@@ -105,7 +105,11 @@
             if (json.success && json.data) {
                 // Isi otomatis URL Unduhan dengan URL hasil upload
                 document.getElementById('updateUrl').value = json.data.fileUrl;
-                showToast('Sukses', 'APK berhasil diunggah! Jangan lupa klik Simpan Pengaturan.');
+                showToast('Sukses', 'APK berhasil diunggah! Menyimpan pengaturan secara otomatis...');
+                // Otomatis klik tombol simpan agar tersimpan di database
+                setTimeout(() => {
+                    document.getElementById('btn-save').click();
+                }, 500);
             } else {
                 showToast('Gagal', json.message || 'Gagal mengunggah APK');
             }
