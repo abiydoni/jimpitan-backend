@@ -307,8 +307,11 @@
 <div class="chat-container">
     <!-- Sidebar -->
     <div class="chat-sidebar">
-        <div class="chat-header">
-            <input type="text" class="search-box" placeholder="Cari warga atau grup...">
+        <div class="chat-header" style="display:flex; flex-direction:column; gap:0.5rem;">
+            <select class="search-box" id="chat-village-filter" onchange="changeVillage()" style="cursor: pointer; padding: 0.6rem 1rem;">
+                <option value="ALL">Semua Desa (Pusat)</option>
+            </select>
+            <input type="text" id="contact-search-input" class="search-box" placeholder="Cari warga atau grup..." oninput="filterContactList()">
         </div>
         <ul class="contact-list" id="contact-list">
             <!-- Diisi oleh JavaScript -->
@@ -356,7 +359,8 @@
 
     // MY_UID & getFirebaseToken() sudah didefinisikan secara global di layout/main.php
     const MY_NAME = (typeof CURRENT_USER_NAME !== 'undefined') ? CURRENT_USER_NAME : 'Appsbee Support';
-    const VILLAGE_ID = 'ALL';
+    let VILLAGE_ID = 'ALL';
+    let contactSearchQuery = '';
     // Map untuk menyimpan data pesan (untuk keperluan edit)
     const messageMap = {};
 
@@ -388,6 +392,9 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        // Fetch Villages for Dropdown
+        fetchChatVillages();
+        
         // Init fetch
         fetchContacts();
         // Polling contacts
@@ -457,6 +464,47 @@
             }
         });
     });
+
+    async function fetchChatVillages() {
+        try {
+            const res = await fetch(`${API_URL}/superadmin/villages`, {
+                headers: { 'Authorization': `Bearer ${FIREBASE_ID_TOKEN}` }
+            });
+            const data = await res.json();
+            if(data.success) {
+                const select = document.getElementById('chat-village-filter');
+                data.data.forEach(v => {
+                    const opt = document.createElement('option');
+                    opt.value = v.id;
+                    opt.textContent = v.name;
+                    select.appendChild(opt);
+                });
+            }
+        } catch(e) {
+            console.error('Error fetching villages', e);
+        }
+    }
+
+    function changeVillage() {
+        VILLAGE_ID = document.getElementById('chat-village-filter').value;
+        
+        // Reset state
+        activeChatUid = null;
+        activeRoomId = null;
+        unreadCounts = {};
+        contacts = [];
+        
+        document.getElementById('empty-state').style.display = 'flex';
+        document.getElementById('chat-area').style.display = 'none';
+        document.getElementById('contact-list').innerHTML = '<li style="padding: 2rem; text-align: center; color: #9ca3af;">Memuat daftar kontak...</li>';
+        
+        fetchContacts();
+    }
+
+    function filterContactList() {
+        contactSearchQuery = document.getElementById('contact-search-input').value;
+        renderContacts();
+    }
 
     async function pollChatData() {
         // Ambil badge unread terbaru
@@ -541,8 +589,15 @@
         const list = document.getElementById('contact-list');
         list.innerHTML = '';
         
+        // Filter berdasarkan pencarian
+        let filteredContacts = contacts;
+        if (contactSearchQuery.trim() !== '') {
+            const query = contactSearchQuery.toLowerCase();
+            filteredContacts = contacts.filter(c => c.name.toLowerCase().includes(query));
+        }
+
         // Urutkan kontak: Unread > Online/Grup > LastSeen
-        contacts.sort((a, b) => {
+        filteredContacts.sort((a, b) => {
             const unreadA = unreadCounts[a.uid] || 0;
             const unreadB = unreadCounts[b.uid] || 0;
             if (unreadB !== unreadA) return unreadB - unreadA; // Unread di atas
@@ -556,7 +611,7 @@
             return timeB - timeA; // Terakhir online terbaru di atas
         });
         
-        contacts.forEach(contact => {
+        filteredContacts.forEach(contact => {
             const isGroup = contact.isGroup;
             const targetId = isGroup ? contact.uid : contact.uid;
             
