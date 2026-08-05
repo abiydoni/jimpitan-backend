@@ -112,6 +112,9 @@
         <div class="hero-text">
             <h1>Keamanan & Backup</h1>
             <p>Kelola keamanan sistem, pencadangan database, dan pembersihan file sementara secara langsung.</p>
+            <div style="margin-top: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 600;">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Auto-Backup Google Drive: Aktif (Jam 02:00)
+            </div>
         </div>
     </div>
     
