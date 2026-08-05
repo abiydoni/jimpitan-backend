@@ -12,3 +12,4 @@ $routes->get('/master_menu', 'MasterMenu::index');
 $routes->get('/users', 'Users::index');
 $routes->get('/settings', 'Settings::index');
 $routes->get('/villages', 'Villages::index');
+$routes->get('/security', 'Security::index');
