@@ -327,6 +327,12 @@
                     <span>Pengaturan Versi</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="<?= base_url('/security') ?>" class="nav-link <?= (url_is('security*')) ? 'active' : '' ?>">
+                    <i class="fa-solid fa-shield-halved nav-icon"></i>
+                    <span>Keamanan & Backup</span>
+                </a>
+            </li>
         </ul>
     </aside>
 
