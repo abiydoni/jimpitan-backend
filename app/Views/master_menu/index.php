@@ -589,6 +589,7 @@
                     <option value="home">Home (Beranda)</option>
                     <option value="account_balance_wallet">Account Balance Wallet (Keuangan/Tagihan)</option>
                     <option value="payments">Payments (Pembayaran/Iuran)</option>
+                    <option value="savings_outlined">Savings (Celengan/Setor Jimpitan)</option>
                     <option value="people">People (Warga/Penduduk)</option>
                     <option value="assignment">Assignment (Surat/Administrasi)</option>
                     <option value="chat">Chat (Pesan/Komunikasi)</option>
