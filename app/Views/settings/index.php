@@ -26,6 +26,15 @@
                     <input type="file" id="apkFile" accept=".apk" class="form-control" style="flex:1; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; background-color:#fff;">
                     <button type="button" id="btn-upload" onclick="uploadApk()" class="btn btn-secondary" style="padding: 0.5rem 1rem; border-radius: 0.375rem; background-color: #10b981; color: white; border:none; cursor:pointer;">Upload APK</button>
                 </div>
+                <div id="progressContainer" style="display: none; margin-top: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                        <span id="progressText" style="font-size: 0.75rem; font-weight: 500; color: #4b5563;">Menyiapkan unggahan...</span>
+                        <span id="progressPercent" style="font-size: 0.75rem; font-weight: 600; color: #10b981;">0%</span>
+                    </div>
+                    <div style="width: 100%; height: 0.5rem; background-color: #e5e7eb; border-radius: 9999px; overflow: hidden;">
+                        <div id="progressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #059669); border-radius: 9999px; transition: width 0.15s ease-out;"></div>
+                    </div>
+                </div>
                 <p style="font-size: 0.75rem; color: #6b7280; margin-top:0.25rem;">Jika berhasil, URL di bawah akan terisi otomatis.</p>
             </div>
             
@@ -72,7 +81,7 @@
         }
     }
 
-    async function uploadApk() {
+    function uploadApk() {
         const fileInput = document.getElementById('apkFile');
         if (!fileInput.files || fileInput.files.length === 0) {
             showToast('Peringatan', 'Pilih file APK terlebih dahulu!');
@@ -86,41 +95,78 @@
         }
 
         const btn = document.getElementById('btn-upload');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const progressPercent = document.getElementById('progressPercent');
+
         btn.disabled = true;
         btn.textContent = 'Mengunggah...';
+
+        progressContainer.style.display = 'block';
+        progressBar.style.width = '0%';
+        progressText.textContent = 'Menyiapkan unggahan...';
+        progressPercent.textContent = '0%';
 
         const formData = new FormData();
         formData.append('apk', file);
 
-        try {
-            const res = await fetch(`${API_URL}/config/upload-apk`, {
-                method: 'POST',
-                headers: { 
-                    'Authorization': `Bearer ${FIREBASE_ID_TOKEN}` // asumsi ada global var FIREBASE_ID_TOKEN
-                },
-                body: formData
-            });
-            const json = await res.json();
-            
-            if (json.success && json.data) {
-                // Isi otomatis URL Unduhan dengan URL hasil upload
-                document.getElementById('updateUrl').value = json.data.fileUrl;
-                showToast('Sukses', 'APK berhasil diunggah! Menyimpan pengaturan secara otomatis...');
-                // Otomatis klik tombol simpan agar tersimpan di database
-                setTimeout(() => {
-                    document.getElementById('btn-save').click();
-                }, 500);
-            } else {
-                showToast('Gagal', json.message || 'Gagal mengunggah APK');
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `${API_URL}/config/upload-apk`, true);
+
+        if (typeof FIREBASE_ID_TOKEN !== 'undefined' && FIREBASE_ID_TOKEN) {
+            xhr.setRequestHeader('Authorization', `Bearer ${FIREBASE_ID_TOKEN}`);
+        }
+
+        xhr.upload.onprogress = function (e) {
+            if (e.lengthComputable) {
+                const percent = Math.round((e.loaded / e.total) * 100);
+                const loadedMB = (e.loaded / (1024 * 1024)).toFixed(1);
+                const totalMB = (e.total / (1024 * 1024)).toFixed(1);
+
+                progressBar.style.width = percent + '%';
+                progressText.textContent = `Mengunggah APK: ${loadedMB} MB / ${totalMB} MB`;
+                progressPercent.textContent = percent + '%';
             }
-        } catch (error) {
-            console.error('Error uploading APK:', error);
-            showToast('Error', 'Koneksi ke server gagal saat upload APK');
-        } finally {
+        };
+
+        xhr.onload = function () {
             btn.disabled = false;
             btn.textContent = 'Upload APK';
-            fileInput.value = ''; // Reset input
-        }
+
+            if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                    const json = JSON.parse(xhr.responseText);
+                    if (json.success && json.data) {
+                        document.getElementById('updateUrl').value = json.data.fileUrl;
+                        showToast('Sukses', 'APK berhasil diunggah! Menyimpan pengaturan secara otomatis...');
+                        setTimeout(() => {
+                            document.getElementById('btn-save').click();
+                        }, 500);
+                    } else {
+                        showToast('Gagal', json.message || 'Gagal mengunggah APK');
+                        progressContainer.style.display = 'none';
+                    }
+                } catch (err) {
+                    showToast('Gagal', 'Respon server tidak valid');
+                    progressContainer.style.display = 'none';
+                }
+            } else {
+                showToast('Gagal', `Gagal mengunggah APK (Status ${xhr.status})`);
+                progressContainer.style.display = 'none';
+            }
+            fileInput.value = '';
+        };
+
+        xhr.onerror = function () {
+            btn.disabled = false;
+            btn.textContent = 'Upload APK';
+            showToast('Error', 'Koneksi ke server gagal saat upload APK');
+            progressContainer.style.display = 'none';
+            fileInput.value = '';
+        };
+
+        xhr.send(formData);
     }
 
     async function saveSettings(e) {
