@@ -44,6 +44,13 @@
             </div>
             <div style="margin-bottom: 1rem;">
                 <label style="display:flex; align-items:center; cursor:pointer;">
+                    <input type="checkbox" id="showNotification" style="width:1.25rem; height:1.25rem; margin-right:0.5rem;">
+                    <span style="font-size: 0.875rem; font-weight: 500; color:#2563eb;">Tampilkan Notifikasi Pop-Up Update</span>
+                </label>
+                <p style="font-size: 0.75rem; color: #6b7280; margin-left:1.75rem; margin-top:0.25rem;">Centang ini untuk memunculkan pop-up notifikasi update secara otomatis di aplikasi Flutter saat pengguna masuk ke dashboard.</p>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label style="display:flex; align-items:center; cursor:pointer;">
                     <input type="checkbox" id="forceUpdate" style="width:1.25rem; height:1.25rem; margin-right:0.5rem;">
                     <span style="font-size: 0.875rem; font-weight: 500; color:#dc2626;">Wajib Update (Force Update)</span>
                 </label>
@@ -74,6 +81,8 @@
                 document.getElementById('updateUrl').value = json.data.updateUrl || '';
                 document.getElementById('releaseNotes').value = json.data.releaseNotes || '';
                 document.getElementById('forceUpdate').checked = json.data.forceUpdate === true;
+                const notifVal = json.data.showNotification !== undefined ? json.data.showNotification : json.data.showUpdateNotification;
+                document.getElementById('showNotification').checked = notifVal !== false;
             }
         } catch (error) {
             console.error('Error loading settings:', error);
@@ -180,7 +189,8 @@
             minVersion: document.getElementById('minVersion').value,
             updateUrl: document.getElementById('updateUrl').value,
             releaseNotes: document.getElementById('releaseNotes').value,
-            forceUpdate: document.getElementById('forceUpdate').checked
+            forceUpdate: document.getElementById('forceUpdate').checked,
+            showNotification: document.getElementById('showNotification').checked
         };
         
         try {
