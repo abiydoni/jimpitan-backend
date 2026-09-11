@@ -20,13 +20,14 @@
                 <label style="display:block; font-size: 0.875rem; font-weight: 500; margin-bottom:0.5rem; color:#374151;">Versi Minimum (Min Version)</label>
                 <input type="text" id="minVersion" class="form-control" placeholder="Contoh: 1.0.0" required style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
             </div>
-            <div style="margin-bottom: 1rem;">
-                <label style="display:block; font-size: 0.875rem; font-weight: 500; margin-bottom:0.5rem; color:#374151;">Upload File APK Baru (Opsional)</label>
-                <div style="display:flex; gap: 0.5rem;">
+            <div style="margin-bottom: 1.25rem; padding: 1rem; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+                <label style="display:block; font-size: 0.875rem; font-weight: 600; margin-bottom:0.25rem; color:#1e293b;">1. File APK HP Baru (64-bit / ARM64-v8a)</label>
+                <p style="font-size: 0.75rem; color: #64748b; margin-bottom: 0.75rem;">Untuk smartphone Android generasi baru (ukuran unduhan lebih ringan & performa maksimal).</p>
+                <div style="display:flex; gap: 0.5rem; margin-bottom: 0.5rem;">
                     <input type="file" id="apkFile" accept=".apk" class="form-control" style="flex:1; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; background-color:#fff;">
-                    <button type="button" id="btn-upload" onclick="uploadApk()" class="btn btn-secondary" style="padding: 0.5rem 1rem; border-radius: 0.375rem; background-color: #10b981; color: white; border:none; cursor:pointer;">Upload APK</button>
+                    <button type="button" id="btn-upload" onclick="uploadApk('apkFile', 'updateUrl', 'progressContainer', 'progressBar', 'progressText', 'progressPercent', 'btn-upload')" class="btn btn-secondary" style="padding: 0.5rem 1rem; border-radius: 0.375rem; background-color: #10b981; color: white; border:none; cursor:pointer;">Upload APK Baru</button>
                 </div>
-                <div id="progressContainer" style="display: none; margin-top: 0.75rem;">
+                <div id="progressContainer" style="display: none; margin-bottom: 0.75rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
                         <span id="progressText" style="font-size: 0.75rem; font-weight: 500; color: #4b5563;">Menyiapkan unggahan...</span>
                         <span id="progressPercent" style="font-size: 0.75rem; font-weight: 600; color: #10b981;">0%</span>
@@ -35,13 +36,30 @@
                         <div id="progressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #059669); border-radius: 9999px; transition: width 0.15s ease-out;"></div>
                     </div>
                 </div>
-                <p style="font-size: 0.75rem; color: #6b7280; margin-top:0.25rem;">Jika berhasil, URL di bawah akan terisi otomatis.</p>
+                <label style="display:block; font-size: 0.75rem; font-weight: 500; margin-bottom:0.25rem; color:#475569;">URL Unduhan HP Baru (Update URL)</label>
+                <input type="url" id="updateUrl" class="form-control" placeholder="https://.../jimpitan-arm64-v8a-release.apk" required style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+            </div>
+
+            <div style="margin-bottom: 1.25rem; padding: 1rem; background-color: #fffbeb; border: 1px solid #fef3c7; border-radius: 0.5rem;">
+                <label style="display:block; font-size: 0.875rem; font-weight: 600; margin-bottom:0.25rem; color:#92400e;">2. File APK HP Lama (32-bit / ARMeabi-v7a) - Opsional</label>
+                <p style="font-size: 0.75rem; color: #b45309; margin-bottom: 0.75rem;">Khusus untuk smartphone Android tipe lama/32-bit. Aplikasi akan otomatis mendeteksi dan mengunduh link ini jika user memakai HP lama.</p>
+                <div style="display:flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <input type="file" id="apkFileLegacy" accept=".apk" class="form-control" style="flex:1; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; background-color:#fff;">
+                    <button type="button" id="btn-upload-legacy" onclick="uploadApk('apkFileLegacy', 'updateUrlLegacy', 'progressContainerLegacy', 'progressBarLegacy', 'progressTextLegacy', 'progressPercentLegacy', 'btn-upload-legacy')" class="btn btn-secondary" style="padding: 0.5rem 1rem; border-radius: 0.375rem; background-color: #d97706; color: white; border:none; cursor:pointer;">Upload APK Lama</button>
+                </div>
+                <div id="progressContainerLegacy" style="display: none; margin-bottom: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                        <span id="progressTextLegacy" style="font-size: 0.75rem; font-weight: 500; color: #92400e;">Menyiapkan unggahan...</span>
+                        <span id="progressPercentLegacy" style="font-size: 0.75rem; font-weight: 600; color: #d97706;">0%</span>
+                    </div>
+                    <div style="width: 100%; height: 0.5rem; background-color: #e5e7eb; border-radius: 9999px; overflow: hidden;">
+                        <div id="progressBarLegacy" style="width: 0%; height: 100%; background: linear-gradient(90deg, #d97706, #b45309); border-radius: 9999px; transition: width 0.15s ease-out;"></div>
+                    </div>
+                </div>
+                <label style="display:block; font-size: 0.75rem; font-weight: 500; margin-bottom:0.25rem; color:#92400e;">URL Unduhan HP Lama (Update URL Legacy)</label>
+                <input type="url" id="updateUrlLegacy" class="form-control" placeholder="https://.../jimpitan-armeabi-v7a-release.apk" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
             </div>
             
-            <div style="margin-bottom: 1rem;">
-                <label style="display:block; font-size: 0.875rem; font-weight: 500; margin-bottom:0.5rem; color:#374151;">URL Unduhan (Update URL)</label>
-                <input type="url" id="updateUrl" class="form-control" placeholder="https://play.google.com/... atau URL APK" required style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem;">
-            </div>
             <div style="margin-bottom: 1rem;">
                 <label style="display:flex; align-items:center; cursor:pointer;">
                     <input type="checkbox" id="showNotification" style="width:1.25rem; height:1.25rem; margin-right:0.5rem;">
@@ -79,6 +97,7 @@
                 document.getElementById('latestVersion').value = json.data.latestVersion || '';
                 document.getElementById('minVersion').value = json.data.minVersion || '';
                 document.getElementById('updateUrl').value = json.data.updateUrl || '';
+                document.getElementById('updateUrlLegacy').value = json.data.updateUrlLegacy || '';
                 document.getElementById('releaseNotes').value = json.data.releaseNotes || '';
                 document.getElementById('forceUpdate').checked = json.data.forceUpdate === true;
                 const notifVal = json.data.showNotification !== undefined ? json.data.showNotification : json.data.showUpdateNotification;
@@ -90,8 +109,8 @@
         }
     }
 
-    function uploadApk() {
-        const fileInput = document.getElementById('apkFile');
+    function uploadApk(fileInputId, targetUrlId, progressContainerId, progressBarId, progressTextId, progressPercentId, btnId) {
+        const fileInput = document.getElementById(fileInputId);
         if (!fileInput.files || fileInput.files.length === 0) {
             showToast('Peringatan', 'Pilih file APK terlebih dahulu!');
             return;
@@ -103,12 +122,13 @@
             return;
         }
 
-        const btn = document.getElementById('btn-upload');
-        const progressContainer = document.getElementById('progressContainer');
-        const progressBar = document.getElementById('progressBar');
-        const progressText = document.getElementById('progressText');
-        const progressPercent = document.getElementById('progressPercent');
+        const btn = document.getElementById(btnId);
+        const progressContainer = document.getElementById(progressContainerId);
+        const progressBar = document.getElementById(progressBarId);
+        const progressText = document.getElementById(progressTextId);
+        const progressPercent = document.getElementById(progressPercentId);
 
+        const originalBtnText = btn.textContent;
         btn.disabled = true;
         btn.textContent = 'Mengunggah...';
 
@@ -141,17 +161,14 @@
 
         xhr.onload = function () {
             btn.disabled = false;
-            btn.textContent = 'Upload APK';
+            btn.textContent = originalBtnText;
 
             if (xhr.status >= 200 && xhr.status < 300) {
                 try {
                     const json = JSON.parse(xhr.responseText);
                     if (json.success && json.data) {
-                        document.getElementById('updateUrl').value = json.data.fileUrl;
-                        showToast('Sukses', 'APK berhasil diunggah! Menyimpan pengaturan secara otomatis...');
-                        setTimeout(() => {
-                            document.getElementById('btn-save').click();
-                        }, 500);
+                        document.getElementById(targetUrlId).value = json.data.fileUrl;
+                        showToast('Sukses', 'APK berhasil diunggah! URL telah terisi.');
                     } else {
                         showToast('Gagal', json.message || 'Gagal mengunggah APK');
                         progressContainer.style.display = 'none';
@@ -169,7 +186,7 @@
 
         xhr.onerror = function () {
             btn.disabled = false;
-            btn.textContent = 'Upload APK';
+            btn.textContent = originalBtnText;
             showToast('Error', 'Koneksi ke server gagal saat upload APK');
             progressContainer.style.display = 'none';
             fileInput.value = '';
@@ -188,6 +205,7 @@
             latestVersion: document.getElementById('latestVersion').value,
             minVersion: document.getElementById('minVersion').value,
             updateUrl: document.getElementById('updateUrl').value,
+            updateUrlLegacy: document.getElementById('updateUrlLegacy').value,
             releaseNotes: document.getElementById('releaseNotes').value,
             forceUpdate: document.getElementById('forceUpdate').checked,
             showNotification: document.getElementById('showNotification').checked
@@ -198,7 +216,7 @@
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${FIREBASE_ID_TOKEN}` // asumsi ada global var FIREBASE_ID_TOKEN
+                    'Authorization': `Bearer ${FIREBASE_ID_TOKEN}`
                 },
                 body: JSON.stringify(payload)
             });
