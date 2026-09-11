@@ -109,7 +109,7 @@
         }
     }
 
-    function uploadApk(fileInputId, targetUrlId, progressContainerId, progressBarId, progressTextId, progressPercentId, btnId) {
+    async function uploadApk(fileInputId, targetUrlId, progressContainerId, progressBarId, progressTextId, progressPercentId, btnId) {
         const fileInput = document.getElementById(fileInputId);
         if (!fileInput.files || fileInput.files.length === 0) {
             showToast('Peringatan', 'Pilih file APK terlebih dahulu!');
@@ -137,14 +137,18 @@
         progressText.textContent = 'Menyiapkan unggahan...';
         progressPercent.textContent = '0%';
 
+        const token = (typeof getFreshFirebaseToken === 'function') 
+            ? await getFreshFirebaseToken() 
+            : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+
         const formData = new FormData();
         formData.append('apk', file);
 
         const xhr = new XMLHttpRequest();
         xhr.open('POST', `${API_URL}/config/upload-apk`, true);
 
-        if (typeof FIREBASE_ID_TOKEN !== 'undefined' && FIREBASE_ID_TOKEN) {
-            xhr.setRequestHeader('Authorization', `Bearer ${FIREBASE_ID_TOKEN}`);
+        if (token) {
+            xhr.setRequestHeader('Authorization', `Bearer ${token}`);
         }
 
         xhr.upload.onprogress = function (e) {
@@ -177,6 +181,9 @@
                     showToast('Gagal', 'Respon server tidak valid');
                     progressContainer.style.display = 'none';
                 }
+            } else if (xhr.status === 401 || xhr.status === 403) {
+                showToast('Sesi Berakhir', 'Sesi login telah kedaluwarsa. Silakan refresh halaman atau login ulang.');
+                progressContainer.style.display = 'none';
             } else {
                 showToast('Gagal', `Gagal mengunggah APK (Status ${xhr.status})`);
                 progressContainer.style.display = 'none';
@@ -212,11 +219,15 @@
         };
         
         try {
+            const token = (typeof getFreshFirebaseToken === 'function') 
+                ? await getFreshFirebaseToken() 
+                : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+
             const res = await fetch(`${API_URL}/config/version`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${FIREBASE_ID_TOKEN}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(payload)
             });
@@ -224,6 +235,8 @@
             
             if (json.success) {
                 showToast('Sukses', 'Pengaturan versi berhasil diperbarui!');
+            } else if (res.status === 401 || res.status === 403) {
+                showToast('Sesi Berakhir', json.message || 'Token autentikasi kedaluwarsa. Silakan refresh atau login ulang.');
             } else {
                 showToast('Gagal', json.message || 'Terjadi kesalahan saat menyimpan');
             }

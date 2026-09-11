@@ -13,40 +13,56 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Firebase SDK (untuk token auto-refresh) -->
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
         const firebaseConfig = {
-            apiKey: "AIzaSyBAomOJD7Y-ky3k7yxhMzBHrVOcS4Xv0O4",
-            authDomain: "jimpitan-9dd06.firebaseapp.com",
-            projectId: "jimpitan-9dd06",
-            storageBucket: "jimpitan-9dd06.appspot.com",
+            apiKey: "AIzaSyBvK2SEaBTV2tUo6hbSv4xi5mh4i-9Ea4E",
+            authDomain: "jimpitan-26fda.firebaseapp.com",
+            projectId: "jimpitan-26fda",
+            storageBucket: "jimpitan-26fda.firebasestorage.app",
             messagingSenderId: "230006065254",
-            appId: "1:230006065254:web:4c95ce03276ac70e60c5a7"
+            appId: "1:230006065254:web:4c95ce03276ac70e60c5a7",
+            measurementId: "G-18GE22356Y"
         };
 
-        const fbApp = initializeApp(firebaseConfig, 'layout-app');
+        const fbApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
         const fbAuth = getAuth(fbApp);
+        window.fbAuth = fbAuth;
 
         // Auto-refresh token setiap kali Firebase memperbarui sesi
         onAuthStateChanged(fbAuth, async (user) => {
             if (user) {
                 try {
-                    const freshToken = await user.getIdToken(false); // Ambil token (refresh jika perlu)
+                    const freshToken = await user.getIdToken(false);
                     const stored = JSON.parse(localStorage.getItem('jimpitan_admin_user') || '{}');
-                    // Perbarui token dan perpanjang expiry
                     stored.token = freshToken;
                     stored.tokenExpiry = Date.now() + (55 * 60 * 1000);
                     localStorage.setItem('jimpitan_admin_user', JSON.stringify(stored));
-                    // Update variabel global jika sudah ada
-                    if (typeof window !== 'undefined') {
-                        window._freshToken = freshToken;
-                    }
+                    window.FIREBASE_ID_TOKEN = freshToken;
                 } catch(e) {
                     console.warn('Token refresh gagal:', e);
                 }
             }
         });
+
+        window.getFreshFirebaseToken = async function() {
+            if (window.fbAuth && window.fbAuth.currentUser) {
+                try {
+                    const freshToken = await window.fbAuth.currentUser.getIdToken(true);
+                    const stored = JSON.parse(localStorage.getItem('jimpitan_admin_user') || '{}');
+                    stored.token = freshToken;
+                    stored.tokenExpiry = Date.now() + (55 * 60 * 1000);
+                    localStorage.setItem('jimpitan_admin_user', JSON.stringify(stored));
+                    window.FIREBASE_ID_TOKEN = freshToken;
+                    return freshToken;
+                } catch (e) {
+                    console.warn('Gagal ambil fresh token:', e);
+                }
+            }
+            const s = JSON.parse(localStorage.getItem('jimpitan_admin_user') || '{}');
+            return s.token || '';
+        };
     </script>
     
     <style>
@@ -263,8 +279,7 @@
             }
             try {
                 const user = JSON.parse(raw);
-                // Cek apakah token masih valid (55 menit)
-                if (!user.token || Date.now() > user.tokenExpiry) {
+                if (!user.uid) {
                     localStorage.removeItem('jimpitan_admin_user');
                     window.location.replace('/login');
                 }
