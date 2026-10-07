@@ -878,8 +878,10 @@
 
                 <div class="form-group">
                     <label class="form-label">Jeda / Delay Antar Pengiriman Pesan (Detik)</label>
-                    <input type="number" id="cfg-delay" class="form-control" min="1" max="10" value="2">
-                    <div style="font-size:0.75rem; color:#6b7280; margin-top:0.3rem;">Rekomendasi 2-3 detik agar terhindar dari pemblokiran atau anti-spam WhatsApp.</div>
+                    <input type="number" id="cfg-delay" class="form-control" min="2" max="60" value="5">
+                    <div style="font-size:0.75rem; color:#059669; margin-top:0.3rem;">
+                        <i class="fa-solid fa-shield-halved"></i> Rekomendasi <strong>5 - 10 detik</strong>. Sistem otomatis menambahkan variasi acak (+1 s/d 3 detik) agar pola pengiriman terlihat alami seperti manusia dan aman dari banned WhatsApp.
+                    </div>
                 </div>
 
                 <div style="margin-top:1.5rem; display:flex; gap:0.75rem;">
@@ -1798,9 +1800,11 @@
             document.getElementById('blast-progress-text').textContent = `Selesai ${currentNum} dari ${total} KK (${donePct}%)`;
             document.getElementById('blast-count-text').textContent = `Terkirim: ${successCount} / ${total} KK (Gagal: ${failedCount})`;
 
-            // Jeda aman anti-spam jika bukan orang terakhir
+            // Jeda aman anti-spam jika bukan orang terakhir (dengan variasi acak agar tampak seperti manusia)
             if (i < total - 1 && !cancelBlastRequested) {
-                await new Promise(resWait => setTimeout(resWait, delaySec * 1000));
+                const randomJitter = Math.floor(Math.random() * 3); // variasi acak 0 - 2 detik
+                const actualWaitSec = delaySec + randomJitter;
+                await new Promise(resWait => setTimeout(resWait, actualWaitSec * 1000));
             }
         }
 
