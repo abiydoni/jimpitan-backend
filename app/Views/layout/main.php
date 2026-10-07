@@ -312,6 +312,13 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="<?= base_url('/wa_blast') ?>" class="nav-link <?= (url_is('wa_blast*')) ? 'active' : '' ?>">
+                    <i class="fa-brands fa-whatsapp nav-icon" style="color: #25d366; font-size: 1.35rem;"></i>
+                    <span>WhatsApp Blasting</span>
+                    <span style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 2px 7px; border-radius: 999px; font-size: 0.68rem; font-weight: 700; margin-left: auto;">KK</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="<?= base_url('/saas') ?>" class="nav-link <?= (url_is('saas*')) ? 'active' : '' ?>">
                     <i class="fa-solid fa-layer-group nav-icon"></i>
                     <span>SaaS & APK Config</span>
