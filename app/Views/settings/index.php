@@ -36,8 +36,11 @@
                         <div id="progressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #059669); border-radius: 9999px; transition: width 0.15s ease-out;"></div>
                     </div>
                 </div>
-                <label style="display:block; font-size: 0.75rem; font-weight: 500; margin-bottom:0.25rem; color:#475569;">URL Unduhan HP Baru (Update URL)</label>
-                <input type="url" id="updateUrl" class="form-control" placeholder="https://.../jimpitan-arm64-v8a-release.apk" required style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                <label style="display:block; font-size: 0.75rem; font-weight: 500; margin-bottom:0.25rem; color:#475569;">URL Unduhan / Play Store (Update URL)</label>
+                <input type="url" id="updateUrl" class="form-control" placeholder="https://play.google.com/store/apps/details?id=jimpitan.appsbee.my.id" required style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                <button type="button" onclick="document.getElementById('updateUrl').value = 'https://play.google.com/store/apps/details?id=jimpitan.appsbee.my.id'" style="margin-top:0.35rem; font-size: 0.75rem; color: #4f46e5; background: none; border: none; cursor: pointer; padding: 0; text-decoration: underline; display: inline-flex; align-items: center; gap: 0.25rem;">
+                    <span>📲 Gunakan Tautan Resmi Google Play Store (Satu Pintu)</span>
+                </button>
             </div>
 
             <div style="margin-bottom: 1.25rem; padding: 1rem; background-color: #fffbeb; border: 1px solid #fef3c7; border-radius: 0.5rem;">
