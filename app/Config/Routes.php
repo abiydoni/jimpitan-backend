@@ -11,6 +11,8 @@ $routes->get('/saas', 'Saas::index');
 $routes->get('/master_menu', 'MasterMenu::index');
 $routes->get('/users', 'Users::index');
 $routes->get('/settings', 'Settings::index');
+$routes->get('/settings/wa_group', 'Settings::getWaGroupSettings');
+$routes->match(['post', 'put'], '/settings/wa_group', 'Settings::saveWaGroupSettings');
 $routes->get('/villages', 'Villages::index');
 $routes->match(['delete', 'post'], '/villages/(:segment)', 'Villages::delete/$1');
 $routes->match(['delete', 'post'], '/villages/delete/(:segment)', 'Villages::delete/$1');
