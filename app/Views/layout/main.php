@@ -346,7 +346,7 @@
             <li class="nav-item">
                 <a href="<?= base_url('/settings') ?>" class="nav-link <?= (url_is('settings*')) ? 'active' : '' ?>">
                     <i class="fa-solid fa-gears nav-icon"></i>
-                    <span>Pengaturan Versi</span>
+                    <span>Pengaturan Sistem</span>
                 </a>
             </li>
             <li class="nav-item">
