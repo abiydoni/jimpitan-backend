@@ -435,6 +435,29 @@
                         <textarea id="releaseNotes" class="form-input" rows="3" placeholder="Tuliskan catatan pembaruan yang dapat dibaca warga di aplikasi..."></textarea>
                     </div>
 
+                    <!-- Row 5: Akun Akses Penguji Google Play Store (Reviewer Credentials) -->
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.65rem; padding: 1.25rem; margin-bottom: 1.25rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <span style="font-size: 1.25rem;">🛡️</span>
+                            <div>
+                                <div style="font-size: 0.95rem; font-weight: 700; color: #166534;">Akun Penguji Google Play Store (Reviewer Credentials)</div>
+                                <div class="form-hint" style="color: #15803d; margin: 0;">Digunakan oleh tim peninjau Google Play saat verifikasi rilis. Tersimpan di pengaturan sistem (tabel system_settings) dan otomatis tersinkron ke aplikasi & Firebase Auth.</div>
+                            </div>
+                        </div>
+                        <div class="form-row" style="margin-top: 1rem; margin-bottom: 0;">
+                            <div class="form-col">
+                                <label for="reviewerEmail" style="color: #14532d; font-weight: 600;">Email Penguji</label>
+                                <input type="email" id="reviewerEmail" class="form-input form-input-code" placeholder="fourbee02@gmail.com" value="fourbee02@gmail.com" required>
+                                <span class="form-hint">Email akun peninjau Google Play Store.</span>
+                            </div>
+                            <div class="form-col">
+                                <label for="reviewerPassword" style="color: #14532d; font-weight: 600;">Password Penguji</label>
+                                <input type="text" id="reviewerPassword" class="form-input form-input-code" placeholder="Reviewer2026!" value="Reviewer2026!" required>
+                                <span class="form-hint">Password untuk login penguji di aplikasi & Firebase Auth.</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Footer Tombol Simpan -->
                     <div style="display: flex; justify-content: flex-end; padding-top: 1.25rem; border-top: 1px solid #e2e8f0; margin-top: 1rem;">
                         <button type="submit" id="btn-save-version" class="btn-submit-version">
@@ -604,6 +627,13 @@
                 document.getElementById('forceUpdate').checked = json.data.forceUpdate === true;
                 const notifVal = json.data.showNotification !== undefined ? json.data.showNotification : json.data.showUpdateNotification;
                 document.getElementById('showNotification').checked = notifVal !== false;
+
+                if (document.getElementById('reviewerEmail')) {
+                    document.getElementById('reviewerEmail').value = json.data.reviewerEmail || 'fourbee02@gmail.com';
+                }
+                if (document.getElementById('reviewerPassword')) {
+                    document.getElementById('reviewerPassword').value = json.data.reviewerPassword || 'Reviewer2026!';
+                }
             }
         } catch (error) {
             console.error('Error loading version settings:', error);
@@ -623,7 +653,9 @@
             updateUrlLegacy: '',
             releaseNotes: document.getElementById('releaseNotes').value.trim(),
             forceUpdate: document.getElementById('forceUpdate').checked,
-            showNotification: document.getElementById('showNotification').checked
+            showNotification: document.getElementById('showNotification').checked,
+            reviewerEmail: document.getElementById('reviewerEmail') ? document.getElementById('reviewerEmail').value.trim() : 'fourbee02@gmail.com',
+            reviewerPassword: document.getElementById('reviewerPassword') ? document.getElementById('reviewerPassword').value.trim() : 'Reviewer2026!'
         };
         
         try {
