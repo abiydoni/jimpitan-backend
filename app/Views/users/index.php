@@ -384,23 +384,42 @@
 <?= $this->section('scripts') ?>
 <script>
     let allUsers = [];
+
+    // Helper aman untuk mengambil token Firebase tanpa risiko hang
+    async function getSafeToken() {
+        try {
+            if (typeof getFreshFirebaseToken === 'function') {
+                const tokenPromise = getFreshFirebaseToken();
+                const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(null), 3000));
+                const token = await Promise.race([tokenPromise, timeoutPromise]);
+                if (token) return token;
+            }
+        } catch (e) {
+            console.warn('getSafeToken error:', e);
+        }
+        return (typeof FIREBASE_ID_TOKEN !== 'undefined' && FIREBASE_ID_TOKEN) ? FIREBASE_ID_TOKEN : getFirebaseToken();
+    }
     
-    document.addEventListener('DOMContentLoaded', () => {
+    function initUsersPage() {
         fetchVillages();
         fetchUsers();
-    });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initUsersPage);
+    } else {
+        initUsersPage();
+    }
     
     async function fetchVillages() {
         try {
-            const token = typeof getFreshFirebaseToken === 'function'
-                ? await getFreshFirebaseToken()
-                : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+            const token = await getSafeToken();
 
             const res = await fetch(`${API_URL}/superadmin/villages`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
-            if(data.success) {
+            if(data.success && Array.isArray(data.data)) {
                 const select = document.getElementById('village-filter');
                 data.data.forEach(v => {
                     const opt = document.createElement('option');
@@ -422,18 +441,19 @@
         const url = vId ? `${API_URL}/master/users?villageId=${vId}` : `${API_URL}/master/users`;
         
         try {
-            const token = typeof getFreshFirebaseToken === 'function'
-                ? await getFreshFirebaseToken()
-                : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+            const token = await getSafeToken();
 
             const res = await fetch(url, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
             
-            if(data.success) {
+            if(data.success && Array.isArray(data.data)) {
                 // Sembunyikan role SUPER_ADMIN dari daftar pengguna
-                allUsers = data.data.filter(u => !(u.roles && u.roles.includes('SUPER_ADMIN')));
+                allUsers = data.data.filter(u => {
+                    const roleList = (u.roles || []).map(r => typeof r === 'string' ? r : (r.name || ''));
+                    return !roleList.includes('SUPER_ADMIN');
+                });
                 
                 const activeCount = allUsers.filter(u => u.status === 'ACTIVE').length;
                 const pendingCount = allUsers.filter(u => u.status === 'PENDING').length;
@@ -445,8 +465,11 @@
                 document.getElementById('incomplete-users').textContent = incompleteCount;
 
                 filterTable();
+            } else {
+                showToast('Gagal memuat pengguna', data.message || 'Respons server tidak valid');
             }
         } catch(e) {
+            console.error('Fetch users error:', e);
             showToast('Gagal memuat pengguna', e.message);
         } finally {
             document.getElementById('loader').style.display = 'none';
@@ -478,13 +501,17 @@
         }
         
         users.forEach(u => {
-            // Render roles
+            // Render roles safely
             let rolesHtml = '';
             if(u.roles && u.roles.length > 0) {
                 u.roles.forEach(r => {
-                    rolesHtml += `<span class="role-badge ${r}">${r}</span>`;
+                    const rName = typeof r === 'string' ? r : (r.name || '');
+                    if (rName) {
+                        rolesHtml += `<span class="role-badge ${rName}">${rName}</span>`;
+                    }
                 });
-            } else {
+            }
+            if (!rolesHtml) {
                 rolesHtml = '<span style="color:#9ca3af; font-size:0.8rem;">Tidak ada</span>';
             }
             
@@ -501,14 +528,21 @@
                 statusBadge = `<span style="font-size:0.75rem; font-weight:600; padding:0.15rem 0.5rem; border-radius:1rem; background:#fee2e2; color:#dc2626;">${u.status || 'INCOMPLETE'}</span>`;
             }
 
+            const safeUid = (u.uid || '').replace(/'/g, "\\'");
+            const safeName = (u.name || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            const safeVillage = (u.villageId || '').replace(/'/g, "\\'");
+            const displayTitle = (u.name || u.email || 'Pengguna').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            const displayName = (u.name || 'Tanpa Nama').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const displayEmail = (u.email || u.uid || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>
                     <div class="user-info">
                         ${avatarHtml}
                         <div class="user-details">
-                            <span class="user-name">${u.name || 'Tanpa Nama'}</span>
-                            <span class="user-email">${u.email || u.uid}</span>
+                            <span class="user-name">${displayName}</span>
+                            <span class="user-email">${displayEmail}</span>
                         </div>
                     </div>
                 </td>
@@ -517,10 +551,10 @@
                 <td>${statusBadge}</td>
                 <td style="text-align:right;">
                     <div style="display:inline-flex; gap:0.35rem;">
-                        <button class="btn-action" title="Edit Role" onclick="openRoleModal('${u.uid}', '${(u.name || '').replace(/'/g, "\\'")}', '${u.villageId || ''}')">
+                        <button class="btn-action" title="Edit Role" onclick="openRoleModal('${safeUid}', '${safeName}', '${safeVillage}')">
                             <i class="fa-solid fa-shield-halved"></i>
                         </button>
-                        <button class="btn-action btn-delete" title="Hapus Pengguna" onclick="deleteUser('${u.uid}', '${(u.name || u.email || 'Pengguna').replace(/'/g, "\\'")}')">
+                        <button class="btn-action btn-delete" title="Hapus Pengguna" onclick="deleteUser('${safeUid}', '${displayTitle}')">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
@@ -560,9 +594,7 @@
             });
 
             try {
-                const token = typeof getFreshFirebaseToken === 'function'
-                    ? await getFreshFirebaseToken()
-                    : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+                const token = await getSafeToken();
 
                 const res = await fetch(`${API_URL}/master/users/cleanup-incomplete`, {
                     method: 'DELETE',
@@ -595,9 +627,7 @@
 
         if (result.isConfirmed) {
             try {
-                const token = typeof getFreshFirebaseToken === 'function'
-                    ? await getFreshFirebaseToken()
-                    : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+                const token = await getSafeToken();
 
                 const res = await fetch(`${API_URL}/master/users/${uid}`, {
                     method: 'DELETE',
@@ -630,9 +660,7 @@
         document.getElementById('roles-loader').style.display = 'block';
         
         try {
-            const token = typeof getFreshFirebaseToken === 'function'
-                ? await getFreshFirebaseToken()
-                : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+            const token = await getSafeToken();
 
             // Get available roles for this village
             const resRoles = await fetch(`${API_URL}/roles/${villageId || 'ALL'}`, {
@@ -687,9 +715,7 @@
         btn.textContent = 'Menyimpan...';
         
         try {
-            const token = typeof getFreshFirebaseToken === 'function'
-                ? await getFreshFirebaseToken()
-                : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+            const token = await getSafeToken();
 
             const res = await fetch(`${API_URL}/master/users/${uid}/roles`, {
                 method: 'PUT',
@@ -713,5 +739,6 @@
             btn.disabled = false;
             btn.textContent = 'Simpan Perubahan';
         }
+    }
 </script>
 <?= $this->endSection() ?>
