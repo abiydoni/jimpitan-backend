@@ -110,6 +110,9 @@
         font-size: 1rem;
     }
     .stat-chip-icon.indigo  { background: #ede9fe; color: #4f46e5; }
+    .stat-chip-icon.green   { background: #d1fae5; color: #059669; }
+    .stat-chip-icon.amber   { background: #fef3c7; color: #d97706; }
+    .stat-chip-icon.red     { background: #fee2e2; color: #dc2626; }
     .stat-chip-text { line-height: 1.2; }
     .stat-chip-num { font-size: 1.4rem; font-weight: 800; color: #1f2937; }
     .stat-chip-label { font-size: 0.75rem; color: #6b7280; font-weight: 500; }
@@ -188,6 +191,7 @@
         transition: all 0.2s;
     }
     .btn-action:hover { border-color: #4f46e5; color: #4f46e5; background: #eff6ff; }
+    .btn-action.btn-delete:hover { border-color: #dc2626; color: #dc2626; background: #fef2f2; }
     
     /* Loader */
     #loader { padding: 3rem; text-align: center; color: #6b7280; }
@@ -287,6 +291,27 @@
                 <div class="stat-chip-label">Total Pengguna</div>
             </div>
         </div>
+        <div class="stat-chip">
+            <div class="stat-chip-icon green"><i class="fa-solid fa-user-check"></i></div>
+            <div class="stat-chip-text">
+                <div class="stat-chip-num" id="active-users">0</div>
+                <div class="stat-chip-label">Pengguna Aktif</div>
+            </div>
+        </div>
+        <div class="stat-chip">
+            <div class="stat-chip-icon amber"><i class="fa-solid fa-user-clock"></i></div>
+            <div class="stat-chip-text">
+                <div class="stat-chip-num" id="pending-users">0</div>
+                <div class="stat-chip-label">Pending Approval</div>
+            </div>
+        </div>
+        <div class="stat-chip">
+            <div class="stat-chip-icon red"><i class="fa-solid fa-user-xmark"></i></div>
+            <div class="stat-chip-text">
+                <div class="stat-chip-num" id="incomplete-users">0</div>
+                <div class="stat-chip-label">Incomplete / Batal</div>
+            </div>
+        </div>
     </div>
     
     <div class="toolbar">
@@ -298,6 +323,15 @@
             <option value="">Semua Desa</option>
             <!-- Opsi desa diisi via JS -->
         </select>
+        <select class="toolbar-filter" id="status-filter" onchange="filterTable()">
+            <option value="">Semua Status</option>
+            <option value="ACTIVE">Aktif (ACTIVE)</option>
+            <option value="PENDING">Pending (PENDING)</option>
+            <option value="INCOMPLETE">Incomplete (INCOMPLETE)</option>
+        </select>
+        <button type="button" class="btn btn-danger" id="btn-cleanup" onclick="cleanupIncomplete()" style="display:inline-flex; align-items:center; gap:0.5rem; background:#dc2626; color:white; padding:0.65rem 1.15rem; border-radius:0.625rem; font-weight:600; font-size:0.875rem; cursor:pointer; border:none; box-shadow:0 1px 2px rgba(220,38,38,0.2);">
+            <i class="fa-solid fa-broom"></i> Bersihkan Akun Incomplete
+        </button>
     </div>
     
     <div class="data-card">
@@ -358,8 +392,12 @@
     
     async function fetchVillages() {
         try {
+            const token = typeof getFreshFirebaseToken === 'function'
+                ? await getFreshFirebaseToken()
+                : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+
             const res = await fetch(`${API_URL}/superadmin/villages`, {
-                headers: { 'Authorization': `Bearer ${FIREBASE_ID_TOKEN}` }
+                headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
             if(data.success) {
@@ -384,16 +422,29 @@
         const url = vId ? `${API_URL}/master/users?villageId=${vId}` : `${API_URL}/master/users`;
         
         try {
+            const token = typeof getFreshFirebaseToken === 'function'
+                ? await getFreshFirebaseToken()
+                : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+
             const res = await fetch(url, {
-                headers: { 'Authorization': `Bearer ${FIREBASE_ID_TOKEN}` }
+                headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
             
             if(data.success) {
                 // Sembunyikan role SUPER_ADMIN dari daftar pengguna
                 allUsers = data.data.filter(u => !(u.roles && u.roles.includes('SUPER_ADMIN')));
+                
+                const activeCount = allUsers.filter(u => u.status === 'ACTIVE').length;
+                const pendingCount = allUsers.filter(u => u.status === 'PENDING').length;
+                const incompleteCount = allUsers.filter(u => u.status === 'INCOMPLETE').length;
+
                 document.getElementById('total-users').textContent = allUsers.length;
-                renderTable(allUsers);
+                document.getElementById('active-users').textContent = activeCount;
+                document.getElementById('pending-users').textContent = pendingCount;
+                document.getElementById('incomplete-users').textContent = incompleteCount;
+
+                filterTable();
             }
         } catch(e) {
             showToast('Gagal memuat pengguna', e.message);
@@ -404,11 +455,15 @@
     }
     
     function filterTable() {
-        const query = document.getElementById('search-input').value.toLowerCase();
+        const query = (document.getElementById('search-input').value || '').toLowerCase();
+        const statusFilter = document.getElementById('status-filter').value;
+
         const filtered = allUsers.filter(u => {
             const name = (u.name || '').toLowerCase();
             const email = (u.email || '').toLowerCase();
-            return name.includes(query) || email.includes(query);
+            const matchesQuery = name.includes(query) || email.includes(query);
+            const matchesStatus = !statusFilter || u.status === statusFilter;
+            return matchesQuery && matchesStatus;
         });
         renderTable(filtered);
     }
@@ -434,9 +489,18 @@
             }
             
             // Render avatar
-            let initial = (u.name || '?').charAt(0).toUpperCase();
+            let initial = (u.name || u.email || '?').charAt(0).toUpperCase();
             let avatarHtml = `<div class="user-avatar">${u.photoUrl ? `<img src="${u.photoUrl}" onerror="this.style.display='none'">` : initial}</div>`;
             
+            let statusBadge = '';
+            if (u.status === 'ACTIVE') {
+                statusBadge = `<span style="font-size:0.75rem; font-weight:600; padding:0.15rem 0.5rem; border-radius:1rem; background:#d1fae5; color:#059669;">ACTIVE</span>`;
+            } else if (u.status === 'PENDING') {
+                statusBadge = `<span style="font-size:0.75rem; font-weight:600; padding:0.15rem 0.5rem; border-radius:1rem; background:#fef3c7; color:#d97706;">PENDING</span>`;
+            } else {
+                statusBadge = `<span style="font-size:0.75rem; font-weight:600; padding:0.15rem 0.5rem; border-radius:1rem; background:#fee2e2; color:#dc2626;">${u.status || 'INCOMPLETE'}</span>`;
+            }
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>
@@ -450,21 +514,106 @@
                 </td>
                 <td><span style="font-size:0.8rem; color:#4b5563;">${u.villageId || '-'}</span></td>
                 <td>${rolesHtml}</td>
-                <td>
-                    <span style="font-size:0.75rem; font-weight:600; padding:0.15rem 0.5rem; border-radius:1rem; 
-                          background:${u.status === 'ACTIVE' ? '#d1fae5' : '#fee2e2'}; 
-                          color:${u.status === 'ACTIVE' ? '#059669' : '#dc2626'};">
-                        ${u.status}
-                    </span>
-                </td>
+                <td>${statusBadge}</td>
                 <td style="text-align:right;">
-                    <button class="btn-action" title="Edit Role" onclick="openRoleModal('${u.uid}', '${u.name}', '${u.villageId}')">
-                        <i class="fa-solid fa-shield-halved"></i>
-                    </button>
+                    <div style="display:inline-flex; gap:0.35rem;">
+                        <button class="btn-action" title="Edit Role" onclick="openRoleModal('${u.uid}', '${(u.name || '').replace(/'/g, "\\'")}', '${u.villageId || ''}')">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </button>
+                        <button class="btn-action btn-delete" title="Hapus Pengguna" onclick="deleteUser('${u.uid}', '${(u.name || u.email || 'Pengguna').replace(/'/g, "\\'")}')">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
                 </td>
             `;
             tbody.appendChild(tr);
         });
+    }
+
+    async function cleanupIncomplete() {
+        const orphanCount = allUsers.filter(u => u.status === 'INCOMPLETE' && (!u.villageId || u.villageId === '-' || u.villageId === '')).length;
+        if (orphanCount === 0) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Database Bersih',
+                text: 'Tidak ada akun incomplete yang belum memilih desa.'
+            });
+            return;
+        }
+
+        const result = await Swal.fire({
+            title: 'Bersihkan Akun Incomplete?',
+            html: `Ditemukan <b>${orphanCount}</b> akun berstatus <code>INCOMPLETE</code> yang tidak terhubung dengan desa manapun (pengguna batal atau automated bot Google Play).<br><br>Akun-akun ini akan dihapus dari sistem agar manajemen pengguna tetap rapi.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Bersihkan Sekarang',
+            cancelButtonText: 'Batal'
+        });
+
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Membersihkan...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            try {
+                const token = typeof getFreshFirebaseToken === 'function'
+                    ? await getFreshFirebaseToken()
+                    : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+
+                const res = await fetch(`${API_URL}/master/users/cleanup-incomplete`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    Swal.fire('Berhasil!', data.message, 'success');
+                    fetchUsers();
+                } else {
+                    Swal.fire('Gagal', data.message || 'Gagal membersihkan akun', 'error');
+                }
+            } catch (e) {
+                Swal.fire('Error', e.message, 'error');
+            }
+        }
+    }
+
+    async function deleteUser(uid, name) {
+        const result = await Swal.fire({
+            title: 'Hapus Pengguna?',
+            html: `Apakah Anda yakin ingin menghapus pengguna <b>${name}</b>?<br><span style="font-size:0.85rem; color:#6b7280;">Seluruh hak akses pengguna ini akan dicabut.</span>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Hapus',
+            cancelButtonText: 'Batal'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const token = typeof getFreshFirebaseToken === 'function'
+                    ? await getFreshFirebaseToken()
+                    : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+
+                const res = await fetch(`${API_URL}/master/users/${uid}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Sukses', 'Pengguna berhasil dihapus');
+                    fetchUsers();
+                } else {
+                    showToast('Gagal', data.message);
+                }
+            } catch (e) {
+                showToast('Error', e.message);
+            }
+        }
     }
     
     // MODAL LOGIC
@@ -481,9 +630,13 @@
         document.getElementById('roles-loader').style.display = 'block';
         
         try {
+            const token = typeof getFreshFirebaseToken === 'function'
+                ? await getFreshFirebaseToken()
+                : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+
             // Get available roles for this village
             const resRoles = await fetch(`${API_URL}/roles/${villageId || 'ALL'}`, {
-                headers: { 'Authorization': `Bearer ${FIREBASE_ID_TOKEN}` }
+                headers: { 'Authorization': `Bearer ${token}` }
             });
             const dataRoles = await resRoles.json();
             
@@ -493,7 +646,6 @@
             
             if (dataRoles.success) {
                 let availableRoles = dataRoles.data;
-                // Add some default roles if missing
                 const defaultRoles = ['SUPER_ADMIN', 'ADMIN_DESA', 'WARGA', 'BENDAHARA', 'PENGURUS_RT'];
                 defaultRoles.forEach(r => {
                     if(!availableRoles.includes(r)) availableRoles.push(r);
@@ -528,7 +680,6 @@
         const villageId = document.getElementById('edit-village').value;
         const btn = document.getElementById('btn-save-roles');
         
-        // Kumpulkan role yang dicentang
         const checkboxes = document.querySelectorAll('#role-list-container input[type="checkbox"]:checked');
         const selectedRoles = Array.from(checkboxes).map(cb => cb.value);
         
@@ -536,10 +687,14 @@
         btn.textContent = 'Menyimpan...';
         
         try {
+            const token = typeof getFreshFirebaseToken === 'function'
+                ? await getFreshFirebaseToken()
+                : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+
             const res = await fetch(`${API_URL}/master/users/${uid}/roles`, {
                 method: 'PUT',
                 headers: { 
-                    'Authorization': `Bearer ${FIREBASE_ID_TOKEN}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ roles: selectedRoles, villageId })
@@ -548,7 +703,7 @@
             if(data.success) {
                 showToast('Sukses', 'Hak akses berhasil diperbarui.');
                 closeRoleModal();
-                fetchUsers(); // Refresh table
+                fetchUsers();
             } else {
                 showToast('Gagal', data.message);
             }
@@ -558,6 +713,5 @@
             btn.disabled = false;
             btn.textContent = 'Simpan Perubahan';
         }
-    }
 </script>
 <?= $this->endSection() ?>
