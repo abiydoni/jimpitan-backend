@@ -1,57 +1,72 @@
 <?= $this->extend('layout/main') ?>
 
 <?= $this->section('content') ?>
-<div class="content-header" style="display:flex; justify-content:space-between; align-items:center;">
-    <h1 class="page-title">Data Desa</h1>
-    <button class="btn btn-primary" onclick="openVillageModal()" style="padding: 0.5rem 1rem; border-radius: 0.375rem; background-color: #4f46e5; color: white; border:none; cursor:pointer;">
+<div class="content-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+    <div>
+        <h1 class="page-title" style="font-size:1.5rem; font-weight:700; color:#0f172a; margin:0; display:flex; align-items:center; gap:0.5rem;">
+            <span>🏡</span> Data Desa & Wilayah
+        </h1>
+        <p style="font-size:0.85rem; color:#64748b; margin:0.25rem 0 0 0;">
+            Kelola data master desa, kode unik, alamat, dan pengaturan wilayah.
+        </p>
+    </div>
+    <button class="btn btn-primary" onclick="openVillageModal()" style="padding: 0.65rem 1.25rem; border-radius: 0.5rem; background-color: #4f46e5; color: white; border:none; font-weight:600; font-size:0.875rem; cursor:pointer; display:flex; align-items:center; gap:0.5rem; box-shadow:0 2px 4px rgba(79,70,229,0.25);">
         <i class="fa-solid fa-plus"></i> Tambah Desa
     </button>
 </div>
 
-<div class="card" style="margin-top: 1rem;">
-    <div style="padding: 1.5rem; overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+<div class="card" style="width: 100%; border-radius: 0.75rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 0; overflow: hidden; background: #ffffff;">
+    <div style="padding: 0; overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem;">
             <thead>
-                <tr style="border-bottom: 2px solid #e5e7eb; color: #4b5563; font-size: 0.875rem;">
-                    <th style="padding: 1rem;">ID / Kode</th>
-                    <th style="padding: 1rem;">Nama Desa</th>
-                    <th style="padding: 1rem;">Alamat</th>
-                    <th style="padding: 1rem;">Kontak</th>
-                    <th style="padding: 1rem; text-align:right;">Aksi</th>
+                <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #475569; font-size: 0.825rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                    <th style="padding: 1rem 1.25rem;">Kode Unik</th>
+                    <th style="padding: 1rem 1.25rem;">Nama Desa</th>
+                    <th style="padding: 1rem 1.25rem;">ID Sistem</th>
+                    <th style="padding: 1rem 1.25rem;">Alamat</th>
+                    <th style="padding: 1rem 1.25rem; text-align:right;">Aksi</th>
                 </tr>
             </thead>
             <tbody id="villages-tbody">
-                <tr><td colspan="5" style="text-align:center; padding: 2rem; color: #9ca3af;">Memuat data...</td></tr>
+                <tr>
+                    <td colspan="5" style="text-align:center; padding: 2.5rem; color: #94a3b8;">
+                        <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block; color: #4f46e5;"></i>
+                        Memuat data desa...
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
 </div>
 
 <!-- Modal Form -->
-<div id="village-modal" class="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
-    <div style="background:white; border-radius:0.5rem; width:100%; max-width:500px; padding:1.5rem; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);">
-        <h3 id="modal-title" style="margin-top:0; font-size:1.25rem;">Tambah Desa</h3>
+<div id="village-modal" class="modal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.6); z-index:1000; align-items:center; justify-content:center; backdrop-filter: blur(2px);">
+    <div style="background:white; border-radius:0.75rem; width:100%; max-width:520px; padding:1.75rem; box-shadow:0 20px 25px -5px rgba(0,0,0,0.15); margin: 1rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; padding-bottom:0.75rem; border-bottom:1px solid #e2e8f0;">
+            <h3 id="modal-title" style="margin:0; font-size:1.15rem; font-weight:700; color:#0f172a;">Tambah Desa Baru</h3>
+            <button type="button" onclick="closeVillageModal()" style="background:none; border:none; font-size:1.25rem; color:#94a3b8; cursor:pointer;">&times;</button>
+        </div>
         <form id="village-form" onsubmit="saveVillage(event)">
             <input type="hidden" id="v-id">
             <div style="margin-bottom:1rem;">
-                <label style="display:block; font-size:0.875rem; margin-bottom:0.25rem;">Kode Unik (ID Desa)</label>
-                <input type="text" id="v-uniqueCode" class="form-control" required style="width:100%; padding:0.5rem; border:1px solid #d1d5db; border-radius:0.375rem;" placeholder="contoh: desa_001">
+                <label style="display:block; font-size:0.825rem; font-weight:600; color:#334155; margin-bottom:0.35rem;">Kode Unik (5 Digit / ID Desa)</label>
+                <input type="text" id="v-uniqueCode" class="form-control" required style="width:100%; padding:0.6rem 0.85rem; border:1.5px solid #cbd5e1; border-radius:0.5rem; font-family:monospace; font-size:0.9rem;" placeholder="contoh: 12345">
             </div>
             <div style="margin-bottom:1rem;">
-                <label style="display:block; font-size:0.875rem; margin-bottom:0.25rem;">Nama Desa</label>
-                <input type="text" id="v-name" class="form-control" required style="width:100%; padding:0.5rem; border:1px solid #d1d5db; border-radius:0.375rem;" placeholder="Nama RT/RW/Desa">
+                <label style="display:block; font-size:0.825rem; font-weight:600; color:#334155; margin-bottom:0.35rem;">Nama Desa / RT / RW</label>
+                <input type="text" id="v-name" class="form-control" required style="width:100%; padding:0.6rem 0.85rem; border:1.5px solid #cbd5e1; border-radius:0.5rem; font-size:0.9rem;" placeholder="Nama RT/RW/Desa">
             </div>
             <div style="margin-bottom:1rem;">
-                <label style="display:block; font-size:0.875rem; margin-bottom:0.25rem;">Alamat</label>
-                <textarea id="v-address" class="form-control" rows="2" style="width:100%; padding:0.5rem; border:1px solid #d1d5db; border-radius:0.375rem;"></textarea>
+                <label style="display:block; font-size:0.825rem; font-weight:600; color:#334155; margin-bottom:0.35rem;">Alamat Lengkap</label>
+                <textarea id="v-address" class="form-control" rows="2" style="width:100%; padding:0.6rem 0.85rem; border:1.5px solid #cbd5e1; border-radius:0.5rem; font-size:0.9rem;" placeholder="Dusun, RT/RW, Kelurahan..."></textarea>
             </div>
             <div style="margin-bottom:1.5rem;">
-                <label style="display:block; font-size:0.875rem; margin-bottom:0.25rem;">Kontak Info</label>
-                <input type="text" id="v-contactInfo" class="form-control" style="width:100%; padding:0.5rem; border:1px solid #d1d5db; border-radius:0.375rem;">
+                <label style="display:block; font-size:0.825rem; font-weight:600; color:#334155; margin-bottom:0.35rem;">Kontak / Keterangan Info</label>
+                <input type="text" id="v-contactInfo" class="form-control" style="width:100%; padding:0.6rem 0.85rem; border:1.5px solid #cbd5e1; border-radius:0.5rem; font-size:0.9rem;" placeholder="No. telp ketua / info tambahan">
             </div>
-            <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
-                <button type="button" onclick="closeVillageModal()" style="padding:0.5rem 1rem; border-radius:0.375rem; background:#f3f4f6; border:1px solid #d1d5db; cursor:pointer;">Batal</button>
-                <button type="submit" id="btn-save-village" style="padding:0.5rem 1rem; border-radius:0.375rem; background:#4f46e5; color:white; border:none; cursor:pointer;">Simpan</button>
+            <div style="display:flex; justify-content:flex-end; gap:0.6rem; padding-top:1rem; border-top:1px solid #e2e8f0;">
+                <button type="button" onclick="closeVillageModal()" style="padding:0.6rem 1.25rem; border-radius:0.5rem; background:#f1f5f9; border:1px solid #cbd5e1; color:#475569; font-weight:600; font-size:0.875rem; cursor:pointer;">Batal</button>
+                <button type="submit" id="btn-save-village" style="padding:0.6rem 1.5rem; border-radius:0.5rem; background:#4f46e5; color:white; border:none; font-weight:600; font-size:0.875rem; cursor:pointer; box-shadow:0 2px 4px rgba(79,70,229,0.25);">Simpan</button>
             </div>
         </form>
     </div>
@@ -61,38 +76,85 @@
 <?= $this->section('scripts') ?>
 <script>
     let isEditMode = false;
+    window._villagesList = [];
 
     async function fetchVillages() {
+        const tbody = document.getElementById('villages-tbody');
         try {
-            const res = await fetch(`${API_URL}/master/villages`, {
-                headers: { 'Authorization': `Bearer ${FIREBASE_ID_TOKEN}` }
-            });
-            const json = await res.json();
+            let json = { success: false, data: [] };
+
+            // 1. Coba fetch dari API_URL server
+            try {
+                const token = (typeof getFreshFirebaseToken === 'function') 
+                    ? await getFreshFirebaseToken() 
+                    : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+
+                const res = await fetch(`${API_URL}/master/villages`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                json = await res.json();
+            } catch (errApi) {
+                console.warn('API_URL fetch failed, trying local fallback:', errApi);
+            }
+
+            // 2. Fallback ke endpoint lokal jika API gagal
+            if (!json || !json.success || !Array.isArray(json.data)) {
+                try {
+                    const localRes = await fetch(`<?= base_url('/wa_blast/villages') ?>`);
+                    const localJson = await localRes.json();
+                    if (localJson && localJson.success) {
+                        json = localJson;
+                    }
+                } catch (errLocal) {}
+            }
             
-            const tbody = document.getElementById('villages-tbody');
             tbody.innerHTML = '';
+            window._villagesList = json.data || [];
             
-            if (json.success && json.data.length > 0) {
-                json.data.forEach(v => {
+            if (json.success && window._villagesList.length > 0) {
+                window._villagesList.forEach(v => {
                     const tr = document.createElement('tr');
-                    tr.style.borderBottom = '1px solid #f3f4f6';
+                    tr.style.borderBottom = '1px solid #f1f5f9';
+                    tr.onmouseover = () => tr.style.background = '#f8fafc';
+                    tr.onmouseout = () => tr.style.background = '#ffffff';
+
+                    const safeName = (v.name || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    const safeAddress = (v.address || '-').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    const safeCode = v.uniqueCode || '-';
+                    const villageId = v.id;
+
                     tr.innerHTML = `
-                        <td style="padding: 1rem; font-weight: 500; color:#4f46e5;">${v.uniqueCode}</td>
-                        <td style="padding: 1rem; font-weight: 600;">${v.name}</td>
-                        <td style="padding: 1rem; color:#6b7280; font-size:0.875rem;">${v.address || '-'}</td>
-                        <td style="padding: 1rem; color:#6b7280; font-size:0.875rem;">${v.contactInfo || '-'}</td>
-                        <td style="padding: 1rem; text-align:right;">
-                            <button onclick='editVillage(${JSON.stringify(v)})' style="background:none; border:none; color:#f59e0b; cursor:pointer; padding:0.25rem;"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick='deleteVillage(${v.id}, "${v.name}")' style="background:none; border:none; color:#dc2626; cursor:pointer; padding:0.25rem; margin-left:0.5rem;"><i class="fa-solid fa-trash"></i></button>
+                        <td style="padding: 1rem 1.25rem;">
+                            <span style="display:inline-block; padding:0.25rem 0.6rem; border-radius:0.4rem; background:#eef2ff; color:#4f46e5; font-weight:700; font-family:monospace; font-size:0.85rem; border:1px solid #c7d2fe;">
+                                ${safeCode}
+                            </span>
+                        </td>
+                        <td style="padding: 1rem 1.25rem; font-weight: 700; color:#0f172a;">
+                            ${safeName}
+                        </td>
+                        <td style="padding: 1rem 1.25rem; color:#64748b; font-size:0.825rem; font-family:monospace;">
+                            ${villageId}
+                        </td>
+                        <td style="padding: 1rem 1.25rem; color:#64748b; font-size:0.85rem;">
+                            ${safeAddress}
+                        </td>
+                        <td style="padding: 1rem 1.25rem; text-align:right;">
+                            <button type="button" onclick="onEditClick('${villageId}')" title="Edit Desa" style="background:#fef3c7; border:1px solid #fde68a; color:#b45309; cursor:pointer; padding:0.4rem 0.7rem; border-radius:0.4rem; font-size:0.825rem; font-weight:600; margin-right:0.4rem; transition:all 0.15s;">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </button>
+                            <button type="button" onclick="confirmDeleteVillage('${villageId}')" title="Hapus Desa" style="background:#fee2e2; border:1px solid #fecaca; color:#b91c1c; cursor:pointer; padding:0.4rem 0.7rem; border-radius:0.4rem; font-size:0.825rem; font-weight:600; transition:all 0.15s;">
+                                <i class="fa-solid fa-trash"></i> Hapus
+                            </button>
                         </td>
                     `;
                     tbody.appendChild(tr);
                 });
             } else {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 2rem; color: #9ca3af;">Belum ada data desa.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 3rem; color: #94a3b8;">Belum ada data desa yang terdaftar.</td></tr>';
             }
         } catch (error) {
             console.error('Error fetching villages:', error);
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 2.5rem; color: #ef4444;">Gagal memuat data desa. Silakan refresh halaman.</td></tr>';
             showToast('Error', 'Gagal memuat data desa');
         }
     }
@@ -105,12 +167,18 @@
         document.getElementById('village-modal').style.display = 'flex';
     }
 
+    function onEditClick(id) {
+        const v = (window._villagesList || []).find(item => String(item.id) === String(id));
+        if (!v) return;
+        editVillage(v);
+    }
+
     function editVillage(v) {
         isEditMode = true;
         document.getElementById('modal-title').textContent = 'Edit Desa';
         document.getElementById('v-id').value = v.id;
-        document.getElementById('v-uniqueCode').value = v.uniqueCode;
-        document.getElementById('v-name').value = v.name;
+        document.getElementById('v-uniqueCode').value = v.uniqueCode || '';
+        document.getElementById('v-name').value = v.name || '';
         document.getElementById('v-address').value = v.address || '';
         document.getElementById('v-contactInfo').value = v.contactInfo || '';
         document.getElementById('village-modal').style.display = 'flex';
@@ -128,21 +196,25 @@
         
         const id = document.getElementById('v-id').value;
         const payload = {
-            uniqueCode: document.getElementById('v-uniqueCode').value,
-            name: document.getElementById('v-name').value,
-            address: document.getElementById('v-address').value,
-            contactInfo: document.getElementById('v-contactInfo').value
+            uniqueCode: document.getElementById('v-uniqueCode').value.trim(),
+            name: document.getElementById('v-name').value.trim(),
+            address: document.getElementById('v-address').value.trim(),
+            contactInfo: document.getElementById('v-contactInfo').value.trim()
         };
         
         const url = isEditMode ? `${API_URL}/master/villages/${id}` : `${API_URL}/master/villages`;
         const method = isEditMode ? 'PUT' : 'POST';
         
         try {
+            const token = (typeof getFreshFirebaseToken === 'function') 
+                ? await getFreshFirebaseToken() 
+                : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+
             const res = await fetch(url, {
                 method: method,
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${FIREBASE_ID_TOKEN}`
+                    'Authorization': `Bearer ${token}` 
                 },
                 body: JSON.stringify(payload)
             });
@@ -153,7 +225,7 @@
                 closeVillageModal();
                 fetchVillages();
             } else {
-                showToast('Gagal', json.message || 'Terjadi kesalahan');
+                showToast('Gagal', json.message || 'Terjadi kesalahan saat menyimpan desa');
             }
         } catch (error) {
             console.error('Error saving village:', error);
@@ -164,46 +236,133 @@
         }
     }
 
-    async function deleteVillage(id, name) {
-        if (!confirm(`Apakah Anda yakin ingin menghapus desa "${name}"? Seluruh data warga, chat, iuran, inventaris, dan pengaturan yang terhubung akan ikut terhapus secara permanen.`)) return;
-        
+    /**
+     * Konfirmasi Hapus Desa dengan Rincian Seluruh Tabel yang Ikut Terhapus
+     */
+    async function confirmDeleteVillage(id) {
+        const v = (window._villagesList || []).find(item => String(item.id) === String(id)) || { id: id, name: id, uniqueCode: '' };
+        const villageName = v.name || id;
+        const villageCode = v.uniqueCode ? `(${v.uniqueCode})` : '';
+
+        const affectedHtml = `
+            <div style="text-align: left; margin-top: 0.5rem;">
+                <p style="font-size: 0.9rem; color: #1f2937; margin-bottom: 0.75rem;">
+                    Apakah Anda yakin ingin menghapus desa <strong>"${villageName}"</strong> ${villageCode}?
+                </p>
+                <div style="background-color: #fff1f2; border: 1.5px solid #fecdd3; border-radius: 0.6rem; padding: 0.85rem 1rem; max-height: 250px; overflow-y: auto;">
+                    <div style="font-size: 0.825rem; font-weight: 700; color: #9f1239; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+                        <span>⚠️</span> Daftar Tabel & Data Terkait yang Ikut Terhapus:
+                    </div>
+                    <ul style="font-size: 0.775rem; color: #374151; margin: 0; padding-left: 1.25rem; line-height: 1.65;">
+                        <li><strong>users</strong> &mdash; Seluruh data warga & kepala keluarga desa</li>
+                        <li><strong>chat_messages</strong> &mdash; Semua percakapan & pesan grup warga</li>
+                        <li><strong>group_read_states</strong> &mdash; Riwayat status baca pesan grup</li>
+                        <li><strong>jimpitan_history</strong> &mdash; Riwayat setoran & scanning jimpitan</li>
+                        <li><strong>dues_journals</strong> &mdash; Jurnal kas & catatan iuran desa</li>
+                        <li><strong>inventory_items & inventory_loans</strong> &mdash; Barang & pinjaman inventaris</li>
+                        <li><strong>tariffs & exemptions</strong> &mdash; Master tarif iuran & pembebasan warga</li>
+                        <li><strong>schedules</strong> &mdash; Jadwal giliran ronda / jaga malam</li>
+                        <li><strong>slides</strong> &mdash; Banner info pengumuman desa</li>
+                        <li><strong>menus</strong> &mdash; Pengaturan menu kustom aplikasi desa</li>
+                        <li><strong>roles</strong> &mdash; Penugasan jabatan & role pengurus desa</li>
+                        <li><strong>village_subscriptions & invoices</strong> &mdash; Langganan SaaS & tagihan desa</li>
+                        <li><strong>wa_blast_history</strong> &mdash; Riwayat pengiriman WhatsApp Blasting</li>
+                        <li><strong>villages</strong> &mdash; Master data desa utama</li>
+                    </ul>
+                </div>
+                <p style="font-size: 0.8rem; color: #dc2626; font-weight: 700; margin: 0.75rem 0 0 0; display: flex; align-items: center; gap: 0.35rem;">
+                    <span>🛑</span> Tindakan ini bersifat PERMANEN dan tidak dapat dibatalkan.
+                </p>
+            </div>
+        `;
+
+        const result = await Swal.fire({
+            title: 'Hapus Desa & Seluruh Relasi Data?',
+            html: affectedHtml,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Ya, Hapus Semua Data',
+            cancelButtonText: 'Batal',
+            reverseButtons: true,
+            width: '580px'
+        });
+
+        if (!result.isConfirmed) return;
+
+        Swal.fire({
+            title: 'Menghapus Data Desa...',
+            text: 'Sedang membersihkan seluruh data di tabel-tabel terkait...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
         try {
-            let res = await fetch(`${API_URL}/master/villages/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${FIREBASE_ID_TOKEN}` }
-            });
-            let json = await res.json();
-            
-            if (!json.success && res.status !== 401 && res.status !== 403) {
-                const localRes = await fetch(`<?= base_url('/villages/') ?>/${id}`, {
-                    method: 'DELETE'
+            const token = (typeof getFreshFirebaseToken === 'function') 
+                ? await getFreshFirebaseToken() 
+                : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+
+            let res;
+            let json = { success: false };
+
+            // 1. Coba hapus via API server (jimpitan-server)
+            try {
+                res = await fetch(`${API_URL}/master/villages/${encodeURIComponent(id)}`, {
+                    method: 'DELETE',
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
                 });
-                const localJson = await localRes.json();
-                if (localJson.success) {
-                    json = localJson;
+                json = await res.json();
+            } catch (errApi) {
+                console.warn('API_URL delete failed, trying local CI4 endpoint:', errApi);
+            }
+
+            // 2. Jika API server gagal atau tidak success, coba endpoint lokal CI4 (/villages/:id)
+            if (!json || !json.success) {
+                try {
+                    const localRes = await fetch(`<?= base_url('/villages/') ?>/${encodeURIComponent(id)}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const localJson = await localRes.json();
+                    if (localJson && localJson.success) {
+                        json = localJson;
+                    }
+                } catch (errLocal) {
+                    console.error('Local CI4 delete failed:', errLocal);
                 }
             }
-            
-            if (json.success) {
-                showToast('Sukses', 'Desa dan semua data terkait berhasil dihapus');
+
+            if (json && json.success) {
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil Dihapus',
+                    text: json.message || `Desa "${villageName}" dan semua data terkait berhasil dihapus bersih.`,
+                    timer: 2500,
+                    showConfirmButton: false
+                });
                 fetchVillages();
             } else {
-                showToast('Gagal', json.message || 'Terjadi kesalahan saat menghapus desa');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Menghapus',
+                    text: (json && json.message) ? json.message : 'Terjadi kesalahan saat menghapus desa.'
+                });
             }
         } catch (error) {
             console.error('Error deleting village:', error);
-            try {
-                const localRes = await fetch(`<?= base_url('/villages/') ?>/${id}`, {
-                    method: 'DELETE'
-                });
-                const localJson = await localRes.json();
-                if (localJson.success) {
-                    showToast('Sukses', 'Desa dan semua data terkait berhasil dihapus');
-                    fetchVillages();
-                    return;
-                }
-            } catch (err) {}
-            showToast('Error', 'Koneksi ke server gagal');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Koneksi ke server gagal: ' + error.message
+            });
         }
     }
 
