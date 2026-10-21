@@ -447,12 +447,12 @@
                         <div class="form-row" style="margin-top: 1rem; margin-bottom: 0;">
                             <div class="form-col">
                                 <label for="reviewerEmail" style="color: #14532d; font-weight: 600;">Email Penguji</label>
-                                <input type="email" id="reviewerEmail" class="form-input form-input-code" placeholder="fourbee02@gmail.com" value="fourbee02@gmail.com" required>
-                                <span class="form-hint">Email akun peninjau Google Play Store.</span>
+                                <input type="email" id="reviewerEmail" class="form-input form-input-code" placeholder="Masukkan email akun penguji (Play Store)" value="" required>
+                                <span class="form-hint">Email akun khusus peninjau Google Play Store yang tersimpan di sistem.</span>
                             </div>
                             <div class="form-col">
                                 <label for="reviewerPassword" style="color: #14532d; font-weight: 600;">Password Penguji</label>
-                                <input type="text" id="reviewerPassword" class="form-input form-input-code" placeholder="Reviewer2026!" value="Reviewer2026!" required>
+                                <input type="text" id="reviewerPassword" class="form-input form-input-code" placeholder="Masukkan password akun penguji" value="" required>
                                 <span class="form-hint">Password untuk login penguji di aplikasi & Firebase Auth.</span>
                             </div>
                         </div>
@@ -610,7 +610,14 @@
     // ==========================================
     async function loadVersionSettings() {
         try {
-            const res = await fetch(`${API_URL}/config/version`);
+            const token = (typeof getFreshFirebaseToken === 'function') 
+                ? await getFreshFirebaseToken() 
+                : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : (typeof getFirebaseToken === 'function' ? getFirebaseToken() : null));
+
+            const headers = {};
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
+            const res = await fetch(`${API_URL}/config/version`, { headers });
             const json = await res.json();
             
             if (json.success && json.data) {
@@ -629,10 +636,10 @@
                 document.getElementById('showNotification').checked = notifVal !== false;
 
                 if (document.getElementById('reviewerEmail')) {
-                    document.getElementById('reviewerEmail').value = json.data.reviewerEmail || 'fourbee02@gmail.com';
+                    document.getElementById('reviewerEmail').value = json.data.reviewerEmail || '';
                 }
                 if (document.getElementById('reviewerPassword')) {
-                    document.getElementById('reviewerPassword').value = json.data.reviewerPassword || 'Reviewer2026!';
+                    document.getElementById('reviewerPassword').value = json.data.reviewerPassword || '';
                 }
             }
         } catch (error) {
@@ -654,8 +661,8 @@
             releaseNotes: document.getElementById('releaseNotes').value.trim(),
             forceUpdate: document.getElementById('forceUpdate').checked,
             showNotification: document.getElementById('showNotification').checked,
-            reviewerEmail: document.getElementById('reviewerEmail') ? document.getElementById('reviewerEmail').value.trim() : 'fourbee02@gmail.com',
-            reviewerPassword: document.getElementById('reviewerPassword') ? document.getElementById('reviewerPassword').value.trim() : 'Reviewer2026!'
+            reviewerEmail: document.getElementById('reviewerEmail') ? document.getElementById('reviewerEmail').value.trim() : '',
+            reviewerPassword: document.getElementById('reviewerPassword') ? document.getElementById('reviewerPassword').value.trim() : ''
         };
         
         try {
