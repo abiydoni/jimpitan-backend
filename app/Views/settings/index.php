@@ -1,266 +1,448 @@
 <?= $this->extend('layout/main') ?>
 
+<?= $this->section('styles') ?>
+<style>
+    /* Reset & Prevent Horizontal Scroll */
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
+    .settings-wrapper {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* Tabs Styling */
+    .settings-tabs {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .settings-tab-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.4rem;
+        font-size: 0.925rem;
+        font-weight: 600;
+        border-radius: 0.6rem;
+        cursor: pointer;
+        border: 1px solid #cbd5e1;
+        background-color: #ffffff;
+        color: #475569;
+        transition: all 0.2s ease;
+    }
+
+    .settings-tab-btn:hover {
+        background-color: #f8fafc;
+        color: #0f172a;
+    }
+
+    .settings-tab-btn.active-wa {
+        background-color: #16a34a;
+        color: #ffffff;
+        border-color: #16a34a;
+        box-shadow: 0 2px 4px rgba(22, 163, 74, 0.25);
+    }
+
+    .settings-tab-btn.active-version {
+        background-color: #4f46e5;
+        color: #ffffff;
+        border-color: #4f46e5;
+        box-shadow: 0 2px 4px rgba(79, 70, 229, 0.25);
+    }
+
+    /* Card Full Width */
+    .settings-card {
+        width: 100%;
+        max-width: 100%;
+        background: #ffffff;
+        border-radius: 0.85rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .settings-card-header {
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .header-wa {
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        border-bottom: 1px solid #bbf7d0;
+    }
+
+    .header-version {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .settings-card-body {
+        padding: 1.75rem 1.5rem;
+        width: 100%;
+    }
+
+    /* Form Layout Elements - Guaranteed No Overlap */
+    .form-group {
+        margin-bottom: 1.25rem;
+        width: 100%;
+        position: static;
+        clear: both;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.45rem;
+        line-height: 1.3;
+    }
+
+    .form-hint {
+        display: block;
+        font-size: 0.775rem;
+        color: #64748b;
+        margin-top: 0.35rem;
+        line-height: 1.4;
+    }
+
+    .form-input {
+        display: block;
+        width: 100%;
+        padding: 0.7rem 0.95rem;
+        font-size: 0.9rem;
+        font-family: inherit;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 0.5rem;
+        background-color: #ffffff;
+        color: #0f172a;
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .form-input:focus {
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+
+    .form-input-wa:focus {
+        border-color: #16a34a;
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+    }
+
+    .form-input-code {
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-size: 0.875rem;
+    }
+
+    /* Flex Grid Rows - Prevents Horizontal Overflow with min-width: 0 */
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-col {
+        flex: 1 1 300px;
+        min-width: 0; /* Essential to prevent overflow */
+    }
+
+    .form-col-full {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+
+    /* Action Buttons */
+    .btn-submit-wa {
+        padding: 0.75rem 2rem;
+        border-radius: 0.5rem;
+        background-color: #16a34a;
+        color: #ffffff;
+        border: none;
+        font-weight: 700;
+        font-size: 0.925rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background-color 0.15s;
+    }
+
+    .btn-submit-wa:hover {
+        background-color: #15803d;
+    }
+
+    .btn-submit-version {
+        padding: 0.75rem 2rem;
+        border-radius: 0.5rem;
+        background-color: #4f46e5;
+        color: #ffffff;
+        border: none;
+        font-weight: 700;
+        font-size: 0.925rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background-color 0.15s;
+    }
+
+    .btn-submit-version:hover {
+        background-color: #4338ca;
+    }
+</style>
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
-<div class="content-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
-    <div>
-        <h1 class="page-title" style="font-size: 1.6rem; font-weight: 700; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 0.6rem;">
-            <span>⚙️</span> Pengaturan Sistem
+<div class="settings-wrapper">
+    <!-- Page Header -->
+    <div style="margin-bottom: 1.5rem;">
+        <h1 class="page-title" style="font-size: 1.5rem; font-weight: 700; color: #0f172a; margin: 0;">
+            Pengaturan Sistem
         </h1>
-        <p style="font-size: 0.875rem; color: #64748b; margin: 0.35rem 0 0 0;">
-            Kelola konfigurasi pengiriman notifikasi WhatsApp Group, bot auto jimpitan, dan parameter rilis Google Play Store.
+        <p style="font-size: 0.85rem; color: #64748b; margin: 0.3rem 0 0 0;">
+            Kelola konfigurasi pengiriman notifikasi WhatsApp Group dan versi rilis aplikasi Google Play Store.
         </p>
     </div>
 
-    <!-- Filter Navigasi Cepat -->
-    <div style="display: flex; gap: 0.5rem; background: #f1f5f9; padding: 0.35rem; border-radius: 0.65rem; border: 1px solid #e2e8f0;">
-        <button type="button" id="filter-btn-all" onclick="filterSections('all')" class="quick-filter-btn active" style="padding: 0.45rem 1rem; border-radius: 0.5rem; font-size: 0.825rem; font-weight: 600; cursor: pointer; border: none; background: #ffffff; color: #0f172a; box-shadow: 0 1px 2px rgba(0,0,0,0.06); transition: all 0.15s;">
-            📋 Semua Pengaturan
+    <!-- Hanya 2 Tab Navigasi -->
+    <div class="settings-tabs">
+        <button type="button" id="tab-btn-wa" onclick="switchSettingsTab('wa')" class="settings-tab-btn active-wa">
+            <span>💬</span> Notifikasi WhatsApp Group (Telebot)
         </button>
-        <button type="button" id="filter-btn-wa" onclick="filterSections('wa')" class="quick-filter-btn" style="padding: 0.45rem 1rem; border-radius: 0.5rem; font-size: 0.825rem; font-weight: 600; cursor: pointer; border: none; background: transparent; color: #64748b; transition: all 0.15s;">
-            💬 WhatsApp Group
-        </button>
-        <button type="button" id="filter-btn-version" onclick="filterSections('version')" class="quick-filter-btn" style="padding: 0.45rem 1rem; border-radius: 0.5rem; font-size: 0.825rem; font-weight: 600; cursor: pointer; border: none; background: transparent; color: #64748b; transition: all 0.15s;">
-            📱 Google Play Store
+        <button type="button" id="tab-btn-version" onclick="switchSettingsTab('version')" class="settings-tab-btn">
+            <span>📱</span> Google Play Store
         </button>
     </div>
-</div>
 
-<!-- ========================================================================= -->
-<!-- 1. CARD: KONFIGURASI WHATSAPP GROUP & BOT AUTO JIMPITAN                   -->
-<!-- ========================================================================= -->
-<div id="section-wa" class="settings-card-wrapper" style="width: 100%; margin-bottom: 2rem;">
-    <div class="card" style="width: 100%; border-radius: 0.85rem; border: 1px solid #bbf7d0; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.03); background: #ffffff;">
-        <!-- Header -->
-        <div style="padding: 1.25rem 1.75rem; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-bottom: 1px solid #bbf7d0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-            <div style="display: flex; align-items: center; gap: 0.85rem;">
-                <div style="width: 44px; height: 44px; border-radius: 12px; background: #22c55e; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; box-shadow: 0 2px 6px rgba(34,197,94,0.3);">
-                    💬
+    <!-- ========================================================================= -->
+    <!-- 1. TAB KONTEN: WHATSAPP GROUP (TELEBOT & GATEWAY)                          -->
+    <!-- ========================================================================= -->
+    <div id="tab-content-wa" style="display: block; width: 100%;">
+        <div class="settings-card">
+            <!-- Header -->
+            <div class="settings-card-header header-wa">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 42px; height: 42px; border-radius: 10px; background: #22c55e; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                        💬
+                    </div>
+                    <div>
+                        <h2 style="font-size: 1.15rem; font-weight: 700; color: #14532d; margin: 0;">
+                            Konfigurasi WhatsApp Group & Bot Telebot
+                        </h2>
+                        <p style="font-size: 0.8rem; color: #166534; margin: 0.2rem 0 0 0;">
+                            Data tersimpan di tabel <code>system_settings</code> database <code>appsbeem_jimpitan_admin</code> untuk cron <code>auto_jimpitan</code>.
+                        </p>
+                    </div>
                 </div>
                 <div>
-                    <h2 style="font-size: 1.15rem; font-weight: 700; color: #14532d; margin: 0;">
-                        Konfigurasi WhatsApp Group & Bot Telebot
-                    </h2>
-                    <p style="font-size: 0.8rem; color: #166534; margin: 0.2rem 0 0 0;">
-                        Tersimpan di tabel <code>system_settings</code> database <code>appsbeem_jimpitan_admin</code> untuk cron <code>auto_jimpitan</code>.
-                    </p>
-                </div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <span id="wa-badge-status" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.85rem; border-radius: 9999px; background: #dcfce7; color: #15803d; border: 1px solid #86efac; display: inline-flex; align-items: center; gap: 0.4rem;">
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e;"></span> SINKRON DENGAN BOT
-                </span>
-            </div>
-        </div>
-
-        <!-- Body Form -->
-        <div style="padding: 1.75rem;">
-            <!-- Callout Petunjuk -->
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #22c55e; border-radius: 0.5rem; padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
-                <div style="font-size: 0.825rem; color: #334155; line-height: 1.5;">
-                    💡 Seluruh script cron (<strong>auto_send_jimpitan.php</strong>, <strong>auto_send_jaga.php</strong>, <strong>auto_send_tagihan.php</strong>, <strong>auto_send_ultah.php</strong>) langsung membaca parameter ini tanpa perlu restart bot.
-                </div>
-                <div style="font-size: 0.75rem; color: #15803d; font-weight: 600; background: #dcfce7; padding: 0.2rem 0.6rem; border-radius: 0.35rem;">
-                    Target Aktif: 6285729705810-1505093181@g.us
-                </div>
-            </div>
-
-            <form id="wa-group-form" onsubmit="saveWaSettings(event)">
-                <!-- Toggle Aktifkan / Nonaktifkan -->
-                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
-                    <div>
-                        <div style="font-size: 0.95rem; font-weight: 700; color: #0f172a;">Status Pengiriman Otomatis WhatsApp Group</div>
-                        <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.2rem;">
-                            Jika dinonaktifkan, pesan notifikasi tetap tersimpan di riwayat chat grup warga aplikasi, namun pengiriman WhatsApp keluar akan dilewati.
-                        </div>
-                    </div>
-                    <label style="position: relative; display: inline-block; width: 48px; height: 26px; margin: 0; cursor: pointer;">
-                        <input type="checkbox" id="wa-enabled" style="opacity: 0; width: 0; height: 0;" onchange="updateWaToggleLabel(this.checked)">
-                        <span id="wa-slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 34px;"></span>
-                        <span id="wa-slider-dot" style="position: absolute; content: ''; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
-                    </label>
-                </div>
-
-                <!-- Grid Baris 1: Target Number & API URL -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
-                    <div>
-                        <label style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-weight: 700; color: #1e293b; margin-bottom: 0.4rem;">
-                            <span>🎯 ID Group / Nomor WhatsApp Tujuan ($targetNumber)</span>
-                            <span style="font-size: 0.75rem; color: #64748b; font-weight: normal;">WA_GROUP_TARGET_NUMBER</span>
-                        </label>
-                        <input type="text" id="wa-target-number" class="form-control" placeholder="Contoh: 6285729705810-1505093181@g.us" required style="width: 100%; padding: 0.65rem 0.85rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.9rem; font-family: monospace; background: #fdfdfd;">
-                        <span style="font-size: 0.75rem; color: #64748b; margin-top: 0.3rem; display: block;">
-                            Gunakan ID grup (akhiran <code>@g.us</code>) untuk pengiriman ke grup WhatsApp warga, atau nomor (<code>628xxx</code>) untuk chat personal.
-                        </span>
-                    </div>
-
-                    <div>
-                        <label style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-weight: 700; color: #1e293b; margin-bottom: 0.4rem;">
-                            <span>🌐 URL Gateway WhatsApp Appsbee ($appsbeeUrl)</span>
-                            <span style="font-size: 0.75rem; color: #64748b; font-weight: normal;">WA_API_URL</span>
-                        </label>
-                        <input type="url" id="wa-api-url" class="form-control" placeholder="https://wa-ab.appsbee.my.id/api/send-message" required style="width: 100%; padding: 0.65rem 0.85rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.9rem; font-family: monospace; background: #fdfdfd;">
-                        <span style="font-size: 0.75rem; color: #64748b; margin-top: 0.3rem; display: block;">
-                            Endpoint API server gateway WhatsApp untuk mengirimkan payload pesan teks.
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Grid Baris 2: API Key, Session ID, dan Desa Terhubung -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
-                    <div>
-                        <label style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-weight: 700; color: #1e293b; margin-bottom: 0.4rem;">
-                            <span>🔑 API Key Gateway ($appsbeeApiKey)</span>
-                            <span style="font-size: 0.75rem; color: #64748b; font-weight: normal;">WA_API_KEY</span>
-                        </label>
-                        <div style="position: relative;">
-                            <input type="password" id="wa-api-key" class="form-control" placeholder="wa-xxxx" required style="width: 100%; padding: 0.65rem 2.5rem 0.65rem 0.85rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.9rem; font-family: monospace; background: #fdfdfd;">
-                            <button type="button" onclick="togglePasswordVisibility('wa-api-key', this)" style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1rem; color: #64748b;" title="Lihat/Sembunyikan">
-                                👁️
-                            </button>
-                        </div>
-                        <span style="font-size: 0.75rem; color: #64748b; margin-top: 0.3rem; display: block;">
-                            Header otentikasi <code>x-api-key</code> yang terdaftar di gateway.
-                        </span>
-                    </div>
-
-                    <div>
-                        <label style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-weight: 700; color: #1e293b; margin-bottom: 0.4rem;">
-                            <span>📱 Session ID Pengirim ($sessionId)</span>
-                            <span style="font-size: 0.75rem; color: #64748b; font-weight: normal;">WA_SESSION_ID</span>
-                        </label>
-                        <input type="text" id="wa-session-id" class="form-control" placeholder="appsbee" required style="width: 100%; padding: 0.65rem 0.85rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.9rem; background: #fdfdfd;">
-                        <span style="font-size: 0.75rem; color: #64748b; margin-top: 0.3rem; display: block;">
-                            Nama sesi perangkat WhatsApp pengirim aktif di server gateway.
-                        </span>
-                    </div>
-
-                    <div>
-                        <label style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-weight: 700; color: #1e293b; margin-bottom: 0.4rem;">
-                            <span>🏡 Chat Group Desa Terhubung ($villageId)</span>
-                            <span style="font-size: 0.75rem; color: #64748b; font-weight: normal;">WA_GROUP_VILLAGE_ID</span>
-                        </label>
-                        <select id="wa-village-id" class="form-control" style="width: 100%; padding: 0.65rem 0.85rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.9rem; background: #ffffff;">
-                            <option value="village_001">village_001 (Default)</option>
-                        </select>
-                        <span style="font-size: 0.75rem; color: #64748b; margin-top: 0.3rem; display: block;">
-                            Menghubungkan pesan laporan ke grup chat warga & notifikasi FCM desa.
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Footer Tombol Simpan -->
-                <div style="display: flex; justify-content: flex-end; align-items: center; padding-top: 1.25rem; border-top: 1px solid #e2e8f0;">
-                    <button type="submit" id="btn-save-wa" class="btn btn-primary" style="padding: 0.75rem 2rem; border-radius: 0.5rem; background: #16a34a; color: white; border: none; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 2px 4px rgba(22,163,74,0.2); transition: background 0.15s;" onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">
-                        <span>💾</span> Simpan Pengaturan WhatsApp
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- ========================================================================= -->
-<!-- 2. CARD: KONFIGURASI VERSI GOOGLE PLAY STORE                              -->
-<!-- ========================================================================= -->
-<div id="section-version" class="settings-card-wrapper" style="width: 100%; margin-bottom: 2.5rem;">
-    <div class="card" style="width: 100%; border-radius: 0.85rem; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.03); background: #ffffff;">
-        <!-- Header -->
-        <div style="padding: 1.25rem 1.75rem; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-            <div style="display: flex; align-items: center; gap: 0.85rem;">
-                <div style="width: 44px; height: 44px; border-radius: 12px; background: #4f46e5; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; box-shadow: 0 2px 6px rgba(79,70,229,0.3);">
-                    📱
-                </div>
-                <div>
-                    <h2 style="font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 0;">
-                        Konfigurasi Rilis Google Play Store
-                    </h2>
-                    <p style="font-size: 0.8rem; color: #64748b; margin: 0.2rem 0 0 0;">
-                        Pengaturan pengecekan versi aplikasi APK warga secara terpusat melalui Google Play Store.
-                    </p>
-                </div>
-            </div>
-            <div>
-                <a href="https://play.google.com/store/apps/details?id=jimpitan.appsbee.my.id" target="_blank" style="font-size: 0.8rem; color: #4f46e5; text-decoration: none; font-weight: 700; display: flex; align-items: center; gap: 0.35rem; background: #ffffff; padding: 0.35rem 0.85rem; border-radius: 0.5rem; border: 1px solid #cbd5e1;">
-                    <span>🛒</span> Buka Play Store ↗
-                </a>
-            </div>
-        </div>
-
-        <!-- Body Form -->
-        <div style="padding: 1.75rem;">
-            <form id="version-form" onsubmit="saveVersionSettings(event)">
-                <!-- Grid Baris 1: Versi Terbaru & Versi Minimum -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem;">
-                    <div>
-                        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #1e293b; margin-bottom: 0.4rem;">
-                            Versi Terbaru (Latest Version)
-                        </label>
-                        <input type="text" id="latestVersion" class="form-control" placeholder="Contoh: 1.10.2" required style="width: 100%; padding: 0.65rem 0.85rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.9rem; background: #fdfdfd;">
-                        <span style="font-size: 0.75rem; color: #64748b; margin-top: 0.3rem; display: block;">
-                            Sesuai nomor versi APK resmi yang telah dipublikasikan di Google Play Store.
-                        </span>
-                    </div>
-
-                    <div>
-                        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #1e293b; margin-bottom: 0.4rem;">
-                            Versi Minimum (Minimum Version)
-                        </label>
-                        <input type="text" id="minVersion" class="form-control" placeholder="Contoh: 1.0.0" required style="width: 100%; padding: 0.65rem 0.85rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.9rem; background: #fdfdfd;">
-                        <span style="font-size: 0.75rem; color: #64748b; margin-top: 0.3rem; display: block;">
-                            Versi aplikasi di bawah batas ini akan otomatis diminta untuk melakukan pembaruan.
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Tautan Resmi Play Store (Full Width) -->
-                <div style="margin-bottom: 1.25rem;">
-                    <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #1e293b; margin-bottom: 0.4rem;">
-                        Tautan Resmi Google Play Store (Update URL)
-                    </label>
-                    <input type="url" id="updateUrl" class="form-control" required style="width: 100%; padding: 0.65rem 0.85rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.85rem; font-family: monospace; background: #fdfdfd;" value="https://play.google.com/store/apps/details?id=jimpitan.appsbee.my.id">
-                    <span style="font-size: 0.75rem; color: #64748b; margin-top: 0.3rem; display: block;">
-                        Semua pembaruan aplikasi diarahkan satu pintu melalui tautan resmi Google Play Store ini.
+                    <span id="wa-badge-status" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.85rem; border-radius: 9999px; background: #dcfce7; color: #15803d; border: 1px solid #86efac; display: inline-flex; align-items: center; gap: 0.4rem;">
+                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e;"></span> PENGIRIMAN AKTIF
                     </span>
                 </div>
+            </div>
 
-                <!-- Opsi Notifikasi & Force Update -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem 1.25rem;">
-                        <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; margin: 0;">
-                            <input type="checkbox" id="showNotification" style="width: 1.25rem; height: 1.25rem; accent-color: #4f46e5; cursor: pointer;">
-                            <div>
-                                <div style="font-size: 0.875rem; font-weight: 700; color: #0f172a;">Tampilkan Dialog Pembaruan</div>
-                                <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.15rem;">Menampilkan pop-up dialog elegan "Perbarui Sekarang" atau "Nanti" di aplikasi warga.</div>
-                            </div>
-                        </label>
+            <!-- Body -->
+            <div class="settings-card-body">
+                <!-- Info Notice -->
+                <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.6rem; padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                    <div style="font-size: 0.825rem; color: #166534; line-height: 1.5;">
+                        💡 Script otomatis (<code>auto_send_jimpitan.php</code>, <code>auto_send_jaga.php</code>, <code>auto_send_tagihan.php</code>, <code>auto_send_ultah.php</code>) langsung membaca parameter di bawah ini.
                     </div>
-
-                    <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 0.75rem; padding: 1rem 1.25rem;">
-                        <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; margin: 0;">
-                            <input type="checkbox" id="forceUpdate" style="width: 1.25rem; height: 1.25rem; accent-color: #e11d48; cursor: pointer;">
-                            <div>
-                                <div style="font-size: 0.875rem; font-weight: 700; color: #9f1239;">Wajib Update (Force Update)</div>
-                                <div style="font-size: 0.75rem; color: #be123c; margin-top: 0.15rem;">Pengguna versi lama tidak dapat menutup dialog sebelum memperbarui aplikasi.</div>
-                            </div>
-                        </label>
+                    <div style="font-size: 0.75rem; color: #15803d; font-weight: 700; background: #ffffff; padding: 0.25rem 0.6rem; border-radius: 0.35rem; border: 1px solid #bbf7d0;">
+                        Target Aktif: 6285729705810-1505093181@g.us
                     </div>
                 </div>
 
-                <!-- Catatan Rilis -->
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #1e293b; margin-bottom: 0.4rem;">
-                        Catatan Rilis (Release Notes)
-                    </label>
-                    <textarea id="releaseNotes" class="form-control" rows="3" placeholder="Tuliskan ringkasan pembaruan yang dapat dibaca warga pada dialog update..." style="width: 100%; padding: 0.65rem 0.85rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.875rem; background: #fdfdfd;"></textarea>
-                </div>
+                <form id="wa-group-form" onsubmit="saveWaSettings(event)">
+                    <!-- Toggle Switch Status Notifikasi -->
+                    <div class="form-group" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.65rem; padding: 1rem 1.25rem;">
+                        <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0;">
+                            <div>
+                                <div style="font-size: 0.925rem; font-weight: 700; color: #0f172a;">Status Pengiriman WhatsApp Otomatis</div>
+                                <div class="form-hint" style="margin-top: 0.2rem;">
+                                    Jika dinonaktifkan, pesan laporan tetap tersimpan di database chat grup warga aplikasi, namun bot tidak mengirim chat keluar ke grup WhatsApp.
+                                </div>
+                            </div>
+                            <input type="checkbox" id="wa-enabled" style="width: 1.35rem; height: 1.35rem; accent-color: #16a34a; cursor: pointer;" onchange="updateWaToggleStatus(this.checked)">
+                        </label>
+                    </div>
 
-                <!-- Footer Tombol Simpan -->
-                <div style="display: flex; justify-content: flex-end; align-items: center; padding-top: 1.25rem; border-top: 1px solid #e2e8f0;">
-                    <button type="submit" id="btn-save-version" class="btn btn-primary" style="padding: 0.75rem 2rem; border-radius: 0.5rem; background: #4f46e5; color: white; border: none; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 2px 4px rgba(79,70,229,0.2); transition: background 0.15s;" onmouseover="this.style.background='#4338ca'" onmouseout="this.style.background='#4f46e5'">
-                        <span>💾</span> Simpan Pengaturan Versi
-                    </button>
+                    <!-- Row 1: Target Number & API URL -->
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="wa-target-number">🎯 Target WhatsApp Group JID / Nomor ($targetNumber)</label>
+                                <input type="text" id="wa-target-number" class="form-input form-input-wa form-input-code" placeholder="Contoh: 6285729705810-1505093181@g.us" required>
+                                <span class="form-hint">Format ID Group berakhiran <code>@g.us</code> untuk grup WhatsApp, atau <code>628xxx</code> untuk nomor personal.</span>
+                            </div>
+                        </div>
+
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="wa-api-url">🌐 URL Gateway Appsbee ($appsbeeUrl)</label>
+                                <input type="url" id="wa-api-url" class="form-input form-input-wa form-input-code" placeholder="https://wa-ab.appsbee.my.id/api/send-message" required>
+                                <span class="form-hint">Endpoint server API gateway pengiriman pesan teks WhatsApp Appsbee.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: API Key, Session ID, dan Desa Terhubung -->
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="wa-api-key">🔑 API Key Gateway ($appsbeeApiKey)</label>
+                                <div style="display: flex; gap: 0.35rem;">
+                                    <input type="password" id="wa-api-key" class="form-input form-input-wa form-input-code" placeholder="wa-xxxx" required style="flex: 1;">
+                                    <button type="button" onclick="togglePasswordVisibility('wa-api-key', this)" style="padding: 0 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 0.5rem; background: #ffffff; cursor: pointer; color: #475569;" title="Tampilkan / Sembunyikan">
+                                        👁️
+                                    </button>
+                                </div>
+                                <span class="form-hint">Kunci <code>x-api-key</code> autentikasi yang terdaftar pada gateway.</span>
+                            </div>
+                        </div>
+
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="wa-session-id">📱 Session ID / Nama Device ($sessionId)</label>
+                                <input type="text" id="wa-session-id" class="form-input form-input-wa" placeholder="appsbee" required>
+                                <span class="form-hint">Nama sesi perangkat WhatsApp pengirim aktif di gateway.</span>
+                            </div>
+                        </div>
+
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="wa-village-id">🏡 Desa untuk Chat Grup Aplikasi ($villageId)</label>
+                                <select id="wa-village-id" class="form-input form-input-wa" style="cursor: pointer;">
+                                    <option value="village_001">village_001 (Default)</option>
+                                </select>
+                                <span class="form-hint">Desa tujuan penyimpanan chat warga dan trigger notifikasi FCM aplikasi.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Tombol Simpan -->
+                    <div style="display: flex; justify-content: flex-end; padding-top: 1.25rem; border-top: 1px solid #e2e8f0; margin-top: 1rem;">
+                        <button type="submit" id="btn-save-wa" class="btn-submit-wa">
+                            <span>💾</span> Simpan Pengaturan WhatsApp
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 2. TAB KONTEN: GOOGLE PLAY STORE                                          -->
+    <!-- ========================================================================= -->
+    <div id="tab-content-version" style="display: none; width: 100%;">
+        <div class="settings-card">
+            <!-- Header -->
+            <div class="settings-card-header header-version">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 42px; height: 42px; border-radius: 10px; background: #4f46e5; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                        📱
+                    </div>
+                    <div>
+                        <h2 style="font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 0;">
+                            Konfigurasi Rilis Google Play Store
+                        </h2>
+                        <p style="font-size: 0.8rem; color: #64748b; margin: 0.2rem 0 0 0;">
+                            Pengaturan resmi versi aplikasi Jimpitan satu pintu via Google Play Store.
+                        </p>
+                    </div>
                 </div>
-            </form>
+                <div>
+                    <a href="https://play.google.com/store/apps/details?id=jimpitan.appsbee.my.id" target="_blank" style="font-size: 0.8rem; color: #4f46e5; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem; background: #ffffff; padding: 0.45rem 0.9rem; border-radius: 0.5rem; border: 1px solid #cbd5e1;">
+                        <span>🛒</span> Buka di Play Store ↗
+                    </a>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="settings-card-body">
+                <form id="version-form" onsubmit="saveVersionSettings(event)">
+                    <!-- Row 1: Versi Terbaru & Versi Minimum -->
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="latestVersion">Versi Terbaru (Latest Version)</label>
+                                <input type="text" id="latestVersion" class="form-input" placeholder="Contoh: 1.10.2" required>
+                                <span class="form-hint">Nomor versi APK terkini yang sudah rilis di Play Store.</span>
+                            </div>
+                        </div>
+
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="minVersion">Versi Minimum (Minimum Version)</label>
+                                <input type="text" id="minVersion" class="form-input" placeholder="Contoh: 1.0.0" required>
+                                <span class="form-hint">Aplikasi di bawah versi ini akan diminta memperbarui sistem.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Play Store URL -->
+                    <div class="form-group">
+                        <label for="updateUrl">Tautan Resmi Google Play Store (Update URL)</label>
+                        <input type="url" id="updateUrl" class="form-input form-input-code" required value="https://play.google.com/store/apps/details?id=jimpitan.appsbee.my.id">
+                        <span class="form-hint">Semua pembaruan diarahkan resmi satu pintu ke tautan Play Store ini.</span>
+                    </div>
+
+                    <!-- Row 3: Opsi Dialog Pembaruan & Wajib Update -->
+                    <div class="form-row" style="margin-bottom: 1.25rem;">
+                        <div class="form-col">
+                            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.65rem; padding: 1rem 1.25rem;">
+                                <label style="display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; margin: 0;">
+                                    <input type="checkbox" id="showNotification" style="width: 1.25rem; height: 1.25rem; accent-color: #4f46e5; margin-top: 0.15rem; cursor: pointer;">
+                                    <div>
+                                        <div style="font-size: 0.875rem; font-weight: 700; color: #0f172a;">Tampilkan Dialog Pembaruan</div>
+                                        <div class="form-hint" style="margin-top: 0.2rem;">Menampilkan pop-up "Perbarui Sekarang" atau "Nanti" saat warga membuka aplikasi.</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-col">
+                            <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 0.65rem; padding: 1rem 1.25rem;">
+                                <label style="display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; margin: 0;">
+                                    <input type="checkbox" id="forceUpdate" style="width: 1.25rem; height: 1.25rem; accent-color: #e11d48; margin-top: 0.15rem; cursor: pointer;">
+                                    <div>
+                                        <div style="font-size: 0.875rem; font-weight: 700; color: #9f1239;">Wajib Update (Force Update)</div>
+                                        <div class="form-hint" style="margin-top: 0.2rem; color: #be123c;">Warga dengan versi lama tidak dapat menutup dialog sebelum melakukan update.</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Catatan Rilis -->
+                    <div class="form-group">
+                        <label for="releaseNotes">Catatan Rilis (Release Notes)</label>
+                        <textarea id="releaseNotes" class="form-input" rows="3" placeholder="Tuliskan catatan pembaruan yang dapat dibaca warga di aplikasi..."></textarea>
+                    </div>
+
+                    <!-- Footer Tombol Simpan -->
+                    <div style="display: flex; justify-content: flex-end; padding-top: 1.25rem; border-top: 1px solid #e2e8f0; margin-top: 1rem;">
+                        <button type="submit" id="btn-save-version" class="btn-submit-version">
+                            <span>💾</span> Simpan Pengaturan Versi
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -270,62 +452,34 @@
 <script>
     const DEFAULT_PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=jimpitan.appsbee.my.id';
 
-    // Navigasi Filter / Tab
-    function filterSections(mode) {
-        const btnAll = document.getElementById('filter-btn-all');
-        const btnWa = document.getElementById('filter-btn-wa');
-        const btnVersion = document.getElementById('filter-btn-version');
+    // Perpindahan 2 Tab
+    function switchSettingsTab(tabName) {
+        const btnWa = document.getElementById('tab-btn-wa');
+        const btnVersion = document.getElementById('tab-btn-version');
+        const contentWa = document.getElementById('tab-content-wa');
+        const contentVersion = document.getElementById('tab-content-version');
 
-        const secWa = document.getElementById('section-wa');
-        const secVersion = document.getElementById('section-version');
-
-        // Reset Styles
-        [btnAll, btnWa, btnVersion].forEach(b => {
-            b.style.background = 'transparent';
-            b.style.color = '#64748b';
-            b.style.boxShadow = 'none';
-        });
-
-        if (mode === 'all') {
-            btnAll.style.background = '#ffffff';
-            btnAll.style.color = '#0f172a';
-            btnAll.style.boxShadow = '0 1px 2px rgba(0,0,0,0.06)';
-
-            secWa.style.display = 'block';
-            secVersion.style.display = 'block';
-        } else if (mode === 'wa') {
-            btnWa.style.background = '#ffffff';
-            btnWa.style.color = '#15803d';
-            btnWa.style.boxShadow = '0 1px 2px rgba(0,0,0,0.06)';
-
-            secWa.style.display = 'block';
-            secVersion.style.display = 'none';
-        } else if (mode === 'version') {
-            btnVersion.style.background = '#ffffff';
-            btnVersion.style.color = '#4f46e5';
-            btnVersion.style.boxShadow = '0 1px 2px rgba(0,0,0,0.06)';
-
-            secWa.style.display = 'none';
-            secVersion.style.display = 'block';
+        if (tabName === 'wa') {
+            btnWa.className = 'settings-tab-btn active-wa';
+            btnVersion.className = 'settings-tab-btn';
+            contentWa.style.display = 'block';
+            contentVersion.style.display = 'none';
+        } else if (tabName === 'version') {
+            btnWa.className = 'settings-tab-btn';
+            btnVersion.className = 'settings-tab-btn active-version';
+            contentWa.style.display = 'none';
+            contentVersion.style.display = 'block';
         }
     }
 
-    // Toggle switch slider UI update
-    function updateWaToggleLabel(checked) {
-        const slider = document.getElementById('wa-slider');
-        const dot = document.getElementById('wa-slider-dot');
+    function updateWaToggleStatus(checked) {
         const badge = document.getElementById('wa-badge-status');
-
         if (checked) {
-            slider.style.backgroundColor = '#22c55e';
-            dot.style.transform = 'translateX(22px)';
             badge.innerHTML = '<span style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e;"></span> PENGIRIMAN AKTIF';
             badge.style.background = '#dcfce7';
             badge.style.color = '#15803d';
             badge.style.borderColor = '#86efac';
         } else {
-            slider.style.backgroundColor = '#cbd5e1';
-            dot.style.transform = 'translateX(0px)';
             badge.innerHTML = '<span style="width: 8px; height: 8px; border-radius: 50%; background: #94a3b8;"></span> PENGIRIMAN DIJEDA';
             badge.style.background = '#f1f5f9';
             badge.style.color = '#64748b';
@@ -362,7 +516,7 @@
                 const isEnabled = (d.isEnabled !== false);
                 const chk = document.getElementById('wa-enabled');
                 chk.checked = isEnabled;
-                updateWaToggleLabel(isEnabled);
+                updateWaToggleStatus(isEnabled);
 
                 // Populate Desa Dropdown
                 const sel = document.getElementById('wa-village-id');
@@ -393,7 +547,7 @@
         e.preventDefault();
         const btn = document.getElementById('btn-save-wa');
         btn.disabled = true;
-        btn.innerHTML = '<span>⏳</span> Menyimpan ke Database...';
+        btn.innerHTML = '<span>⏳</span> Menyimpan...';
 
         const payload = {
             targetNumber: document.getElementById('wa-target-number').value.trim(),
