@@ -12,6 +12,8 @@ $routes->get('/master_menu', 'MasterMenu::index');
 $routes->get('/users', 'Users::index');
 $routes->get('/settings', 'Settings::index');
 $routes->get('/villages', 'Villages::index');
+$routes->match(['delete', 'post'], '/villages/(:segment)', 'Villages::delete/$1');
+$routes->match(['delete', 'post'], '/villages/delete/(:segment)', 'Villages::delete/$1');
 $routes->get('/security', 'Security::index');
 $routes->get('/wa_blast', 'WaBlast::index');
 $routes->get('/wa_blast/villages', 'WaBlast::getVillages');

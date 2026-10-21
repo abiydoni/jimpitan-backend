@@ -165,23 +165,44 @@
     }
 
     async function deleteVillage(id, name) {
-        if (!confirm(`Apakah Anda yakin ingin menghapus desa "${name}"? Data yang terhubung mungkin akan ikut terpengaruh.`)) return;
+        if (!confirm(`Apakah Anda yakin ingin menghapus desa "${name}"? Seluruh data warga, chat, iuran, inventaris, dan pengaturan yang terhubung akan ikut terhapus secara permanen.`)) return;
         
         try {
-            const res = await fetch(`${API_URL}/master/villages/${id}`, {
+            let res = await fetch(`${API_URL}/master/villages/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${FIREBASE_ID_TOKEN}` }
             });
-            const json = await res.json();
+            let json = await res.json();
+            
+            if (!json.success && res.status !== 401 && res.status !== 403) {
+                const localRes = await fetch(`<?= base_url('/villages/') ?>/${id}`, {
+                    method: 'DELETE'
+                });
+                const localJson = await localRes.json();
+                if (localJson.success) {
+                    json = localJson;
+                }
+            }
             
             if (json.success) {
-                showToast('Sukses', 'Desa berhasil dihapus');
+                showToast('Sukses', 'Desa dan semua data terkait berhasil dihapus');
                 fetchVillages();
             } else {
-                showToast('Gagal', json.message || 'Terjadi kesalahan');
+                showToast('Gagal', json.message || 'Terjadi kesalahan saat menghapus desa');
             }
         } catch (error) {
             console.error('Error deleting village:', error);
+            try {
+                const localRes = await fetch(`<?= base_url('/villages/') ?>/${id}`, {
+                    method: 'DELETE'
+                });
+                const localJson = await localRes.json();
+                if (localJson.success) {
+                    showToast('Sukses', 'Desa dan semua data terkait berhasil dihapus');
+                    fetchVillages();
+                    return;
+                }
+            } catch (err) {}
             showToast('Error', 'Koneksi ke server gagal');
         }
     }
