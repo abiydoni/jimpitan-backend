@@ -172,13 +172,44 @@
         0%, 100% { opacity: 1; }
         50% { opacity: .5; }
     }
+
+    /* Toggle Periode Grafik Registrasi */
+    .period-toggle-group {
+        display: flex;
+        background: #f1f5f9;
+        padding: 3px;
+        border-radius: 8px;
+        gap: 2px;
+    }
+
+    .btn-period {
+        background: transparent;
+        border: none;
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #64748b;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-period:hover {
+        color: #1e293b;
+    }
+
+    .btn-period.active {
+        background: #ffffff;
+        color: #4f46e5;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
 </style>
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
     <div class="dashboard-header">
         <h2>Dashboard Ringkasan</h2>
-        <p>Pantau statistik global dan aktivitas transaksi Jimpitan hari ini secara real-time.</p>
+        <p>Pantau statistik global dan aktivitas registrasi desa serta transaksi Jimpitan secara real-time.</p>
     </div>
 
     <!-- Metrik Utama -->
@@ -219,13 +250,28 @@
     <!-- Bagian Grafik & Tabel -->
     <div class="dashboard-bottom">
         
-        <!-- Panel Grafik -->
+        <!-- Panel Grafik Registrasi Desa -->
         <div class="panel">
-            <div class="panel-header">
-                <h3 class="panel-title">Tren Pemasukan Jimpitan (7 Hari Terakhir)</h3>
+            <div class="panel-header" style="align-items: flex-start; flex-wrap: wrap; gap: 0.75rem;">
+                <div>
+                    <h3 class="panel-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="display: inline-flex; width: 28px; height: 28px; background: #e0e7ff; color: #4f46e5; border-radius: 8px; align-items: center; justify-content: center; font-size: 0.85rem;">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </span>
+                        Grafik Registrasi Desa per Hari
+                    </h3>
+                    <p id="chart-summary-subtitle" style="color: #6b7280; font-size: 0.75rem; margin: 0.25rem 0 0 0;">
+                        Memuat data tren registrasi...
+                    </p>
+                </div>
+                <div class="period-toggle-group">
+                    <button type="button" class="btn-period active" onclick="setChartPeriod(7, this)">7 Hari</button>
+                    <button type="button" class="btn-period" onclick="setChartPeriod(14, this)">14 Hari</button>
+                    <button type="button" class="btn-period" onclick="setChartPeriod(30, this)">30 Hari</button>
+                </div>
             </div>
-            <div style="position: relative; height: 300px; width: 100%;">
-                <canvas id="jimpitanChart"></canvas>
+            <div style="position: relative; height: 300px; width: 100%; margin-top: 0.5rem;">
+                <canvas id="villageChart"></canvas>
             </div>
         </div>
 
@@ -257,6 +303,7 @@
 <script>
     const DASHBOARD_API_URL = API_URL + '/dashboard';
     let chartInstance = null; // Menyimpan instansi grafik Chart.js
+    let selectedDays = 7;
 
     function formatRupiah(number) {
         return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
@@ -268,41 +315,51 @@
     }
 
     function renderChart(chartData) {
-        const ctx = document.getElementById('jimpitanChart').getContext('2d');
+        const canvas = document.getElementById('villageChart') || document.getElementById('jimpitanChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
         
         const labels = chartData.map(d => d.label);
-        const data = chartData.map(d => d.value);
+        const data = chartData.map(d => Number(d.value) || 0);
+
+        // Update Subtitle ringkasan
+        const totalRegistrations = data.reduce((a, b) => a + b, 0);
+        const subtitleEl = document.getElementById('chart-summary-subtitle');
+        if (subtitleEl) {
+            subtitleEl.innerHTML = `Total <strong style="color: #4f46e5;">${totalRegistrations} desa</strong> terdaftar dalam ${selectedDays} hari terakhir.`;
+        }
 
         // Jika grafik sudah ada, perbarui datanya
         if (chartInstance) {
             chartInstance.data.labels = labels;
             chartInstance.data.datasets[0].data = data;
+            chartInstance.data.datasets[0].label = `Registrasi Desa (${selectedDays} Hari)`;
             chartInstance.update();
             return;
         }
 
         // Buat gradien untuk area di bawah garis
         const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, 'rgba(79, 70, 229, 0.2)');
-        gradient.addColorStop(1, 'rgba(79, 70, 229, 0)');
+        gradient.addColorStop(0, 'rgba(79, 70, 229, 0.25)');
+        gradient.addColorStop(1, 'rgba(79, 70, 229, 0.01)');
 
         chartInstance = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Pemasukan Jimpitan (Rp)',
+                    label: `Registrasi Desa (${selectedDays} Hari)`,
                     data: data,
                     borderColor: '#4f46e5',
                     backgroundColor: gradient,
-                    borderWidth: 2,
+                    borderWidth: 2.5,
                     pointBackgroundColor: '#ffffff',
                     pointBorderColor: '#4f46e5',
                     pointBorderWidth: 2,
                     pointRadius: 4,
                     pointHoverRadius: 6,
                     fill: true,
-                    tension: 0.4 // Membuat garis melengkung elegan
+                    tension: 0.35 // Garis melengkung elegan
                 }]
             },
             options: {
@@ -318,7 +375,7 @@
                         displayColors: false,
                         callbacks: {
                             label: function(context) {
-                                return formatRupiah(context.raw);
+                                return `${context.raw} Desa Terdaftar`;
                             }
                         }
                     }
@@ -333,10 +390,13 @@
                         ticks: {
                             font: { size: 10 },
                             color: '#9ca3af',
+                            precision: 0,
+                            stepSize: 1,
                             callback: function(value) {
-                                if (value >= 1000000) return (value / 1000000) + 'Jt';
-                                if (value >= 1000) return (value / 1000) + 'k';
-                                return value;
+                                if (Number.isInteger(value)) {
+                                    return value + ' Desa';
+                                }
+                                return '';
                             }
                         }
                     },
@@ -347,7 +407,7 @@
                             color: '#9ca3af',
                             maxRotation: 0,
                             autoSkip: true,
-                            maxTicksLimit: 7
+                            maxTicksLimit: 10
                         }
                     }
                 },
@@ -359,55 +419,74 @@
         });
     }
 
-    async function fetchDashboardStats() {
+    async function fetchDashboardStats(days = selectedDays) {
+        selectedDays = days;
+        let json = null;
+
+        // 1. Coba fetch dari API_URL server (jimpitan-server)
         try {
-            const res = await fetch(`${DASHBOARD_API_URL}/superadmin/summary`);
-            const json = await res.json();
-
-            if (json.success) {
-                const data = json.data;
-                
-                // Update Metrik Utama
-                if (document.getElementById('stat-desa')) {
-                    document.getElementById('stat-desa').innerText = data.totalVillages.toLocaleString('id-ID');
-                }
-                document.getElementById('stat-warga').innerText = data.totalUsers.toLocaleString('id-ID');
-                document.getElementById('stat-jimpitan').innerText = formatRupiah(data.totalJimpitan);
-                document.getElementById('stat-pending').innerText = data.pendingReports.toLocaleString('id-ID');
-
-                // Render Chart jika data tersedia
-                if (data.chartData && data.chartData.length > 0) {
-                    renderChart(data.chartData);
-                }
-
-                // Render Tabel Aktivitas
-                const tbody = document.getElementById('table-activities');
-                tbody.innerHTML = '';
-
-                if (data.recentActivities && data.recentActivities.length > 0) {
-                    // Batasi ke 6 aktivitas terbaru saja agar pas di panel
-                    const limitedActs = data.recentActivities.slice(0, 6);
-                    limitedActs.forEach(act => {
-                        const tr = document.createElement('tr');
-                        const isIncome = act.type && act.type.toLowerCase() === 'pemasukan';
-                        
-                        tr.innerHTML = `
-                            <td style="color: #6b7280;">${formatDateShort(act.createdAt)}</td>
-                            <td><span class="badge-type ${isIncome ? 'type-in' : 'type-out'}">${act.type || 'N/A'}</span></td>
-                            <td style="font-weight: 600; color: ${isIncome ? '#059669' : '#dc2626'}">
-                                ${isIncome ? '+' : '-'}${formatRupiah(act.amount)}
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                } else {
-                    tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #9ca3af; padding: 2rem 0;">Belum ada aktivitas.</td></tr>';
-                }
-            } else {
-                showToast('Error', 'Gagal memuat statistik dari server.');
+            const res = await fetch(`${DASHBOARD_API_URL}/superadmin/summary?days=${days}`);
+            if (res.ok) {
+                json = await res.json();
             }
         } catch (error) {
-            console.error("Gagal menarik data super admin:", error);
+            console.warn("Fetch dari DASHBOARD_API_URL gagal, mencoba fallback lokal:", error);
+        }
+
+        // 2. Fallback ke endpoint CodeIgniter lokal jika API_URL tidak merespons
+        if (!json || !json.success) {
+            try {
+                const localRes = await fetch(`<?= base_url('/dashboard/summary') ?>?days=${days}`);
+                if (localRes.ok) {
+                    json = await localRes.json();
+                }
+            } catch (errLocal) {
+                console.warn("Fetch lokal juga gagal:", errLocal);
+            }
+        }
+
+        if (json && json.success) {
+            const data = json.data;
+            
+            // Update Metrik Utama
+            if (document.getElementById('stat-desa')) {
+                document.getElementById('stat-desa').innerText = (data.totalVillages || 0).toLocaleString('id-ID');
+            }
+            document.getElementById('stat-warga').innerText = (data.totalUsers || 0).toLocaleString('id-ID');
+            document.getElementById('stat-jimpitan').innerText = formatRupiah(data.totalJimpitan || 0);
+            document.getElementById('stat-pending').innerText = (data.pendingReports || 0).toLocaleString('id-ID');
+
+            // Render Chart jika data tersedia
+            const chartData = data.chartData || data.villageChartData;
+            if (chartData && chartData.length > 0) {
+                renderChart(chartData);
+            }
+
+            // Render Tabel Aktivitas
+            const tbody = document.getElementById('table-activities');
+            tbody.innerHTML = '';
+
+            if (data.recentActivities && data.recentActivities.length > 0) {
+                // Batasi ke 6 aktivitas terbaru saja agar pas di panel
+                const limitedActs = data.recentActivities.slice(0, 6);
+                limitedActs.forEach(act => {
+                    const tr = document.createElement('tr');
+                    const isIncome = act.type && act.type.toLowerCase() === 'pemasukan';
+                    
+                    tr.innerHTML = `
+                        <td style="color: #6b7280;">${formatDateShort(act.createdAt)}</td>
+                        <td><span class="badge-type ${isIncome ? 'type-in' : 'type-out'}">${act.type || 'N/A'}</span></td>
+                        <td style="font-weight: 600; color: ${isIncome ? '#059669' : '#dc2626'}">
+                            ${isIncome ? '+' : '-'}${formatRupiah(act.amount)}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #9ca3af; padding: 2rem 0;">Belum ada aktivitas.</td></tr>';
+            }
+        } else {
+            console.error("Gagal menarik data super admin.");
             const errHtml = '<span style="color:#dc2626; font-size:0.85rem;">Error</span>';
             if (document.getElementById('stat-desa')) document.getElementById('stat-desa').innerHTML = errHtml;
             document.getElementById('stat-warga').innerHTML = errHtml;
@@ -417,10 +496,17 @@
         }
     }
 
+    function setChartPeriod(days, btn) {
+        selectedDays = days;
+        document.querySelectorAll('.btn-period').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        fetchDashboardStats(days);
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         fetchDashboardStats();
         // Update statistik setiap 60 detik (menghemat resource)
-        setInterval(fetchDashboardStats, 60000);
+        setInterval(() => fetchDashboardStats(selectedDays), 60000);
     });
 </script>
 <?= $this->endSection() ?>

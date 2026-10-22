@@ -4,6 +4,7 @@ use CodeIgniter\Router\RouteCollection;
 
 /** @var RouteCollection $routes */
 $routes->get('/', 'Dashboard::index');
+$routes->get('/dashboard/summary', 'Dashboard::getSummary');
 $routes->get('/chat', 'Chat::index');
 $routes->get('/login', 'Auth::login');
 $routes->get('/logout', 'Auth::logout');
