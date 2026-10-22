@@ -454,7 +454,7 @@
                 });
 
                 if (resConfirm.isConfirmed) {
-                    window.location.href = '<?= base_url('/chat') ?>';
+                    window.location.href = '<?= base_url('/chat?partner=SYSTEM_BOT') ?>';
                 }
             } else {
                 Swal.fire({

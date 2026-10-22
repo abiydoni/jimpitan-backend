@@ -394,16 +394,55 @@
         return safeText;
     }
 
+    // Helper: Ambil unread count untuk kontak (mendukung key UID maupun format ROOM)
+    function getContactUnread(targetId) {
+        if (!targetId || !unreadCounts) return 0;
+        if (unreadCounts[targetId]) return Number(unreadCounts[targetId]) || 0;
+        for (let k in unreadCounts) {
+            if (k.includes(targetId) && (Number(unreadCounts[k]) > 0)) {
+                return Number(unreadCounts[k]);
+            }
+        }
+        return 0;
+    }
+
+    // Helper: Cek URL query parameter untuk otomatis membuka chat
+    let _hasAutoOpened = false;
+    function checkUrlAutoOpen() {
+        if (_hasAutoOpened) return;
+        const urlParams = new URLSearchParams(window.location.search);
+        const partner = urlParams.get('partner') || urlParams.get('target') || urlParams.get('chat');
+        if (partner && contacts && contacts.length > 0) {
+            const found = contacts.find(c => c.uid === partner);
+            if (found) {
+                _hasAutoOpened = true;
+                openChat(found.uid, found.name, !!found.isGroup);
+            } else if (partner === 'SYSTEM_BOT') {
+                _hasAutoOpened = true;
+                openChat('SYSTEM_BOT', 'Sistem Registrasi', false);
+            }
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-        // Fetch Villages for Dropdown
+        // 1. Render kontak dari cache seketika (0 ms delay) jika sudah pernah dibuka
+        try {
+            const cached = sessionStorage.getItem('chat_contacts_cache_' + VILLAGE_ID);
+            if (cached) {
+                contacts = JSON.parse(cached);
+                renderContacts();
+                checkUrlAutoOpen();
+            }
+        } catch (e) {}
+
+        // 2. Fetch dropdown desa & data kontak segar di background
         fetchChatVillages();
-        
-        // Init fetch
         fetchContacts();
-        // Polling contacts
-        setInterval(fetchContacts, 10000);
         
-        // Polling setiap 3 detik untuk chat
+        // Polling kontak setiap 30 detik (tidak perlu terlalu sering agar hemat bandwidth & CPU)
+        setInterval(fetchContacts, 30000);
+        
+        // Polling setiap 3 detik khusus untuk chat pesan baru & unread
         setInterval(pollChatData, 3000);
         
         // Setup tombol Enter untuk kirim
@@ -433,7 +472,6 @@
         const chatInput = document.getElementById('chat-input');
         const emojiPicker = document.querySelector('emoji-picker');
 
-        // Toggle tampilan picker
         btnEmoji.addEventListener('click', (e) => {
             e.stopPropagation();
             if (emojiContainer.style.display === 'none') {
@@ -445,7 +483,6 @@
             }
         });
 
-        // Menangkap event saat emoji dipilih
         emojiPicker.addEventListener('emoji-click', event => {
             const cursorPosition = chatInput.selectionStart;
             const textBefore = chatInput.value.substring(0, cursorPosition);
@@ -454,12 +491,10 @@
             chatInput.value = textBefore + event.detail.unicode + textAfter;
             chatInput.focus();
             
-            // Pindahkan kursor setelah emoji yang baru dimasukkan
             const newCursorPosition = cursorPosition + event.detail.unicode.length;
             chatInput.setSelectionRange(newCursorPosition, newCursorPosition);
         });
 
-        // Sembunyikan picker jika klik di luar area
         document.addEventListener('click', (e) => {
             if (e.target !== emojiContainer && !emojiContainer.contains(e.target) && e.target !== btnEmoji && !btnEmoji.contains(e.target)) {
                 emojiContainer.style.display = 'none';
@@ -470,18 +505,32 @@
 
     async function fetchChatVillages() {
         try {
-            const res = await fetch(`${API_URL}/superadmin/villages`, {
-                headers: { 'Authorization': `Bearer ${FIREBASE_ID_TOKEN}` }
-            });
-            const data = await res.json();
-            if(data.success) {
+            let data = null;
+            // Gunakan master/villages yang ringan atau fallback lokal
+            try {
+                const res = await fetch(`${API_URL}/master/villages`, {
+                    headers: { 'Authorization': `Bearer ${FIREBASE_ID_TOKEN}` }
+                });
+                data = await res.json();
+            } catch(e) {}
+
+            if (!data || !data.success) {
+                try {
+                    const localRes = await fetch(`<?= base_url('/wa_blast/villages') ?>`);
+                    data = await localRes.json();
+                } catch(e) {}
+            }
+
+            if (data && data.success && Array.isArray(data.data)) {
                 const select = document.getElementById('chat-village-filter');
+                select.innerHTML = '<option value="ALL">Semua Desa (Pusat)</option>';
                 data.data.forEach(v => {
                     const opt = document.createElement('option');
                     opt.value = v.id;
                     opt.textContent = v.name;
                     select.appendChild(opt);
                 });
+                if (VILLAGE_ID) select.value = VILLAGE_ID;
             }
         } catch(e) {
             console.error('Error fetching villages', e);
@@ -496,10 +545,23 @@
         activeRoomId = null;
         unreadCounts = {};
         contacts = [];
+        _hasAutoOpened = false;
         
         document.getElementById('empty-state').style.display = 'flex';
         document.getElementById('chat-area').style.display = 'none';
-        document.getElementById('contact-list').innerHTML = '<li style="padding: 2rem; text-align: center; color: #9ca3af;">Memuat daftar kontak...</li>';
+        
+        // Coba render cache desa yang baru dipilih
+        try {
+            const cached = sessionStorage.getItem('chat_contacts_cache_' + VILLAGE_ID);
+            if (cached) {
+                contacts = JSON.parse(cached);
+                renderContacts();
+            } else {
+                document.getElementById('contact-list').innerHTML = '<li style="padding: 2rem; text-align: center; color: #9ca3af;">Memuat daftar kontak...</li>';
+            }
+        } catch(e) {
+            document.getElementById('contact-list').innerHTML = '<li style="padding: 2rem; text-align: center; color: #9ca3af;">Memuat daftar kontak...</li>';
+        }
         
         fetchContacts();
     }
@@ -557,7 +619,7 @@
         
         // Jika sedang buka chat, update isi pesan
         if (activeChatUid || activeRoomId) {
-            await fetchMessages(false); // false = jangan scroll ke bawah jika tidak ada pesan baru
+            await fetchMessages(false);
         }
     }
 
@@ -566,26 +628,30 @@
             const res = await fetch(`${API_URL}/chat/${VILLAGE_ID}/unread?uid=${MY_UID}`, { cache: 'no-store' });
             const data = await res.json();
             
-            if (data.success) {
-                // Deteksi jika ada unread baru untuk memunculkan Toast
-                for (let key in data.data) {
-                    const count = data.data[key];
+            if (data.success && data.data) {
+                const newCounts = data.data;
+                const oldString = JSON.stringify(unreadCounts);
+                const newString = JSON.stringify(newCounts);
+                
+                // Deteksi jika ada unread baru untuk memunculkan Toast & suara
+                for (let key in newCounts) {
+                    const count = newCounts[key];
                     const oldCount = unreadCounts[key] || 0;
                     
                     if (count > oldCount) {
-                        // Ada pesan baru masuk yang belum dibaca!
-                        // Pastikan ini BUKAN dari chat yang sedang kita buka
                         if (key !== activeChatUid && key !== activeRoomId) {
                             showToast("Pesan Baru", `Anda memiliki ${count - oldCount} pesan baru!`);
-                            
-                            // 🔔 MAIN KAN SUARA NOTIFIKASI
                             playNotificationSound();
                         }
                     }
                 }
                 
-                unreadCounts = data.data;
-                renderContacts(); // Update badge di list
+                unreadCounts = newCounts;
+                
+                // Hanya re-render list jika ada perubahan unread agar UI tetap ringan
+                if (oldString !== newString) {
+                    renderContacts();
+                }
             }
         } catch (error) {
             console.error("Gagal mengambil unread counts:", error);
@@ -593,8 +659,6 @@
     }
 
     function playNotificationSound() {
-        // Karena browser modern melarang autoplay sound tanpa interaksi,
-        // Ini mungkin diblokir sampai user mengklik sesuatu di halaman.
         try {
             const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
             audio.play().catch(e => console.log("Audio autoplay blocked by browser"));
@@ -608,10 +672,10 @@
             });
             const data = await res.json();
             
-            if (data.success) {
+            if (data.success && Array.isArray(data.data)) {
                 contacts = data.data;
                 
-                // Pastikan GROUP_ADMINS selalu ada di daftar kontak (sinkron dengan Flutter)
+                // Pastikan GROUP_ADMINS selalu ada di daftar kontak
                 const hasGroupAdmins = contacts.some(c => c.uid === 'GROUP_ADMINS');
                 if (!hasGroupAdmins) {
                     contacts.unshift({
@@ -621,58 +685,94 @@
                         isOnline: false,
                     });
                 }
+
+                // Pastikan SYSTEM_BOT selalu ada di daftar kontak Super Admin
+                const hasSystemBot = contacts.some(c => c.uid === 'SYSTEM_BOT');
+                if (!hasSystemBot && VILLAGE_ID === 'ALL') {
+                    contacts.unshift({
+                        uid: 'SYSTEM_BOT',
+                        name: 'Sistem Registrasi',
+                        foto: 'https://cdn-icons-png.flaticon.com/512/4712/4712109.png',
+                        isOnline: true,
+                    });
+                }
                 
+                // Simpan ke cache lokal
+                try {
+                    sessionStorage.setItem('chat_contacts_cache_' + VILLAGE_ID, JSON.stringify(contacts));
+                } catch(e) {}
+
                 renderContacts();
                 await fetchUnreadCounts();
+                checkUrlAutoOpen();
             }
         } catch (error) {
-            document.getElementById('contact-list').innerHTML = `<li style="padding: 2rem; text-align: center; color: var(--danger);">Gagal memuat kontak. Pastikan Server API Node.js berjalan.</li>`;
+            if (!contacts || contacts.length === 0) {
+                document.getElementById('contact-list').innerHTML = `<li style="padding: 2rem; text-align: center; color: var(--danger);">Gagal memuat kontak. Pastikan Server API Node.js berjalan.</li>`;
+            }
         }
     }
 
     function renderContacts() {
         const list = document.getElementById('contact-list');
-        list.innerHTML = '';
+        if (!contacts || contacts.length === 0) {
+            return;
+        }
         
         // Filter berdasarkan pencarian
         let filteredContacts = contacts;
         if (contactSearchQuery.trim() !== '') {
             const query = contactSearchQuery.toLowerCase();
-            filteredContacts = contacts.filter(c => c.name.toLowerCase().includes(query));
+            filteredContacts = contacts.filter(c => (c.name || '').toLowerCase().includes(query));
         }
 
-        // Urutkan kontak: Unread > Online/Grup > LastSeen
+        // Urutkan kontak secara cerdas:
+        // 1. Unread count tertinggi
+        // 2. SYSTEM_BOT & GROUP_ADMINS (Pusat) diprioritaskan
+        // 3. Online
+        // 4. Terakhir aktif
         filteredContacts.sort((a, b) => {
-            const unreadA = unreadCounts[a.uid] || 0;
-            const unreadB = unreadCounts[b.uid] || 0;
+            const unreadA = getContactUnread(a.uid);
+            const unreadB = getContactUnread(b.uid);
             if (unreadB !== unreadA) return unreadB - unreadA; // Unread di atas
             
+            const isPriorityA = (a.uid === 'SYSTEM_BOT' || a.uid === 'GROUP_ADMINS') ? 1 : 0;
+            const isPriorityB = (b.uid === 'SYSTEM_BOT' || b.uid === 'GROUP_ADMINS') ? 1 : 0;
+            if (isPriorityB !== isPriorityA) return isPriorityB - isPriorityA;
+
             const onlineA = (a.isOnline || a.isGroup) ? 1 : 0;
             const onlineB = (b.isOnline || b.isGroup) ? 1 : 0;
             if (onlineB !== onlineA) return onlineB - onlineA; // Online & Grup di atas
             
             const timeA = a.lastSeen ? new Date(a.lastSeen).getTime() : 0;
             const timeB = b.lastSeen ? new Date(b.lastSeen).getTime() : 0;
-            return timeB - timeA; // Terakhir online terbaru di atas
+            return timeB - timeA;
         });
+
+        // Gunakan DocumentFragment agar 1 pass DOM render (sangat cepat, 0 lag!)
+        const fragment = document.createDocumentFragment();
         
         filteredContacts.forEach(contact => {
-            const isGroup = contact.isGroup;
-            const targetId = isGroup ? contact.uid : contact.uid;
+            const isGroup = !!contact.isGroup;
+            const targetId = contact.uid;
             
             // Jangan tampilkan diri sendiri
             if (targetId === MY_UID) return;
 
-            const unreadCount = unreadCounts[targetId] || 0;
+            const unreadCount = getContactUnread(targetId);
             const badgeHtml = unreadCount > 0 ? `<span class="contact-badge">${unreadCount}</span>` : '';
             
             const isActive = (activeChatUid === targetId) || (activeRoomId === targetId);
-            const initial = contact.name.charAt(0).toUpperCase();
+            const initial = (contact.name || 'U').charAt(0).toUpperCase();
             
             const li = document.createElement('li');
             li.className = `contact-item ${isActive ? 'active' : ''}`;
             li.onclick = () => openChat(targetId, contact.name, isGroup);
             
+            const isSystemBot = (targetId === 'SYSTEM_BOT');
+            const avatarColor = isSystemBot ? '#f59e0b' : (isGroup ? '#10b981' : '#6366f1');
+            const avatarIcon = isSystemBot ? '<i class="fa-solid fa-robot"></i>' : (isGroup ? '<i class="fa-solid fa-users"></i>' : initial);
+
             // Indikator online
             const onlineIndicator = (contact.isOnline && !isGroup) 
                 ? `<span style="position: absolute; bottom: 0; right: 0; width: 10px; height: 10px; background-color: var(--success); border-radius: 50%; border: 2px solid white;"></span>`
@@ -680,7 +780,9 @@
 
             // Format waktu terakhir online
             let lastMessageText = 'Offline';
-            if (isGroup) {
+            if (isSystemBot) {
+                lastMessageText = '<span style="color:#f59e0b; font-weight:600;">Notifikasi Pendaftaran</span>';
+            } else if (isGroup) {
                 lastMessageText = 'Grup Obrolan';
             } else if (contact.isOnline) {
                 lastMessageText = '<span style="color:var(--success);">Online</span>';
@@ -693,19 +795,21 @@
             }
 
             li.innerHTML = `
-                <div class="contact-avatar" style="position: relative; background-color: ${isGroup ? '#10b981' : '#6366f1'};">
-                    ${isGroup ? '<i class="fa-solid fa-users"></i>' : initial}
+                <div class="contact-avatar" style="position: relative; background-color: ${avatarColor};">
+                    ${avatarIcon}
                     ${onlineIndicator}
                 </div>
                 <div class="contact-info">
-                    <div class="contact-name">${contact.name}</div>
+                    <div class="contact-name">${contact.name || targetId}</div>
                     <div class="contact-last-message">${lastMessageText}</div>
                 </div>
                 ${badgeHtml}
             `;
             
-            list.appendChild(li);
+            fragment.appendChild(li);
         });
+
+        list.replaceChildren(fragment);
     }
 
     async function openChat(targetId, name, isGroup = false) {
@@ -718,30 +822,45 @@
         }
         
         document.getElementById('active-chat-title').innerText = name;
-        const initial = name.charAt(0).toUpperCase();
-        document.getElementById('active-chat-avatar').innerHTML = isGroup ? '<i class="fa-solid fa-users"></i>' : initial;
-        document.getElementById('active-chat-avatar').style.backgroundColor = isGroup ? '#10b981' : '#6366f1';
+        const initial = (name || 'U').charAt(0).toUpperCase();
+        const isSystemBot = (targetId === 'SYSTEM_BOT');
+        const avatarColor = isSystemBot ? '#f59e0b' : (isGroup ? '#10b981' : '#6366f1');
+        const avatarIcon = isSystemBot ? '<i class="fa-solid fa-robot"></i>' : (isGroup ? '<i class="fa-solid fa-users"></i>' : initial);
+
+        document.getElementById('active-chat-avatar').innerHTML = avatarIcon;
+        document.getElementById('active-chat-avatar').style.backgroundColor = avatarColor;
         
         document.getElementById('empty-state').style.display = 'none';
         document.getElementById('chat-area').style.display = 'flex';
         
         renderContacts(); // Update active state
         
-        // Tandai sudah dibaca
+        // Tandai sudah dibaca jika memang ada pesan unread
         markAsRead(targetId, isGroup);
         
         // Reset count & Fetch messages
         lastMessageString = '';
-        document.getElementById('chat-messages').innerHTML = '<div style="text-align:center; color:#9ca3af; margin-top:2rem;">Memuat pesan...</div>';
+        document.getElementById('chat-messages').innerHTML = '<div style="text-align:center; color:#9ca3af; margin-top:2rem;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat percakapan...</div>';
         await fetchMessages(true);
     }
 
     async function markAsRead(targetId, isGroup) {
+        if (!targetId) return;
+        const unreadCount = getContactUnread(targetId);
+        if (unreadCount <= 0) return;
+
         try {
             const payload = { uid: MY_UID };
             if (isGroup) payload.roomId = targetId;
             else payload.senderUid = targetId;
             
+            // Hapus dari state lokal seketika agar badge langsung hilang tanpa delay
+            delete unreadCounts[targetId];
+            for (let k in unreadCounts) {
+                if (k.includes(targetId)) delete unreadCounts[k];
+            }
+            renderContacts();
+
             await fetch(`${API_URL}/chat/${VILLAGE_ID}/mark-read`, {
                 method: 'POST',
                 headers: { 
@@ -751,10 +870,7 @@
                 body: JSON.stringify(payload)
             });
             
-            // Hapus dari state lokal
-            delete unreadCounts[targetId];
             fetchGlobalUnread(); // Update global badge
-            renderContacts();
         } catch (e) {
             console.error("Gagal menandai dibaca:", e);
         }
@@ -868,8 +984,10 @@
                     container.scrollTop = container.scrollHeight;
                 }
                 
-                // Jika sedang chat, selalu tandai sudah dibaca saat pesan baru masuk
-                markAsRead(activeRoomId || activeChatUid, !!activeRoomId);
+                // Jika sedang chat, hanya tandai sudah dibaca saat ada pesan baru masuk
+                if (isNewMessage) {
+                    markAsRead(activeRoomId || activeChatUid, !!activeRoomId);
+                }
             }
         } catch (error) {
             console.error("Gagal mengambil pesan:", error);
