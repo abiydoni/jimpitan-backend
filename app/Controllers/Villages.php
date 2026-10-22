@@ -150,4 +150,182 @@ class Villages extends BaseController
             ]);
         }
     }
+
+    /**
+     * Kirim notifikasi chat pendaftaran desa secara manual.
+     * Mengirim pesan #1 dari SYSTEM ke Super Admin dan pesan #2 dari Super Admin ke Admin Desa.
+     * POST /villages/notify/(:segment)
+     */
+    public function notifyChat($id = null)
+    {
+        if (empty($id)) {
+            return $this->response->setStatusCode(400)->setJSON([
+                'success' => false,
+                'message' => 'ID Desa tidak valid'
+            ]);
+        }
+
+        try {
+            $db = Database::connect();
+
+            // 1. Ambil data desa
+            $village = $db->table('villages')->where('id', $id)->get()->getRowArray();
+            if (!$village) {
+                $village = $db->table('villages')->where('uniqueCode', $id)->get()->getRowArray();
+            }
+
+            if (!$village) {
+                return $this->response->setStatusCode(404)->setJSON([
+                    'success' => false,
+                    'message' => 'Desa tidak ditemukan'
+                ]);
+            }
+
+            $villageId = $village['id'];
+            $villageName = $village['name'] ?? 'Desa Baru';
+            $uniqueCode = $village['uniqueCode'] ?? '-';
+            $address = $village['address'] ?? '-';
+
+            // 2. Cari Super Admin
+            $superadmin = $db->table('users')->where('email', 'appsbeem@gmail.com')->get()->getRowArray();
+            if (!$superadmin) {
+                $superadmin = $db->table('users')->where('uid', 'SUPER_ADMIN')->get()->getRowArray();
+            }
+            if (!$superadmin) {
+                $roleSa = $db->table('roles')->where('name', 'SUPER_ADMIN')->where('userId IS NOT NULL')->get()->getRowArray();
+                if ($roleSa) {
+                    $superadmin = $db->table('users')->where('uid', $roleSa['userId'])->get()->getRowArray();
+                }
+            }
+            $appsbeeUid = $superadmin['uid'] ?? 'SUPER_ADMIN';
+
+            // 3. Pastikan user SYSTEM_BOT ada
+            $systemBot = $db->table('users')->where('uid', 'SYSTEM_BOT')->get()->getRowArray();
+            if (!$systemBot) {
+                $db->table('users')->insert([
+                    'uid' => 'SYSTEM_BOT',
+                    'name' => 'Sistem Registrasi',
+                    'foto' => 'https://cdn-icons-png.flaticon.com/512/4712/4712109.png',
+                    'photoUrl' => 'https://cdn-icons-png.flaticon.com/512/4712/4712109.png',
+                    'status' => 'ACTIVE'
+                ]);
+            }
+
+            // 4. Cari Admin Desa terkait
+            $adminRole = $db->table('roles')
+                ->where('villageId', $villageId)
+                ->where('name', 'ADMIN_DESA')
+                ->where('userId IS NOT NULL')
+                ->get()->getRowArray();
+
+            $registrantUser = null;
+            if ($adminRole && !empty($adminRole['userId'])) {
+                $registrantUser = $db->table('users')->where('uid', $adminRole['userId'])->get()->getRowArray();
+            }
+            if (!$registrantUser) {
+                $registrantUser = $db->table('users')->where('villageId', $villageId)->get()->getRowArray();
+            }
+
+            $targetRegistrantUid = $registrantUser['uid'] ?? null;
+            $registrantName = $registrantUser['name'] ?? 'Admin Desa';
+            $registrantPhone = $registrantUser['phoneNumber'] ?? ($registrantUser['phone'] ?? '-');
+            $registrantEmail = $registrantUser['email'] ?? null;
+
+            $now = date('Y-m-d H:i:s');
+            $dateFormatted = date('d M Y');
+            $timeFormatted = date('H:i');
+
+            // --- PESAN 1: Notifikasi ke Super Admin dari SYSTEM ---
+            $systemRoomId = 'PERSONAL_' . min($appsbeeUid, 'SYSTEM_BOT') . '_' . max($appsbeeUid, 'SYSTEM_BOT');
+            $adminLines = [
+                "🏛️ *PENDAFTARAN DESA BARU*",
+                "",
+                "Telah terdaftar desa baru di sistem Jimpitan:",
+                "• *Nama Desa*: {$villageName}",
+                "• *Kode Unik*: {$uniqueCode}",
+                "• *Alamat*: {$address}",
+                "• *Pendaftar*: {$registrantName}",
+                "• *No. HP/WA*: {$registrantPhone}",
+                $registrantEmail ? "• *Email*: {$registrantEmail}" : "",
+                "• *Waktu*: {$dateFormatted}, {$timeFormatted} WIB",
+                "",
+                "Data registrasi telah berhasil disimpan dan siap dikelola."
+            ];
+            $adminMessageText = implode("\n", array_filter($adminLines));
+
+            $db->table('chat_messages')->insert([
+                'id' => 'msg_' . bin2hex(random_bytes(16)),
+                'villageId' => $villageId,
+                'senderUid' => 'SYSTEM_BOT',
+                'senderName' => 'Sistem Registrasi',
+                'receiverUid' => $appsbeeUid,
+                'roomId' => $systemRoomId,
+                'message' => $adminMessageText,
+                'isRead' => 0,
+                'isDeleted' => 0,
+                'isEdited' => 0,
+                'isForwarded' => 0,
+                'createdAt' => $now,
+                'updatedAt' => $now
+            ]);
+
+            // --- PESAN 2: Sambutan dari Super Admin ke Admin Desa Baru ---
+            if ($targetRegistrantUid) {
+                $adminDesaRoomId = 'PERSONAL_' . min($appsbeeUid, $targetRegistrantUid) . '_' . max($appsbeeUid, $targetRegistrantUid);
+                $welcomeLines = [
+                    "🎉 *SELAMAT DATANG DI JIMPITAN!*",
+                    "",
+                    "Halo *{$registrantName}*,",
+                    "Selamat! Pendaftaran desa Anda telah berhasil diproses dan kini sudah aktif di sistem Jimpitan.",
+                    "",
+                    "🏛️ *Nama Desa*: {$villageName}",
+                    "🔑 *Kode Unik Desa*: *{$uniqueCode}*",
+                    "📍 *Alamat*: {$address}",
+                    "⭐ *Status Layanan*: Aktif (Free Trial 1 Bulan)",
+                    "",
+                    "*Langkah Selanjutnya:*",
+                    "1. Bagikan *Kode Unik Desa* (*{$uniqueCode}*) kepada para pengurus RT/RW dan warga agar dapat bergabung di aplikasi.",
+                    "2. Atur tarif jimpitan, jadwal ronda, dan nomor rekening penampung di menu Pengaturan.",
+                    "3. Tambahkan atau kelola data kartu keluarga (KK) serta warga desa Anda.",
+                    "",
+                    "Jika Anda memiliki pertanyaan atau membutuhkan bantuan teknis, Anda dapat langsung membalas pesan ini untuk terhubung dengan tim Appsbee Support.",
+                    "",
+                    "Salam hangat,",
+                    "*Tim Appsbee Support*"
+                ];
+                $welcomeMessageText = implode("\n", $welcomeLines);
+
+                $db->table('chat_messages')->insert([
+                    'id' => 'msg_' . bin2hex(random_bytes(16)),
+                    'villageId' => $villageId,
+                    'senderUid' => $appsbeeUid,
+                    'senderName' => 'Appsbee Support',
+                    'receiverUid' => $targetRegistrantUid,
+                    'roomId' => $adminDesaRoomId,
+                    'message' => $welcomeMessageText,
+                    'isRead' => 0,
+                    'isDeleted' => 0,
+                    'isEdited' => 0,
+                    'isForwarded' => 0,
+                    'createdAt' => $now,
+                    'updatedAt' => $now
+                ]);
+            }
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => "Notifikasi chat pendaftaran desa \"{$villageName}\" berhasil dikirim!",
+                'data' => [
+                    'villageName' => $villageName,
+                    'uniqueCode' => $uniqueCode,
+                    'registrantName' => $registrantName
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return $this->response->setStatusCode(500)->setJSON([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }

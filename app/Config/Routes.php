@@ -17,6 +17,8 @@ $routes->match(['post', 'put'], '/settings/wa_group', 'Settings::saveWaGroupSett
 $routes->get('/villages', 'Villages::index');
 $routes->match(['delete', 'post'], '/villages/(:segment)', 'Villages::delete/$1');
 $routes->match(['delete', 'post'], '/villages/delete/(:segment)', 'Villages::delete/$1');
+$routes->match(['post', 'get'], '/villages/notify/(:segment)', 'Villages::notifyChat/$1');
+$routes->match(['post', 'get'], '/villages/(:segment)/notify', 'Villages::notifyChat/$1');
 $routes->get('/security', 'Security::index');
 $routes->get('/wa_blast', 'WaBlast::index');
 $routes->get('/wa_blast/villages', 'WaBlast::getVillages');

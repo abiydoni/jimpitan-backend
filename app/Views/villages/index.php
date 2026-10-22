@@ -138,7 +138,10 @@
                         <td style="padding: 1rem 1.25rem; color:#64748b; font-size:0.85rem;">
                             ${safeAddress}
                         </td>
-                        <td style="padding: 1rem 1.25rem; text-align:right;">
+                        <td style="padding: 1rem 1.25rem; text-align:right; white-space:nowrap;">
+                            <button type="button" onclick="sendVillageNotification('${villageId}')" title="Kirim Notifikasi Chat Registrasi Desa" style="background:#e0e7ff; border:1px solid #c7d2fe; color:#4338ca; cursor:pointer; padding:0.4rem 0.7rem; border-radius:0.4rem; font-size:0.825rem; font-weight:600; margin-right:0.4rem; transition:all 0.15s; display:inline-flex; align-items:center; gap:0.35rem;">
+                                <i class="fa-solid fa-paper-plane"></i> Kirim Chat
+                            </button>
                             <button type="button" onclick="onEditClick('${villageId}')" title="Edit Desa" style="background:#fef3c7; border:1px solid #fde68a; color:#b45309; cursor:pointer; padding:0.4rem 0.7rem; border-radius:0.4rem; font-size:0.825rem; font-weight:600; margin-right:0.4rem; transition:all 0.15s;">
                                 <i class="fa-solid fa-pen"></i> Edit
                             </button>
@@ -358,6 +361,110 @@
             }
         } catch (error) {
             console.error('Error deleting village:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Koneksi ke server gagal: ' + error.message
+            });
+        }
+    }
+
+    async function sendVillageNotification(id) {
+        const v = (window._villagesList || []).find(item => String(item.id) === String(id));
+        const villageName = v ? (v.name || 'Desa') : 'Desa';
+
+        const result = await Swal.fire({
+            title: 'Kirim Notifikasi Chat?',
+            html: `Kirim notifikasi pendaftaran untuk desa <b>${villageName}</b>?<br><br>` +
+                  `<div style="text-align:left; background:#f8fafc; border:1px solid #e2e8f0; padding:0.75rem 1rem; border-radius:0.5rem; font-size:0.825rem; color:#475569; line-height:1.5;">` +
+                  `• <b>Super Admin</b> menerima rincian pendaftaran dari <i>Sistem Registrasi</i>.<br>` +
+                  `• <b>Admin Desa</b> menerima pesan sambutan & panduan dari <i>Appsbee Support</i>.` +
+                  `</div>`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#4f46e5',
+            cancelButtonColor: '#94a3b8',
+            confirmButtonText: '<i class="fa-solid fa-paper-plane"></i> Ya, Kirim Chat',
+            cancelButtonText: 'Batal'
+        });
+
+        if (!result.isConfirmed) return;
+
+        Swal.fire({
+            title: 'Mengirim Chat...',
+            text: 'Mohon tunggu sebentar, pesan sedang diproses.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        try {
+            let json = null;
+            const token = (typeof getFreshFirebaseToken === 'function') 
+                ? await getFreshFirebaseToken() 
+                : (typeof FIREBASE_ID_TOKEN !== 'undefined' ? FIREBASE_ID_TOKEN : getFirebaseToken());
+
+            // 1. Coba via API Server Node.js
+            try {
+                const res = await fetch(`${API_URL}/master/villages/${encodeURIComponent(id)}/notify`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                json = await res.json();
+            } catch (errApi) {
+                console.warn('API_URL notify failed, trying local CI4 fallback:', errApi);
+            }
+
+            // 2. Fallback via local CI4 endpoint jika API Server Node.js gagal
+            if (!json || !json.success) {
+                try {
+                    const localRes = await fetch(`<?= base_url('/villages/notify/') ?>/${encodeURIComponent(id)}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const localJson = await localRes.json();
+                    if (localJson && localJson.success) {
+                        json = localJson;
+                    }
+                } catch (errLocal) {
+                    console.error('Local CI4 notify failed:', errLocal);
+                }
+            }
+
+            if (json && json.success) {
+                const resConfirm = await Swal.fire({
+                    icon: 'success',
+                    title: 'Chat Berhasil Dikirim!',
+                    html: `Pesan notifikasi untuk desa <b>${villageName}</b> berhasil dikirimkan:<br><br>` +
+                          `<div style="text-align:left; background:#f0fdf4; border:1px solid #bbf7d0; padding:0.6rem 0.85rem; border-radius:0.4rem; font-size:0.8rem; color:#166534; line-height:1.4;">` +
+                          `✓ Pesan rincian pendaftaran masuk ke Chat Personal Super Admin.<br>` +
+                          `✓ Pesan sambutan resmi masuk ke Chat Personal Admin Desa.` +
+                          `</div>`,
+                    showCancelButton: true,
+                    confirmButtonColor: '#4f46e5',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: '<i class="fa-solid fa-comments"></i> Buka Menu Chat',
+                    cancelButtonText: 'Tutup'
+                });
+
+                if (resConfirm.isConfirmed) {
+                    window.location.href = '<?= base_url('/chat') ?>';
+                }
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Mengirim Chat',
+                    text: (json && json.message) ? json.message : 'Terjadi kesalahan saat mengirim notifikasi chat.'
+                });
+            }
+        } catch (error) {
+            console.error('Error sending village notification:', error);
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
