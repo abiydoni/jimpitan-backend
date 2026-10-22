@@ -533,11 +533,12 @@
             });
             const data = await res.json();
             if (data.success) {
-                showToast('Sukses', 'Notifikasi registrasi desa berhasil dikirim ke Grup Admin Pusat!');
+                showToast('Sukses', 'Notifikasi pendaftaran desa berhasil dikirim ke Chat Personal Super Admin!');
                 document.getElementById('chat-village-filter').value = 'ALL';
                 VILLAGE_ID = 'ALL';
                 await fetchContacts();
-                await openChat('GROUP_ADMINS', 'Grup Admin Pusat', true);
+                const partnerUid = (data.data && data.data.partnerUid) ? data.data.partnerUid : 'SYSTEM_BOT';
+                await openChat(partnerUid, 'Sistem Registrasi', false);
             } else {
                 showAlert('Gagal', data.message || 'Gagal mengirim notifikasi uji coba');
             }
