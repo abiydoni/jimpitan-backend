@@ -58,6 +58,22 @@ class Dashboard extends BaseController
                     ->get()->getResultArray();
             }
 
+            // Pendaftar Desa Terbaru
+            $recentVillages = [];
+            if ($db->tableExists('villages')) {
+                $vFields = $db->getFieldNames('villages');
+                $selectCols = ['id', 'name'];
+                if (in_array('uniqueCode', $vFields)) $selectCols[] = 'uniqueCode';
+                if (in_array('address', $vFields)) $selectCols[] = 'address';
+                if (in_array('createdAt', $vFields)) $selectCols[] = 'createdAt';
+
+                $vBuilder = $db->table('villages')->select(implode(', ', $selectCols));
+                if (in_array('createdAt', $vFields)) {
+                    $vBuilder->orderBy('createdAt', 'DESC');
+                }
+                $recentVillages = $vBuilder->limit(8)->get()->getResultArray();
+            }
+
             // 5. Grafik Registrasi Desa per Hari
             $days = (int)($this->request->getGet('days') ?? 7);
             if ($days <= 0 || $days > 90) {
@@ -109,6 +125,7 @@ class Dashboard extends BaseController
                     'totalJimpitan'    => $totalJimpitan,
                     'pendingReports'   => $pendingReports,
                     'recentActivities' => $recentActivities,
+                    'recentVillages'   => $recentVillages,
                     'chartData'        => $chartData,
                     'villageChartData' => $chartData
                 ]

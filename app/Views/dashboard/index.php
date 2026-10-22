@@ -275,18 +275,26 @@
             </div>
         </div>
 
-        <!-- Panel Tabel -->
+        <!-- Panel Tabel Pendaftar Desa Terbaru -->
         <div class="panel">
-            <div class="panel-header">
-                <h3 class="panel-title">Aktivitas Jurnal Terbaru</h3>
+            <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 class="panel-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="display: inline-flex; width: 28px; height: 28px; background: #f3e8ff; color: #7e22ce; border-radius: 8px; align-items: center; justify-content: center; font-size: 0.85rem;">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </span>
+                    Aktivitas Pendaftar Terbaru
+                </h3>
+                <a href="<?= base_url('/villages') ?>" style="font-size: 0.75rem; color: #4f46e5; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 0.25rem;">
+                    Lihat Semua <i class="fa-solid fa-arrow-right" style="font-size: 0.65rem;"></i>
+                </a>
             </div>
             <div class="table-container">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Waktu</th>
-                            <th>Jenis</th>
-                            <th>Nominal</th>
+                            <th>Waktu Daftar</th>
+                            <th>Nama Desa</th>
+                            <th>Kode Unik</th>
                         </tr>
                     </thead>
                     <tbody id="table-activities">
@@ -312,6 +320,75 @@
     function formatDateShort(dateString) {
         const date = new Date(dateString);
         return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function renderRecentVillagesTable(villages) {
+        const tbody = document.getElementById('table-activities');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+
+        if (villages && villages.length > 0) {
+            // Urutkan berdasarkan createdAt DESC jika ada
+            const sorted = [...villages].sort((a, b) => {
+                const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                return dateB - dateA;
+            });
+
+            const limited = sorted.slice(0, 6);
+            limited.forEach(v => {
+                const tr = document.createElement('tr');
+                const safeName = (v.name || 'Desa Tanpa Nama').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                const safeCode = (v.uniqueCode || '-').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                const safeAddress = v.address ? v.address.replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
+                const dateFormatted = v.createdAt ? formatDateShort(v.createdAt) : '-';
+
+                tr.innerHTML = `
+                    <td style="color: #6b7280; white-space: nowrap;">
+                        <i class="fa-regular fa-calendar-check" style="margin-right: 4px; font-size: 0.75rem; color: #94a3b8;"></i>
+                        ${dateFormatted}
+                    </td>
+                    <td>
+                        <div style="font-weight: 600; color: #111827;">${safeName}</div>
+                        ${safeAddress ? `<div style="font-size: 0.7rem; color: #9ca3af; margin-top: 1px;">${safeAddress}</div>` : ''}
+                    </td>
+                    <td>
+                        <span style="display:inline-block; padding:0.2rem 0.5rem; border-radius:4px; background:#eef2ff; color:#4f46e5; font-weight:700; font-family:monospace; font-size:0.75rem; border:1px solid #c7d2fe;">
+                            ${safeCode}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #9ca3af; padding: 2rem 0;">Belum ada data pendaftar desa.</td></tr>';
+        }
+    }
+
+    async function fetchVillagesFallback() {
+        try {
+            const res = await fetch(`${API_URL}/master/villages`);
+            if (res.ok) {
+                const j = await res.json();
+                if (j.success && Array.isArray(j.data) && j.data.length > 0) {
+                    renderRecentVillagesTable(j.data);
+                    return;
+                }
+            }
+        } catch (e) {}
+
+        try {
+            const localRes = await fetch(`<?= base_url('/wa_blast/villages') ?>`);
+            if (localRes.ok) {
+                const localJ = await localRes.json();
+                if (localJ.success && Array.isArray(localJ.data) && localJ.data.length > 0) {
+                    renderRecentVillagesTable(localJ.data);
+                    return;
+                }
+            }
+        } catch (e) {}
+
+        renderRecentVillagesTable([]);
     }
 
     function renderChart(chartData) {
@@ -462,28 +539,12 @@
                 renderChart(chartData);
             }
 
-            // Render Tabel Aktivitas
-            const tbody = document.getElementById('table-activities');
-            tbody.innerHTML = '';
-
-            if (data.recentActivities && data.recentActivities.length > 0) {
-                // Batasi ke 6 aktivitas terbaru saja agar pas di panel
-                const limitedActs = data.recentActivities.slice(0, 6);
-                limitedActs.forEach(act => {
-                    const tr = document.createElement('tr');
-                    const isIncome = act.type && act.type.toLowerCase() === 'pemasukan';
-                    
-                    tr.innerHTML = `
-                        <td style="color: #6b7280;">${formatDateShort(act.createdAt)}</td>
-                        <td><span class="badge-type ${isIncome ? 'type-in' : 'type-out'}">${act.type || 'N/A'}</span></td>
-                        <td style="font-weight: 600; color: ${isIncome ? '#059669' : '#dc2626'}">
-                            ${isIncome ? '+' : '-'}${formatRupiah(act.amount)}
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+            // Render Tabel Aktivitas Pendaftar Terbaru
+            if (data.recentVillages && data.recentVillages.length > 0) {
+                renderRecentVillagesTable(data.recentVillages);
             } else {
-                tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #9ca3af; padding: 2rem 0;">Belum ada aktivitas.</td></tr>';
+                // Ambil daftar desa terbaru dari fallback endpoint
+                fetchVillagesFallback();
             }
         } else {
             console.error("Gagal menarik data super admin.");
