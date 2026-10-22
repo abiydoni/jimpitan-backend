@@ -203,13 +203,97 @@
         color: #4f46e5;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
+
+    /* Indikator Realtime Live */
+    .live-status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #15803d;
+        padding: 6px 14px;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+
+    .live-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #22c55e;
+        position: relative;
+        display: inline-block;
+    }
+
+    .live-dot::after {
+        content: '';
+        position: absolute;
+        top: -3px; left: -3px; right: -3px; bottom: -3px;
+        border-radius: 50%;
+        background-color: rgba(34, 197, 94, 0.45);
+        animation: livePulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    @keyframes livePulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(2.4); opacity: 0; }
+        100% { transform: scale(1); opacity: 0; }
+    }
+
+    .btn-refresh {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #ffffff;
+        border: 1.5px solid #e2e8f0;
+        color: #475569;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-refresh:hover {
+        background: #f8fafc;
+        color: #0f172a;
+        border-color: #cbd5e1;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .badge-new-village {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #ffffff;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: 6px;
+        letter-spacing: 0.02em;
+    }
 </style>
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-    <div class="dashboard-header">
-        <h2>Dashboard Ringkasan</h2>
-        <p>Pantau statistik global dan aktivitas registrasi desa serta transaksi Jimpitan secara real-time.</p>
+    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+        <div>
+            <h2>Dashboard Ringkasan</h2>
+            <p>Pantau statistik global dan aktivitas registrasi desa serta transaksi Jimpitan secara real-time.</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+            <div class="live-status-pill">
+                <span class="live-dot"></span>
+                <span>Realtime Aktif</span>
+                <span id="last-updated-time" style="color: #64748b; font-size: 0.72rem; margin-left: 2px;">• Memperbarui...</span>
+            </div>
+            <button id="btn-manual-refresh" onclick="triggerManualRefresh()" class="btn-refresh" title="Muat ulang data sekarang">
+                <i class="fa-solid fa-arrows-rotate" id="refresh-icon"></i> Refresh
+            </button>
+        </div>
     </div>
 
     <!-- Metrik Utama -->
@@ -310,8 +394,12 @@
 <?= $this->section('scripts') ?>
 <script>
     const DASHBOARD_API_URL = API_URL + '/dashboard';
+    const REALTIME_INTERVAL_MS = 5000; // Polling realtime setiap 5 detik
     let chartInstance = null; // Menyimpan instansi grafik Chart.js
     let selectedDays = 7;
+    let isFetching = false;
+    let pollingTimer = null;
+    let isInitialized = false;
 
     function formatRupiah(number) {
         return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
@@ -325,7 +413,6 @@
     function renderRecentVillagesTable(villages) {
         const tbody = document.getElementById('table-activities');
         if (!tbody) return;
-        tbody.innerHTML = '';
 
         if (villages && villages.length > 0) {
             // Urutkan berdasarkan createdAt DESC jika ada
@@ -336,12 +423,17 @@
             });
 
             const limited = sorted.slice(0, 6);
-            limited.forEach(v => {
+            tbody.innerHTML = '';
+            
+            limited.forEach((v, index) => {
                 const tr = document.createElement('tr');
                 const safeName = (v.name || 'Desa Tanpa Nama').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 const safeCode = (v.uniqueCode || '-').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 const safeAddress = v.address ? v.address.replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
                 const dateFormatted = v.createdAt ? formatDateShort(v.createdAt) : '-';
+                
+                // Beri penanda jika merupakan pendaftar paling baru
+                const isNewest = index === 0;
 
                 tr.innerHTML = `
                     <td style="color: #6b7280; white-space: nowrap;">
@@ -349,7 +441,10 @@
                         ${dateFormatted}
                     </td>
                     <td>
-                        <div style="font-weight: 600; color: #111827;">${safeName}</div>
+                        <div style="font-weight: 600; color: #111827; display: flex; align-items: center;">
+                            ${safeName}
+                            ${isNewest ? '<span class="badge-new-village">Baru</span>' : ''}
+                        </div>
                         ${safeAddress ? `<div style="font-size: 0.7rem; color: #9ca3af; margin-top: 1px;">${safeAddress}</div>` : ''}
                     </td>
                     <td>
@@ -367,7 +462,7 @@
 
     async function fetchVillagesFallback() {
         try {
-            const res = await fetch(`${API_URL}/master/villages`);
+            const res = await fetch(`${API_URL}/master/villages?_t=${Date.now()}`, { cache: 'no-store' });
             if (res.ok) {
                 const j = await res.json();
                 if (j.success && Array.isArray(j.data) && j.data.length > 0) {
@@ -378,7 +473,7 @@
         } catch (e) {}
 
         try {
-            const localRes = await fetch(`<?= base_url('/wa_blast/villages') ?>`);
+            const localRes = await fetch(`<?= base_url('/wa_blast/villages') ?>?_t=${Date.now()}`, { cache: 'no-store' });
             if (localRes.ok) {
                 const localJ = await localRes.json();
                 if (localJ.success && Array.isArray(localJ.data) && localJ.data.length > 0) {
@@ -406,12 +501,20 @@
             subtitleEl.innerHTML = `Total <strong style="color: #4f46e5;">${totalRegistrations} desa</strong> terdaftar dalam ${selectedDays} hari terakhir.`;
         }
 
-        // Jika grafik sudah ada, perbarui datanya
+        // Jika grafik sudah ada, perbarui datanya secara dinamis & halus (realtime)
         if (chartInstance) {
-            chartInstance.data.labels = labels;
-            chartInstance.data.datasets[0].data = data;
-            chartInstance.data.datasets[0].label = `Registrasi Desa (${selectedDays} Hari)`;
-            chartInstance.update();
+            const currentLabels = chartInstance.data.labels || [];
+            const currentData = chartInstance.data.datasets[0].data || [];
+            
+            const isLabelsEqual = JSON.stringify(currentLabels) === JSON.stringify(labels);
+            const isDataEqual = JSON.stringify(currentData) === JSON.stringify(data);
+            
+            if (!isLabelsEqual || !isDataEqual || chartInstance.data.datasets[0].label !== `Registrasi Desa (${selectedDays} Hari)`) {
+                chartInstance.data.labels = labels;
+                chartInstance.data.datasets[0].data = data;
+                chartInstance.data.datasets[0].label = `Registrasi Desa (${selectedDays} Hari)`;
+                chartInstance.update();
+            }
             return;
         }
 
@@ -442,6 +545,9 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: {
+                    duration: 400
+                },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
@@ -496,13 +602,19 @@
         });
     }
 
-    async function fetchDashboardStats(days = selectedDays) {
+    async function fetchDashboardStats(days = selectedDays, isManual = false) {
+        if (isFetching && !isManual) return;
+        isFetching = true;
         selectedDays = days;
         let json = null;
 
-        // 1. Coba fetch dari API_URL server (jimpitan-server)
+        const timestamp = Date.now();
+
+        // 1. Coba fetch dari API_URL server (jimpitan-server) dengan cache-busting
         try {
-            const res = await fetch(`${DASHBOARD_API_URL}/superadmin/summary?days=${days}`);
+            const res = await fetch(`${DASHBOARD_API_URL}/superadmin/summary?days=${days}&_t=${timestamp}`, {
+                cache: 'no-store'
+            });
             if (res.ok) {
                 json = await res.json();
             }
@@ -513,7 +625,9 @@
         // 2. Fallback ke endpoint CodeIgniter lokal jika API_URL tidak merespons
         if (!json || !json.success) {
             try {
-                const localRes = await fetch(`<?= base_url('/dashboard/summary') ?>?days=${days}`);
+                const localRes = await fetch(`<?= base_url('/dashboard/summary') ?>?days=${days}&_t=${timestamp}`, {
+                    cache: 'no-store'
+                });
                 if (localRes.ok) {
                     json = await localRes.json();
                 }
@@ -525,49 +639,98 @@
         if (json && json.success) {
             const data = json.data;
             
-            // Update Metrik Utama
+            // Update Metrik Utama secara real-time
             if (document.getElementById('stat-desa')) {
                 document.getElementById('stat-desa').innerText = (data.totalVillages || 0).toLocaleString('id-ID');
             }
-            document.getElementById('stat-warga').innerText = (data.totalUsers || 0).toLocaleString('id-ID');
-            document.getElementById('stat-jimpitan').innerText = formatRupiah(data.totalJimpitan || 0);
-            document.getElementById('stat-pending').innerText = (data.pendingReports || 0).toLocaleString('id-ID');
+            if (document.getElementById('stat-warga')) {
+                document.getElementById('stat-warga').innerText = (data.totalUsers || 0).toLocaleString('id-ID');
+            }
+            if (document.getElementById('stat-jimpitan')) {
+                document.getElementById('stat-jimpitan').innerText = formatRupiah(data.totalJimpitan || 0);
+            }
+            if (document.getElementById('stat-pending')) {
+                document.getElementById('stat-pending').innerText = (data.pendingReports || 0).toLocaleString('id-ID');
+            }
 
-            // Render Chart jika data tersedia
+            // Render Chart Realtime
             const chartData = data.chartData || data.villageChartData;
             if (chartData && chartData.length > 0) {
                 renderChart(chartData);
             }
 
-            // Render Tabel Aktivitas Pendaftar Terbaru
+            // Render Tabel Aktivitas Pendaftar Terbaru Realtime
             if (data.recentVillages && data.recentVillages.length > 0) {
                 renderRecentVillagesTable(data.recentVillages);
             } else {
-                // Ambil daftar desa terbaru dari fallback endpoint
                 fetchVillagesFallback();
+            }
+
+            // Update timestamp pembaruan realtime
+            const lastUpdatedEl = document.getElementById('last-updated-time');
+            if (lastUpdatedEl) {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                lastUpdatedEl.innerText = `• ${timeStr} WIB`;
             }
         } else {
             console.error("Gagal menarik data super admin.");
             const errHtml = '<span style="color:#dc2626; font-size:0.85rem;">Error</span>';
-            if (document.getElementById('stat-desa')) document.getElementById('stat-desa').innerHTML = errHtml;
-            document.getElementById('stat-warga').innerHTML = errHtml;
-            document.getElementById('stat-jimpitan').innerHTML = errHtml;
-            document.getElementById('stat-pending').innerHTML = errHtml;
-            document.getElementById('table-activities').innerHTML = '<tr><td colspan="3" style="text-align: center; color: #dc2626; padding: 2rem 0;">Koneksi ke API terputus.</td></tr>';
+            const statDesaEl = document.getElementById('stat-desa');
+            if (statDesaEl && statDesaEl.innerHTML.includes('skeleton')) statDesaEl.innerHTML = errHtml;
+            const statWargaEl = document.getElementById('stat-warga');
+            if (statWargaEl && statWargaEl.innerHTML.includes('skeleton')) statWargaEl.innerHTML = errHtml;
+            const statJimpitanEl = document.getElementById('stat-jimpitan');
+            if (statJimpitanEl && statJimpitanEl.innerHTML.includes('skeleton')) statJimpitanEl.innerHTML = errHtml;
+            const statPendingEl = document.getElementById('stat-pending');
+            if (statPendingEl && statPendingEl.innerHTML.includes('skeleton')) statPendingEl.innerHTML = errHtml;
         }
+
+        isFetching = false;
+    }
+
+    async function triggerManualRefresh() {
+        const icon = document.getElementById('refresh-icon');
+        if (icon) icon.classList.add('fa-spin');
+        await fetchDashboardStats(selectedDays, true);
+        setTimeout(() => {
+            if (icon) icon.classList.remove('fa-spin');
+        }, 500);
     }
 
     function setChartPeriod(days, btn) {
         selectedDays = days;
         document.querySelectorAll('.btn-period').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
-        fetchDashboardStats(days);
+        fetchDashboardStats(days, true);
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchDashboardStats();
-        // Update statistik setiap 60 detik (menghemat resource)
-        setInterval(() => fetchDashboardStats(selectedDays), 60000);
-    });
+    function startRealtimeEngine() {
+        if (isInitialized) return;
+        isInitialized = true;
+
+        fetchDashboardStats(selectedDays, true);
+
+        // Polling realtime setiap 5 detik
+        if (pollingTimer) clearInterval(pollingTimer);
+        pollingTimer = setInterval(() => {
+            if (!document.hidden && !isFetching) {
+                fetchDashboardStats(selectedDays, false);
+            }
+        }, REALTIME_INTERVAL_MS);
+
+        // Sinkronisasi ulang saat tab aktif kembali
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                fetchDashboardStats(selectedDays, false);
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', startRealtimeEngine);
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        startRealtimeEngine();
+    }
 </script>
 <?= $this->endSection() ?>
