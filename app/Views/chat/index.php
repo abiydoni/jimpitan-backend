@@ -312,6 +312,9 @@
                 <option value="ALL">Semua Desa (Pusat)</option>
             </select>
             <input type="text" id="contact-search-input" class="search-box" placeholder="Cari warga atau grup..." oninput="filterContactList()">
+            <button type="button" id="btn-test-notif" onclick="triggerTestVillageNotif()" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);">
+                <i class="fa-solid fa-flask"></i> Uji Coba Notifikasi Desa Baru
+            </button>
         </div>
         <ul class="contact-list" id="contact-list">
             <!-- Diisi oleh JavaScript -->
@@ -504,6 +507,47 @@
     function filterContactList() {
         contactSearchQuery = document.getElementById('contact-search-input').value;
         renderContacts();
+    }
+
+    async function triggerTestVillageNotif() {
+        const btn = document.getElementById('btn-test-notif');
+        const origHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengirim Notif...';
+        
+        try {
+            const token = (typeof FIREBASE_ID_TOKEN !== 'undefined') ? FIREBASE_ID_TOKEN : '';
+            const res = await fetch(`${API_URL}/chat/test-village-notification`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    villageName: 'Desa Uji Coba Mandiri ' + Math.floor(Math.random() * 900 + 100),
+                    address: 'Jl. Merdeka No. 45, RT 02 / RW 05',
+                    registrantName: 'Bapak Hendra (Admin Baru)',
+                    registrantPhone: '081234567890',
+                    registrantEmail: 'hendra.desa@jimpitan.id'
+                })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast('Sukses', 'Notifikasi registrasi desa berhasil dikirim ke Grup Admin Pusat!');
+                document.getElementById('chat-village-filter').value = 'ALL';
+                VILLAGE_ID = 'ALL';
+                await fetchContacts();
+                await openChat('GROUP_ADMINS', 'Grup Admin Pusat', true);
+            } else {
+                showAlert('Gagal', data.message || 'Gagal mengirim notifikasi uji coba');
+            }
+        } catch (err) {
+            console.error('Error triggerTestVillageNotif:', err);
+            showAlert('Gagal', 'Terjadi kesalahan koneksi saat mengirim notifikasi.');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = origHtml;
+        }
     }
 
     async function pollChatData() {
