@@ -20,6 +20,8 @@
         position: relative;
         overflow: hidden;
         box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.2);
+        flex-wrap: wrap;
+        gap: 1.25rem;
     }
     .page-hero::before {
         content: '';
@@ -52,6 +54,72 @@
         font-size: 0.925rem; 
         max-width: 650px;
         line-height: 1.45;
+    }
+
+    /* Realtime Pill & Pulse */
+    .realtime-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(16, 185, 129, 0.16);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.32);
+        padding: 0.4rem 0.85rem;
+        border-radius: 9999px;
+        font-size: 0.775rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        user-select: none;
+        backdrop-filter: blur(4px);
+    }
+    .realtime-pill.paused {
+        background: rgba(148, 163, 184, 0.12);
+        color: #cbd5e1;
+        border-color: rgba(148, 163, 184, 0.25);
+    }
+    .pulsing-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #10b981;
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        animation: pulseGreen 1.8s infinite;
+        display: inline-block;
+    }
+    .pulsing-dot.paused {
+        background-color: #94a3b8;
+        box-shadow: none;
+        animation: none;
+    }
+    @keyframes pulseGreen {
+        0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+        70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    .btn-realtime-toggle {
+        padding: 0.55rem 0.95rem;
+        background: rgba(255, 255, 255, 0.12);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 0.625rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.2s;
+    }
+    .btn-realtime-toggle:hover {
+        background: rgba(255, 255, 255, 0.22);
+    }
+    @keyframes highlightRow {
+        0% { background-color: #dbeafe !important; }
+        50% { background-color: #eff6ff !important; }
+        100% { background-color: transparent !important; }
+    }
+    .row-highlight-new {
+        animation: highlightRow 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
     /* Stats Grid */
@@ -392,11 +460,33 @@
                 Rekam jejak setiap login warga, pendaftaran akun baru, klaim akun, penghapusan, hingga penautan akun warga secara transparan dan akurat.
             </p>
         </div>
-        <div>
-            <button class="btn-refresh" id="btn-manual-refresh" onclick="fetchLogs(1)">
-                <i class="fa-solid fa-arrows-rotate" id="refresh-icon"></i> Segarkan Data
+        <div style="display:flex; align-items:center; gap:0.65rem; flex-wrap:wrap; justify-content:flex-end;">
+            <!-- Realtime Live Pill -->
+            <div class="realtime-pill" id="realtime-pill" title="Status pemantauan realtime">
+                <span class="pulsing-dot" id="realtime-dot"></span>
+                <span id="realtime-status-text">Realtime Aktif (3s)</span>
+            </div>
+
+            <!-- Toggle Jeda Realtime -->
+            <button class="btn-realtime-toggle" id="btn-toggle-realtime" onclick="toggleRealtime()" title="Jeda atau lanjutkan pembaruan otomatis">
+                <i class="fa-solid fa-pause" id="realtime-toggle-icon"></i>
+                <span id="realtime-toggle-text">Jeda</span>
+            </button>
+
+            <!-- Manual Refresh -->
+            <button class="btn-refresh" id="btn-manual-refresh" onclick="fetchLogs(1, false)">
+                <i class="fa-solid fa-arrows-rotate" id="refresh-icon"></i> Segarkan
             </button>
         </div>
+    </div>
+
+    <!-- Floating Banner Jika ada log baru saat user di halaman > 1 -->
+    <div id="new-logs-banner" style="display:none; margin-bottom: 1.25rem; background: linear-gradient(90deg, #3730a3, #4f46e5); color: white; padding: 0.75rem 1.25rem; border-radius: 0.75rem; box-shadow: 0 4px 15px rgba(79,70,229,0.3); align-items: center; justify-content: space-between; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'" onclick="fetchLogs(1, false)">
+        <div style="display:flex; align-items:center; gap:0.65rem;">
+            <i class="fa-solid fa-bell fa-shake" style="color: #fde047; font-size:1.1rem;"></i>
+            <span id="new-logs-banner-text">Ada aktivitas baru tercatat! Klik untuk melihat halaman pertama.</span>
+        </div>
+        <span style="background: rgba(255,255,255,0.2); padding: 0.25rem 0.65rem; border-radius: 0.375rem; font-size: 0.775rem;">Buka Halaman 1 &rarr;</span>
     </div>
 
     <!-- Stats Row -->
@@ -446,7 +536,7 @@
             <input type="text" id="search-input" placeholder="Cari nama warga, email, NIK, deskripsi, atau IP..." oninput="debounceSearch()">
         </div>
 
-        <select id="filter-action" class="toolbar-select" onchange="fetchLogs(1)">
+        <select id="filter-action" class="toolbar-select" onchange="fetchLogs(1, false)">
             <option value="ALL">🔍 Semua Tipe Aksi</option>
             <option value="LOGIN">🟢 LOGIN (Login Berhasil)</option>
             <option value="LOGIN_PENDING_VILLAGE">🟡 LOGIN_PENDING_VILLAGE (Login Belum Ada RT)</option>
@@ -460,7 +550,7 @@
             <option value="BULK_IMPORT_USERS">📦 BULK_IMPORT_USERS (Import Warga)</option>
         </select>
 
-        <select id="filter-village" class="toolbar-select" onchange="fetchLogs(1)">
+        <select id="filter-village" class="toolbar-select" onchange="fetchLogs(1, false)">
             <option value="ALL">🏡 Semua Desa / RT</option>
         </select>
     </div>
@@ -528,19 +618,89 @@
     let debounceTimer = null;
     let currentLogsData = [];
 
+    // Realtime Polling state
+    let isRealtimeActive = true;
+    let realtimeTimer = null;
+    let isFetching = false;
+    let lastKnownTopId = null;
+    const POLL_INTERVAL = 3000; // Cek aktivitas baru setiap 3 detik
+
     async function getSafeToken() {
         return (typeof FIREBASE_ID_TOKEN !== 'undefined' && FIREBASE_ID_TOKEN) ? FIREBASE_ID_TOKEN : getFirebaseToken();
     }
 
     document.addEventListener('DOMContentLoaded', () => {
         loadVillagesDropdown();
-        fetchLogs(1);
+        fetchLogs(1, false);
+        startRealtimePolling();
     });
+
+    // Pause polling jika tab browser tidak aktif untuk hemat bandwidth
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopRealtimePolling();
+        } else if (isRealtimeActive) {
+            startRealtimePolling();
+            pollRealtimeLogs();
+        }
+    });
+
+    function startRealtimePolling() {
+        stopRealtimePolling();
+        realtimeTimer = setInterval(pollRealtimeLogs, POLL_INTERVAL);
+    }
+
+    function stopRealtimePolling() {
+        if (realtimeTimer) {
+            clearInterval(realtimeTimer);
+            realtimeTimer = null;
+        }
+    }
+
+    function toggleRealtime() {
+        isRealtimeActive = !isRealtimeActive;
+        const pill = document.getElementById('realtime-pill');
+        const dot = document.getElementById('realtime-dot');
+        const statusText = document.getElementById('realtime-status-text');
+        const toggleIcon = document.getElementById('realtime-toggle-icon');
+        const toggleText = document.getElementById('realtime-toggle-text');
+
+        if (isRealtimeActive) {
+            pill.classList.remove('paused');
+            dot.classList.remove('paused');
+            statusText.textContent = 'Realtime Aktif (3s)';
+            toggleIcon.className = 'fa-solid fa-pause';
+            toggleText.textContent = 'Jeda';
+            startRealtimePolling();
+            pollRealtimeLogs();
+        } else {
+            pill.classList.add('paused');
+            dot.classList.add('paused');
+            statusText.textContent = 'Realtime Dijeda';
+            toggleIcon.className = 'fa-solid fa-play';
+            toggleText.textContent = 'Lanjutkan';
+            stopRealtimePolling();
+        }
+    }
+
+    function pollRealtimeLogs() {
+        if (!isRealtimeActive || isFetching) return;
+
+        // Jangan auto-refresh jika modal detail sedang terbuka
+        const modal = document.getElementById('detail-modal');
+        if (modal && modal.style.display === 'flex') return;
+
+        // Jangan auto-refresh jika pengguna sedang mengetik di kotak pencarian
+        const searchInput = document.getElementById('search-input');
+        if (searchInput && document.activeElement === searchInput) return;
+
+        fetchLogs(currentPage, true);
+    }
 
     function debounceSearch() {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
-            fetchLogs(1);
+            fetchLogs(1, false);
         }, 350);
     }
 
@@ -585,20 +745,25 @@
         }
     }
 
-    async function fetchLogs(page = 1) {
+    async function fetchLogs(page = 1, isSilent = false) {
+        if (isFetching) return;
+        isFetching = true;
         currentPage = page;
+
         const tbody = document.getElementById('logs-tbody');
         const icon = document.getElementById('refresh-icon');
-        if (icon) icon.classList.add('fa-spin');
 
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="7" style="text-align:center; padding: 2.5rem; color: #94a3b8;">
-                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; color: #4f46e5; margin-bottom: 0.5rem; display: block;"></i>
-                    Memuat data...
-                </td>
-            </tr>
-        `;
+        if (!isSilent) {
+            if (icon) icon.classList.add('fa-spin');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align:center; padding: 2.5rem; color: #94a3b8;">
+                        <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; color: #4f46e5; margin-bottom: 0.5rem; display: block;"></i>
+                        Memuat data...
+                    </td>
+                </tr>
+            `;
+        }
 
         const action = document.getElementById('filter-action').value;
         const villageId = document.getElementById('filter-village').value;
@@ -614,52 +779,89 @@
 
         let json = null;
 
-        // 1. Coba fetch dari API_URL (Node.js jimpitan-server)
         try {
-            const token = await getSafeToken();
-            const res = await fetch(`${API_URL}/master/activity-logs?${queryParams.toString()}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (res.ok) {
-                json = await res.json();
-            }
-        } catch (errApi) {
-            console.warn('Fetch dari API_URL gagal, mencoba fallback ke endpoint lokal...', errApi);
-        }
-
-        // 2. Fallback ke endpoint CI4 lokal (/activity_logs/data)
-        if (!json || !json.success) {
+            // 1. Coba fetch dari API_URL (Node.js jimpitan-server)
             try {
-                const localRes = await fetch(`<?= base_url('/activity_logs/data') ?>?${queryParams.toString()}`);
-                if (localRes.ok) {
-                    json = await localRes.json();
+                const token = await getSafeToken();
+                const res = await fetch(`${API_URL}/master/activity-logs?${queryParams.toString()}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    json = await res.json();
                 }
-            } catch (errLocal) {
-                console.error('Fetch endpoint lokal juga gagal:', errLocal);
+            } catch (errApi) {
+                // Silently fallback
             }
+
+            // 2. Fallback ke endpoint CI4 lokal (/activity_logs/data)
+            if (!json || !json.success) {
+                try {
+                    const localRes = await fetch(`<?= base_url('/activity_logs/data') ?>?${queryParams.toString()}`);
+                    if (localRes.ok) {
+                        json = await localRes.json();
+                    }
+                } catch (errLocal) {}
+            }
+        } finally {
+            isFetching = false;
+            if (icon && !isSilent) icon.classList.remove('fa-spin');
         }
 
-        if (icon) icon.classList.remove('fa-spin');
-
         if (!json || !json.success) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="7" style="text-align:center; padding: 2.5rem; color: #ef4444;">
-                        <i class="fa-solid fa-circle-exclamation" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block;"></i>
-                        Gagal memuat log aktivitas: ${json ? (json.message || 'Error server') : 'Koneksi terputus'}.
-                    </td>
-                </tr>
-            `;
+            if (!isSilent) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding: 2.5rem; color: #ef4444;">
+                            <i class="fa-solid fa-circle-exclamation" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block;"></i>
+                            Gagal memuat log aktivitas: ${json ? (json.message || 'Error server') : 'Koneksi terputus'}.
+                        </td>
+                    </tr>
+                `;
+            }
             return;
         }
 
-        currentLogsData = json.data || [];
-        totalLogs = json.total || currentLogsData.length;
+        const newLogs = json.data || [];
+        const incomingTopId = newLogs.length > 0 ? newLogs[0].id : null;
+        totalLogs = json.total || newLogs.length;
         totalPages = json.totalPages || Math.ceil(totalLogs / limitPerPage) || 1;
 
-        updateStats(currentLogsData, totalLogs);
-        renderTable(currentLogsData);
-        renderPagination();
+        // Deteksi apakah ada item baru
+        const hasNewItems = lastKnownTopId && incomingTopId && (lastKnownTopId !== incomingTopId);
+        const newIdsSet = new Set();
+
+        if (hasNewItems && isSilent) {
+            const prevIds = new Set(currentLogsData.map(l => l.id));
+            newLogs.forEach(l => {
+                if (!prevIds.has(l.id)) {
+                    newIdsSet.add(l.id);
+                }
+            });
+        }
+
+        // Jika user sedang melihat halaman > 1 dan ada log baru masuk
+        const banner = document.getElementById('new-logs-banner');
+        if (currentPage > 1 && hasNewItems) {
+            if (banner) {
+                banner.style.display = 'flex';
+                document.getElementById('new-logs-banner-text').textContent = 
+                    `Ada ${newIdsSet.size || 'beberapa'} aktivitas baru baru saja tercatat! Klik di sini untuk melihat.`;
+            }
+        } else {
+            if (banner) banner.style.display = 'none';
+        }
+
+        // Perbarui data jika bukan silent ATAU ada item baru ATAU data awal
+        if (!isSilent || hasNewItems || currentLogsData.length === 0) {
+            currentLogsData = newLogs;
+            lastKnownTopId = incomingTopId;
+            updateStats(currentLogsData, totalLogs);
+            renderTable(currentLogsData, newIdsSet);
+            renderPagination();
+        } else {
+            // Update stats tetap berjalan halus
+            updateStats(currentLogsData, totalLogs);
+        }
     }
 
     function updateStats(logs, total) {
@@ -760,7 +962,7 @@
             .replace(/'/g, '&#039;');
     }
 
-    function renderTable(logs) {
+    function renderTable(logs, newIdsSet = new Set()) {
         const tbody = document.getElementById('logs-tbody');
         tbody.innerHTML = '';
 
@@ -778,6 +980,11 @@
 
         logs.forEach((log, index) => {
             const tr = document.createElement('tr');
+
+            // Tambahkan animasi highlight jika baris ini baru saja masuk secara realtime
+            if (newIdsSet && newIdsSet.has(log.id)) {
+                tr.classList.add('row-highlight-new');
+            }
 
             const userName = log.userName || (log.userEmail ? log.userEmail.split('@')[0] : 'Sistem/Anonim');
             const initial = userName.charAt(0).toUpperCase();
@@ -852,7 +1059,7 @@
         prevBtn.className = 'btn-page';
         prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
         prevBtn.disabled = currentPage === 1;
-        prevBtn.onclick = () => fetchLogs(currentPage - 1);
+        prevBtn.onclick = () => fetchLogs(currentPage - 1, false);
         container.appendChild(prevBtn);
 
         // Page buttons (windowing)
@@ -868,7 +1075,7 @@
             const pageBtn = document.createElement('button');
             pageBtn.className = `btn-page ${p === currentPage ? 'active' : ''}`;
             pageBtn.textContent = p;
-            pageBtn.onclick = () => fetchLogs(p);
+            pageBtn.onclick = () => fetchLogs(p, false);
             container.appendChild(pageBtn);
         }
 
@@ -877,7 +1084,7 @@
         nextBtn.className = 'btn-page';
         nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
         nextBtn.disabled = currentPage === totalPages;
-        nextBtn.onclick = () => fetchLogs(currentPage + 1);
+        nextBtn.onclick = () => fetchLogs(currentPage + 1, false);
         container.appendChild(nextBtn);
     }
 
