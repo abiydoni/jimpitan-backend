@@ -126,7 +126,12 @@ class Villages extends BaseController
             }
             $userDeleteBuilder->delete();
 
-            // q. villages
+            // q. activity_logs
+            if ($db->tableExists('activity_logs')) {
+                $db->table('activity_logs')->where('villageId', $villageId)->delete();
+            }
+
+            // r. villages
             $db->table('villages')->where('id', $villageId)->delete();
 
             $db->query('SET FOREIGN_KEY_CHECKS = 1;');

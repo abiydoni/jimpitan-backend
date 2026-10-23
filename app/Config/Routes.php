@@ -20,6 +20,8 @@ $routes->match(['delete', 'post'], '/villages/delete/(:segment)', 'Villages::del
 $routes->match(['post', 'get'], '/villages/notify/(:segment)', 'Villages::notifyChat/$1');
 $routes->match(['post', 'get'], '/villages/(:segment)/notify', 'Villages::notifyChat/$1');
 $routes->get('/security', 'Security::index');
+$routes->get('/activity_logs', 'ActivityLogs::index');
+$routes->get('/activity_logs/data', 'ActivityLogs::getData');
 $routes->get('/wa_blast', 'WaBlast::index');
 $routes->get('/wa_blast/villages', 'WaBlast::getVillages');
 $routes->get('/wa_blast/recipients', 'WaBlast::getRecipients');

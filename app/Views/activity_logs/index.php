@@ -1,0 +1,962 @@
+<?= $this->extend('layout/main') ?>
+
+<?= $this->section('styles') ?>
+<style>
+    /* ===== ACTIVITY LOGS - AUDIT TRAIL ===== */
+    .logs-wrap {
+        width: 100%;
+    }
+
+    /* Hero Header */
+    .page-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #312e81 100%);
+        border-radius: 1.25rem;
+        padding: 2rem 2.25rem;
+        margin-bottom: 1.75rem;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.2);
+    }
+    .page-hero::before {
+        content: '';
+        position: absolute;
+        top: -60px; right: -30px;
+        width: 240px; height: 240px;
+        background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, rgba(99, 102, 241, 0) 70%);
+        border-radius: 50%;
+    }
+    .page-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -50px; right: 120px;
+        width: 140px; height: 140px;
+        background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(56, 189, 248, 0) 70%);
+        border-radius: 50%;
+    }
+    .hero-text h1 { 
+        margin: 0 0 0.4rem 0; 
+        font-size: 1.75rem; 
+        font-weight: 700; 
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+    .hero-text p { 
+        margin: 0; 
+        opacity: 0.82; 
+        font-size: 0.925rem; 
+        max-width: 650px;
+        line-height: 1.45;
+    }
+
+    /* Stats Grid */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .stat-chip {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.875rem;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .stat-chip:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px -3px rgba(0,0,0,0.07);
+    }
+    .stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 0.625rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+    .stat-num {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.2;
+    }
+    .stat-label {
+        font-size: 0.775rem;
+        color: #64748b;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    /* Toolbar Filter */
+    .toolbar-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.875rem;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.25rem;
+        display: flex;
+        gap: 0.85rem;
+        align-items: center;
+        flex-wrap: wrap;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .toolbar-search {
+        flex: 1;
+        min-width: 220px;
+        position: relative;
+    }
+    .toolbar-search input {
+        width: 100%;
+        padding: 0.65rem 1rem 0.65rem 2.4rem;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 0.625rem;
+        font-family: inherit;
+        font-size: 0.875rem;
+        background: #f8fafc;
+        box-sizing: border-box;
+        transition: all 0.2s;
+    }
+    .toolbar-search input:focus {
+        outline: none;
+        background: #ffffff;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+    .toolbar-search i {
+        position: absolute;
+        left: 0.85rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 0.9rem;
+    }
+    .toolbar-select {
+        padding: 0.65rem 1rem;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 0.625rem;
+        font-family: inherit;
+        font-size: 0.875rem;
+        background: #f8fafc;
+        cursor: pointer;
+        color: #334155;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    .toolbar-select:focus {
+        outline: none;
+        background: #ffffff;
+        border-color: #4f46e5;
+    }
+    .btn-refresh {
+        padding: 0.65rem 1.15rem;
+        background: #4f46e5;
+        color: white;
+        border: none;
+        border-radius: 0.625rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background 0.2s;
+    }
+    .btn-refresh:hover {
+        background: #4338ca;
+    }
+
+    /* Logs Table Card */
+    .table-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.875rem;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .logs-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        font-size: 0.85rem;
+    }
+    .logs-table thead tr {
+        background: #f8fafc;
+        border-bottom: 2px solid #e2e8f0;
+        color: #475569;
+        font-size: 0.775rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .logs-table th {
+        padding: 0.9rem 1.1rem;
+        font-weight: 700;
+    }
+    .logs-table td {
+        padding: 0.9rem 1.1rem;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+    .logs-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    /* Action Badges */
+    .badge-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.25rem 0.65rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+    }
+    .badge-login { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .badge-login-pending { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+    .badge-join { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .badge-claim { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+    .badge-link { background: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+    .badge-save { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+    .badge-delete { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+    .badge-village { background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe; }
+    .badge-default { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+
+    /* Village Tag */
+    .village-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: #f1f5f9;
+        color: #334155;
+        font-weight: 600;
+        font-size: 0.775rem;
+        padding: 0.2rem 0.55rem;
+        border-radius: 0.375rem;
+        border: 1px solid #e2e8f0;
+    }
+    .village-code-badge {
+        font-family: monospace;
+        font-size: 0.725rem;
+        color: #6366f1;
+        background: #eef2ff;
+        padding: 0.1rem 0.35rem;
+        border-radius: 0.25rem;
+        font-weight: 700;
+    }
+
+    /* User Cell */
+    .user-cell {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+    }
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #e2e8f0;
+        color: #475569;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+    }
+    .user-meta-name {
+        font-weight: 600;
+        color: #0f172a;
+        line-height: 1.25;
+    }
+    .user-meta-sub {
+        font-size: 0.75rem;
+        color: #64748b;
+        max-width: 170px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Pagination */
+    .pagination-bar {
+        padding: 0.85rem 1.25rem;
+        background: #ffffff;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        font-size: 0.825rem;
+        color: #64748b;
+    }
+    .pagination-btns {
+        display: flex;
+        gap: 0.35rem;
+    }
+    .btn-page {
+        padding: 0.4rem 0.75rem;
+        border: 1px solid #cbd5e1;
+        background: white;
+        color: #334155;
+        border-radius: 0.375rem;
+        font-size: 0.825rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-page:hover:not(:disabled) {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+    }
+    .btn-page.active {
+        background: #4f46e5;
+        border-color: #4f46e5;
+        color: white;
+    }
+    .btn-page:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    /* Modal Detail */
+    .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.65);
+        backdrop-filter: blur(2px);
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+    .modal-box {
+        background: white;
+        border-radius: 1rem;
+        width: 100%;
+        max-width: 650px;
+        max-height: 85vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        overflow: hidden;
+    }
+    .modal-head {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f8fafc;
+    }
+    .modal-body {
+        padding: 1.5rem;
+        overflow-y: auto;
+    }
+    .code-box {
+        background: #0f172a;
+        color: #38bdf8;
+        padding: 1rem;
+        border-radius: 0.625rem;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.8rem;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+</style>
+<?= $this->endSection() ?>
+
+<?= $this->section('content') ?>
+<div class="logs-wrap">
+    <!-- Hero Header -->
+    <div class="page-hero">
+        <div class="hero-text">
+            <h1><i class="fa-solid fa-clock-rotate-left" style="color: #60a5fa;"></i> Log Aktivitas Sistem (Audit Trail)</h1>
+            <p>
+                Rekam jejak setiap login warga, pendaftaran akun baru, klaim akun, penghapusan, hingga penautan akun warga secara transparan dan akurat.
+            </p>
+        </div>
+        <div>
+            <button class="btn-refresh" id="btn-manual-refresh" onclick="fetchLogs(1)">
+                <i class="fa-solid fa-arrows-rotate" id="refresh-icon"></i> Segarkan Data
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+        <div class="stat-chip">
+            <div class="stat-icon" style="background:#eef2ff; color:#4f46e5;">
+                <i class="fa-solid fa-list-check"></i>
+            </div>
+            <div>
+                <div class="stat-num" id="stat-total">0</div>
+                <div class="stat-label">Total Aktivitas</div>
+            </div>
+        </div>
+        <div class="stat-chip">
+            <div class="stat-icon" style="background:#dcfce7; color:#16a34a;">
+                <i class="fa-solid fa-right-to-bracket"></i>
+            </div>
+            <div>
+                <div class="stat-num" id="stat-login">0</div>
+                <div class="stat-label">Aktivitas Login</div>
+            </div>
+        </div>
+        <div class="stat-chip">
+            <div class="stat-icon" style="background:#f3e8ff; color:#9333ea;">
+                <i class="fa-solid fa-link"></i>
+            </div>
+            <div>
+                <div class="stat-num" id="stat-link">0</div>
+                <div class="stat-label">Tautkan / Klaim Akun</div>
+            </div>
+        </div>
+        <div class="stat-chip">
+            <div class="stat-icon" style="background:#fee2e2; color:#dc2626;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <div class="stat-num" id="stat-delete">0</div>
+                <div class="stat-label">Aksi Hapus / Kritis</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar & Filter -->
+    <div class="toolbar-card">
+        <div class="toolbar-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="search-input" placeholder="Cari nama warga, email, NIK, deskripsi, atau IP..." oninput="debounceSearch()">
+        </div>
+
+        <select id="filter-action" class="toolbar-select" onchange="fetchLogs(1)">
+            <option value="ALL">🔍 Semua Tipe Aksi</option>
+            <option value="LOGIN">🟢 LOGIN (Login Berhasil)</option>
+            <option value="LOGIN_PENDING_VILLAGE">🟡 LOGIN_PENDING_VILLAGE (Login Belum Ada RT)</option>
+            <option value="JOIN_VILLAGE_PENDING">🔵 JOIN_VILLAGE_PENDING (Pendaftar Warga Baru)</option>
+            <option value="CLAIM_ACCOUNT">🟠 CLAIM_ACCOUNT (Klaim Akun Warga)</option>
+            <option value="LINK_ACCOUNT">🟣 LINK_ACCOUNT (Tautkan Akun ke Warga Lama)</option>
+            <option value="SAVE_FAMILY">🟢 SAVE_FAMILY (Tambah/Update Warga/KK)</option>
+            <option value="DELETE_USER">🔴 DELETE_USER (Hapus Warga)</option>
+            <option value="DELETE_FAMILY">🔴 DELETE_FAMILY (Hapus Anggota Keluarga)</option>
+            <option value="REGISTER_VILLAGE">🏛️ REGISTER_VILLAGE (Daftar Desa Baru)</option>
+            <option value="BULK_IMPORT_USERS">📦 BULK_IMPORT_USERS (Import Warga)</option>
+        </select>
+
+        <select id="filter-village" class="toolbar-select" onchange="fetchLogs(1)">
+            <option value="ALL">🏡 Semua Desa / RT</option>
+        </select>
+    </div>
+
+    <!-- Table Card -->
+    <div class="table-card">
+        <div style="overflow-x: auto;">
+            <table class="logs-table">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">Waktu</th>
+                        <th style="width: 220px;">Aktor / Pengguna</th>
+                        <th style="width: 180px;">Desa / Wilayah</th>
+                        <th style="width: 160px;">Aksi</th>
+                        <th>Keterangan Aktivitas</th>
+                        <th style="width: 110px;">Perangkat/IP</th>
+                        <th style="width: 80px; text-align: center;">Detail</th>
+                    </tr>
+                </thead>
+                <tbody id="logs-tbody">
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding: 3rem; color: #94a3b8;">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.75rem; color: #4f46e5; margin-bottom: 0.5rem; display: block;"></i>
+                            Memuat log aktivitas...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-bar">
+            <div>
+                Menampilkan <strong id="showing-start">0</strong> - <strong id="showing-end">0</strong> dari <strong id="showing-total">0</strong> aktivitas
+            </div>
+            <div class="pagination-btns" id="pagination-buttons">
+                <!-- Tombol Pagination diinjeksi via JavaScript -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Detail Payload -->
+<div class="modal-backdrop" id="detail-modal" onclick="closeModalOnBackdrop(event)">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3 style="margin:0; font-size:1.1rem; font-weight:700; color:#0f172a; display:flex; align-items:center; gap:0.5rem;">
+                <i class="fa-solid fa-circle-info" style="color:#4f46e5;"></i> Rincian Audit Log
+            </h3>
+            <button onclick="closeDetailModal()" style="background:none; border:none; font-size:1.4rem; color:#94a3b8; cursor:pointer; line-height:1;">&times;</button>
+        </div>
+        <div class="modal-body" id="detail-modal-body">
+            <!-- Konten diisi JavaScript -->
+        </div>
+    </div>
+</div>
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script>
+    let currentPage = 1;
+    const limitPerPage = 50;
+    let totalLogs = 0;
+    let totalPages = 1;
+    let debounceTimer = null;
+    let currentLogsData = [];
+
+    async function getSafeToken() {
+        return (typeof FIREBASE_ID_TOKEN !== 'undefined' && FIREBASE_ID_TOKEN) ? FIREBASE_ID_TOKEN : getFirebaseToken();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadVillagesDropdown();
+        fetchLogs(1);
+    });
+
+    function debounceSearch() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            fetchLogs(1);
+        }, 350);
+    }
+
+    async function loadVillagesDropdown() {
+        const select = document.getElementById('filter-village');
+        try {
+            const token = await getSafeToken();
+            let villages = [];
+
+            // 1. Coba dari API_URL
+            try {
+                const res = await fetch(`${API_URL}/superadmin/villages`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const json = await res.json();
+                if (json.success && Array.isArray(json.data)) {
+                    villages = json.data;
+                }
+            } catch (errApi) {
+                console.warn('Gagal fetch villages dari API_URL, coba lokal...', errApi);
+            }
+
+            // 2. Fallback lokal jika kosong
+            if (villages.length === 0) {
+                try {
+                    const localRes = await fetch(`<?= base_url('/wa_blast/villages') ?>`);
+                    const localJson = await localRes.json();
+                    if (localJson.success && Array.isArray(localJson.data)) {
+                        villages = localJson.data;
+                    }
+                } catch (errLocal) {}
+            }
+
+            villages.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v.id;
+                opt.textContent = `${v.name} (${v.uniqueCode || '-'})`;
+                select.appendChild(opt);
+            });
+        } catch (e) {
+            console.error('Error loading villages dropdown:', e);
+        }
+    }
+
+    async function fetchLogs(page = 1) {
+        currentPage = page;
+        const tbody = document.getElementById('logs-tbody');
+        const icon = document.getElementById('refresh-icon');
+        if (icon) icon.classList.add('fa-spin');
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align:center; padding: 2.5rem; color: #94a3b8;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; color: #4f46e5; margin-bottom: 0.5rem; display: block;"></i>
+                    Memuat data...
+                </td>
+            </tr>
+        `;
+
+        const action = document.getElementById('filter-action').value;
+        const villageId = document.getElementById('filter-village').value;
+        const search = document.getElementById('search-input').value.trim();
+
+        const queryParams = new URLSearchParams({
+            page: currentPage,
+            limit: limitPerPage,
+            action: action,
+            villageId: villageId,
+            search: search
+        });
+
+        let json = null;
+
+        // 1. Coba fetch dari API_URL (Node.js jimpitan-server)
+        try {
+            const token = await getSafeToken();
+            const res = await fetch(`${API_URL}/master/activity-logs?${queryParams.toString()}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                json = await res.json();
+            }
+        } catch (errApi) {
+            console.warn('Fetch dari API_URL gagal, mencoba fallback ke endpoint lokal...', errApi);
+        }
+
+        // 2. Fallback ke endpoint CI4 lokal (/activity_logs/data)
+        if (!json || !json.success) {
+            try {
+                const localRes = await fetch(`<?= base_url('/activity_logs/data') ?>?${queryParams.toString()}`);
+                if (localRes.ok) {
+                    json = await localRes.json();
+                }
+            } catch (errLocal) {
+                console.error('Fetch endpoint lokal juga gagal:', errLocal);
+            }
+        }
+
+        if (icon) icon.classList.remove('fa-spin');
+
+        if (!json || !json.success) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align:center; padding: 2.5rem; color: #ef4444;">
+                        <i class="fa-solid fa-circle-exclamation" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block;"></i>
+                        Gagal memuat log aktivitas: ${json ? (json.message || 'Error server') : 'Koneksi terputus'}.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        currentLogsData = json.data || [];
+        totalLogs = json.total || currentLogsData.length;
+        totalPages = json.totalPages || Math.ceil(totalLogs / limitPerPage) || 1;
+
+        updateStats(currentLogsData, totalLogs);
+        renderTable(currentLogsData);
+        renderPagination();
+    }
+
+    function updateStats(logs, total) {
+        document.getElementById('stat-total').textContent = total.toLocaleString('id-ID');
+        
+        let loginCount = 0;
+        let linkCount = 0;
+        let deleteCount = 0;
+
+        logs.forEach(l => {
+            const act = (l.action || '').toUpperCase();
+            if (act.includes('LOGIN')) loginCount++;
+            if (act.includes('LINK') || act.includes('CLAIM') || act.includes('JOIN')) linkCount++;
+            if (act.includes('DELETE') || act.includes('CLEANUP')) deleteCount++;
+        });
+
+        document.getElementById('stat-login').textContent = loginCount;
+        document.getElementById('stat-link').textContent = linkCount;
+        document.getElementById('stat-delete').textContent = deleteCount;
+    }
+
+    function formatTime(isoStr) {
+        if (!isoStr) return '-';
+        const d = new Date(isoStr);
+        if (isNaN(d.getTime())) return isoStr;
+
+        const pad = n => String(n).padStart(2, '0');
+        const day = pad(d.getDate());
+        const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+        const month = months[d.getMonth()];
+        const year = d.getFullYear();
+        const hours = pad(d.getHours());
+        const mins = pad(d.getMinutes());
+        const secs = pad(d.getSeconds());
+
+        return `
+            <div style="font-weight:600; color:#1e293b; font-size:0.825rem;">${day} ${month} ${year}</div>
+            <div style="font-size:0.75rem; color:#64748b; font-family:monospace;">${hours}:${mins}:${secs} WIB</div>
+        `;
+    }
+
+    function getActionBadge(action) {
+        const act = (action || '').toUpperCase();
+        let badgeClass = 'badge-default';
+        let icon = '<i class="fa-solid fa-circle-dot"></i>';
+
+        switch (act) {
+            case 'LOGIN':
+                badgeClass = 'badge-login';
+                icon = '<i class="fa-solid fa-right-to-bracket"></i>';
+                break;
+            case 'LOGIN_PENDING_VILLAGE':
+                badgeClass = 'badge-login-pending';
+                icon = '<i class="fa-solid fa-user-clock"></i>';
+                break;
+            case 'JOIN_VILLAGE_PENDING':
+                badgeClass = 'badge-join';
+                icon = '<i class="fa-solid fa-user-plus"></i>';
+                break;
+            case 'CLAIM_ACCOUNT':
+                badgeClass = 'badge-claim';
+                icon = '<i class="fa-solid fa-id-badge"></i>';
+                break;
+            case 'LINK_ACCOUNT':
+                badgeClass = 'badge-link';
+                icon = '<i class="fa-solid fa-link"></i>';
+                break;
+            case 'SAVE_FAMILY':
+                badgeClass = 'badge-save';
+                icon = '<i class="fa-solid fa-user-check"></i>';
+                break;
+            case 'DELETE_USER':
+            case 'DELETE_FAMILY':
+            case 'CLEANUP_USERS':
+                badgeClass = 'badge-delete';
+                icon = '<i class="fa-solid fa-trash-can"></i>';
+                break;
+            case 'REGISTER_VILLAGE':
+                badgeClass = 'badge-village';
+                icon = '<i class="fa-solid fa-landmark"></i>';
+                break;
+            case 'BULK_IMPORT_USERS':
+                badgeClass = 'badge-join';
+                icon = '<i class="fa-solid fa-file-import"></i>';
+                break;
+        }
+
+        return `<span class="badge-action ${badgeClass}">${icon} ${escapeHtml(action)}</span>`;
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function renderTable(logs) {
+        const tbody = document.getElementById('logs-tbody');
+        tbody.innerHTML = '';
+
+        if (logs.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align:center; padding: 3rem; color: #94a3b8;">
+                        <i class="fa-regular fa-folder-open" style="font-size: 2rem; margin-bottom: 0.5rem; display: block; color: #cbd5e1;"></i>
+                        Tidak ada log aktivitas yang cocok dengan filter.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        logs.forEach((log, index) => {
+            const tr = document.createElement('tr');
+
+            const userName = log.userName || (log.userEmail ? log.userEmail.split('@')[0] : 'Sistem/Anonim');
+            const initial = userName.charAt(0).toUpperCase();
+            const userEmail = log.userEmail || (log.userId ? `UID: ${log.userId.slice(0, 8)}...` : '-');
+
+            let villageDisplay = '<span style="color:#94a3b8; font-size:0.75rem;">- Global -</span>';
+            if (log.Village && log.Village.name) {
+                villageDisplay = `
+                    <div class="village-tag">
+                        <span>🏡 ${escapeHtml(log.Village.name)}</span>
+                        ${log.Village.uniqueCode ? `<span class="village-code-badge">${escapeHtml(log.Village.uniqueCode)}</span>` : ''}
+                    </div>
+                `;
+            } else if (log.villageId) {
+                villageDisplay = `<span class="village-tag" style="font-family:monospace; font-size:0.75rem;">ID: ${escapeHtml(log.villageId)}</span>`;
+            }
+
+            const ip = log.ipAddress || '-';
+            const userAgent = log.userAgent || '';
+            const isMobile = /Android|iPhone|Mobile/i.test(userAgent);
+            const deviceBadge = isMobile 
+                ? '<span title="Android / Mobile" style="color:#10b981; font-size:0.8rem;"><i class="fa-solid fa-mobile-screen"></i> Mobile</span>'
+                : '<span title="Web Browser" style="color:#6366f1; font-size:0.8rem;"><i class="fa-solid fa-desktop"></i> Web</span>';
+
+            tr.innerHTML = `
+                <td>${formatTime(log.createdAt)}</td>
+                <td>
+                    <div class="user-cell">
+                        <div class="user-avatar">${initial}</div>
+                        <div>
+                            <div class="user-meta-name" title="${escapeHtml(userName)}">${escapeHtml(userName)}</div>
+                            <div class="user-meta-sub" title="${escapeHtml(userEmail)}">${escapeHtml(userEmail)}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>${villageDisplay}</td>
+                <td>${getActionBadge(log.action)}</td>
+                <td>
+                    <div style="font-size:0.85rem; color:#1e293b; line-height:1.4;">${escapeHtml(log.description || '-')}</div>
+                    ${log.targetName ? `<div style="font-size:0.75rem; color:#6366f1; margin-top:2px;"><i class="fa-solid fa-arrow-turn-down-right"></i> Target: <strong>${escapeHtml(log.targetName)}</strong></div>` : ''}
+                </td>
+                <td>
+                    <div style="font-size:0.75rem; font-family:monospace; color:#475569;">${escapeHtml(ip)}</div>
+                    <div>${deviceBadge}</div>
+                </td>
+                <td style="text-align: center;">
+                    <button onclick="showDetailModal(${index})" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:0.375rem; padding:0.35rem 0.6rem; color:#475569; cursor:pointer; font-size:0.8rem; transition:all 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'" title="Lihat Payload Detail">
+                        <i class="fa-solid fa-code"></i>
+                    </button>
+                </td>
+            `;
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    function renderPagination() {
+        const start = totalLogs === 0 ? 0 : (currentPage - 1) * limitPerPage + 1;
+        const end = Math.min(currentPage * limitPerPage, totalLogs);
+
+        document.getElementById('showing-start').textContent = start;
+        document.getElementById('showing-end').textContent = end;
+        document.getElementById('showing-total').textContent = totalLogs;
+
+        const container = document.getElementById('pagination-buttons');
+        container.innerHTML = '';
+
+        if (totalPages <= 1) return;
+
+        // Prev Button
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'btn-page';
+        prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => fetchLogs(currentPage - 1);
+        container.appendChild(prevBtn);
+
+        // Page buttons (windowing)
+        const maxVisible = 5;
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+        if (endPage - startPage < maxVisible - 1) {
+            startPage = Math.max(1, endPage - maxVisible + 1);
+        }
+
+        for (let p = startPage; p <= endPage; p++) {
+            const pageBtn = document.createElement('button');
+            pageBtn.className = `btn-page ${p === currentPage ? 'active' : ''}`;
+            pageBtn.textContent = p;
+            pageBtn.onclick = () => fetchLogs(p);
+            container.appendChild(pageBtn);
+        }
+
+        // Next Button
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'btn-page';
+        nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = () => fetchLogs(currentPage + 1);
+        container.appendChild(nextBtn);
+    }
+
+    function showDetailModal(index) {
+        const log = currentLogsData[index];
+        if (!log) return;
+
+        const modalBody = document.getElementById('detail-modal-body');
+
+        let detailsFormatted = '{}';
+        if (log.details) {
+            try {
+                const parsed = typeof log.details === 'string' ? JSON.parse(log.details) : log.details;
+                detailsFormatted = JSON.stringify(parsed, null, 2);
+            } catch (e) {
+                detailsFormatted = String(log.details);
+            }
+        }
+
+        modalBody.innerHTML = `
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem; margin-bottom:1.25rem;">
+                <div style="background:#f8fafc; padding:0.75rem; border-radius:0.5rem; border:1px solid #e2e8f0;">
+                    <div style="font-size:0.75rem; color:#64748b; font-weight:600;">ID LOG</div>
+                    <div style="font-size:0.875rem; font-weight:700; color:#0f172a; font-family:monospace;">${escapeHtml(log.id)}</div>
+                </div>
+                <div style="background:#f8fafc; padding:0.75rem; border-radius:0.5rem; border:1px solid #e2e8f0;">
+                    <div style="font-size:0.75rem; color:#64748b; font-weight:600;">AKSI</div>
+                    <div style="margin-top:2px;">${getActionBadge(log.action)}</div>
+                </div>
+                <div style="background:#f8fafc; padding:0.75rem; border-radius:0.5rem; border:1px solid #e2e8f0;">
+                    <div style="font-size:0.75rem; color:#64748b; font-weight:600;">AKTOR (USER)</div>
+                    <div style="font-size:0.875rem; font-weight:600; color:#0f172a;">${escapeHtml(log.userName || '-')}</div>
+                    <div style="font-size:0.75rem; color:#64748b;">${escapeHtml(log.userEmail || log.userId || '-')}</div>
+                </div>
+                <div style="background:#f8fafc; padding:0.75rem; border-radius:0.5rem; border:1px solid #e2e8f0;">
+                    <div style="font-size:0.75rem; color:#64748b; font-weight:600;">DESA / WILAYAH</div>
+                    <div style="font-size:0.875rem; font-weight:600; color:#0f172a;">${log.Village ? escapeHtml(log.Village.name) : (log.villageId || '-')}</div>
+                </div>
+                <div style="background:#f8fafc; padding:0.75rem; border-radius:0.5rem; border:1px solid #e2e8f0;">
+                    <div style="font-size:0.75rem; color:#64748b; font-weight:600;">ALAMAT IP CLIENT</div>
+                    <div style="font-size:0.825rem; font-family:monospace; color:#334155;">${escapeHtml(log.ipAddress || '-')}</div>
+                </div>
+                <div style="background:#f8fafc; padding:0.75rem; border-radius:0.5rem; border:1px solid #e2e8f0;">
+                    <div style="font-size:0.75rem; color:#64748b; font-weight:600;">WAKTU REKAM</div>
+                    <div style="font-size:0.825rem; color:#334155;">${log.createdAt || '-'}</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom:1rem;">
+                <div style="font-size:0.8rem; font-weight:700; color:#334155; margin-bottom:0.35rem;">Keterangan Aktivitas:</div>
+                <div style="background:#f8fafc; padding:0.75rem; border-radius:0.5rem; border:1px solid #e2e8f0; font-size:0.875rem; color:#1e293b; line-height:1.45;">
+                    ${escapeHtml(log.description || '-')}
+                </div>
+            </div>
+
+            <div style="margin-bottom:1rem;">
+                <div style="font-size:0.8rem; font-weight:700; color:#334155; margin-bottom:0.35rem;">User Agent / Perangkat:</div>
+                <div style="background:#f8fafc; padding:0.6rem 0.75rem; border-radius:0.5rem; border:1px solid #e2e8f0; font-size:0.75rem; color:#64748b; font-family:monospace; word-break:break-all;">
+                    ${escapeHtml(log.userAgent || '-')}
+                </div>
+            </div>
+
+            <div>
+                <div style="font-size:0.8rem; font-weight:700; color:#334155; margin-bottom:0.35rem;">Payload Data Details (JSON):</div>
+                <pre class="code-box"><code>${escapeHtml(detailsFormatted)}</code></pre>
+            </div>
+        `;
+
+        document.getElementById('detail-modal').style.display = 'flex';
+    }
+
+    function closeDetailModal() {
+        document.getElementById('detail-modal').style.display = 'none';
+    }
+
+    function closeModalOnBackdrop(e) {
+        if (e.target.id === 'detail-modal') {
+            closeDetailModal();
+        }
+    }
+</script>
+<?= $this->endSection() ?>

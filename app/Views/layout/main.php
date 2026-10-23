@@ -355,6 +355,12 @@
                     <span>Keamanan & Backup</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="<?= base_url('/activity_logs') ?>" class="nav-link <?= (url_is('activity_logs*')) ? 'active' : '' ?>">
+                    <i class="fa-solid fa-clock-rotate-left nav-icon" style="color: #60a5fa;"></i>
+                    <span>Log Aktivitas</span>
+                </a>
+            </li>
         </ul>
     </aside>
 
