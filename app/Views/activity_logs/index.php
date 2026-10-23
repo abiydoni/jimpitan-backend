@@ -312,6 +312,98 @@
     .badge-village { background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe; }
     .badge-default { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
 
+    /* Device Badges */
+    .device-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.2rem 0.55rem;
+        border-radius: 9999px;
+        font-size: 0.725rem;
+        font-weight: 600;
+        margin-top: 3px;
+        white-space: nowrap;
+        border: 1px solid transparent;
+        line-height: 1.25;
+        transition: transform 0.15s ease;
+    }
+    .device-badge:hover {
+        transform: translateY(-1px);
+    }
+    .device-android-apk {
+        background: #ecfdf5;
+        color: #065f46;
+        border-color: #a7f3d0;
+    }
+    .device-android-apk i {
+        color: #10b981;
+        font-size: 0.8rem;
+    }
+    .device-android-web {
+        background: #f0fdf4;
+        color: #166534;
+        border-color: #bbf7d0;
+    }
+    .device-android-web i {
+        color: #22c55e;
+        font-size: 0.8rem;
+    }
+    .device-apple {
+        background: #f8fafc;
+        color: #1e293b;
+        border-color: #cbd5e1;
+    }
+    .device-apple i {
+        color: #0f172a;
+        font-size: 0.8rem;
+    }
+    .device-windows {
+        background: #eff6ff;
+        color: #1e40af;
+        border-color: #bfdbfe;
+    }
+    .device-windows i {
+        color: #2563eb;
+        font-size: 0.8rem;
+    }
+    .device-mac {
+        background: #f1f5f9;
+        color: #334155;
+        border-color: #cbd5e1;
+    }
+    .device-mac i {
+        color: #475569;
+        font-size: 0.8rem;
+    }
+    .device-linux {
+        background: #fffbeb;
+        color: #92400e;
+        border-color: #fde68a;
+    }
+    .device-linux i {
+        color: #d97706;
+        font-size: 0.8rem;
+    }
+    .device-api {
+        background: #fdf2f8;
+        color: #9d174d;
+        border-color: #fbcfe8;
+    }
+    .device-api i {
+        color: #ec4899;
+        font-size: 0.75rem;
+    }
+    .device-web {
+        background: #f1f5f9;
+        color: #475569;
+        border-color: #cbd5e1;
+    }
+    .device-web i {
+        color: #64748b;
+        font-size: 0.8rem;
+    }
+
+
     /* Village Tag */
     .village-tag {
         display: inline-flex;
@@ -576,7 +668,7 @@
                         <th style="width: 180px;">Desa / Wilayah</th>
                         <th style="width: 160px;">Aksi</th>
                         <th>Keterangan Aktivitas</th>
-                        <th style="width: 110px;">Perangkat/IP</th>
+                        <th style="width: 140px;">Perangkat & IP</th>
                         <th style="width: 80px; text-align: center;">Detail</th>
                     </tr>
                 </thead>
@@ -966,6 +1058,119 @@
         return `<span class="badge-action ${badgeClass}">${icon} ${escapeHtml(action)}</span>`;
     }
 
+    function parseDeviceInfo(userAgent) {
+        const ua = (userAgent || '').trim();
+        if (!ua) {
+            return {
+                badgeClass: 'device-web',
+                icon: 'fa-solid fa-globe',
+                label: 'Web Browser',
+                fullName: 'Tidak Diketahui'
+            };
+        }
+
+        // 1. Android Flutter APK (Dart HTTP Client / OkHttp / Dalvik / Jimpitan App)
+        if (/Dart|dart:io|okhttp|Dalvik|jimpitan/i.test(ua)) {
+            return {
+                badgeClass: 'device-android-apk',
+                icon: 'fa-brands fa-android',
+                label: 'Android APK',
+                fullName: 'Aplikasi Android Jimpitan (Flutter Native)'
+            };
+        }
+
+        // 2. Android Mobile Web (Chrome / Firefox / Samsung di HP Android)
+        if (/Android/i.test(ua)) {
+            let browser = 'Chrome';
+            if (/SamsungBrowser/i.test(ua)) browser = 'Samsung Browser';
+            else if (/Firefox/i.test(ua)) browser = 'Firefox';
+            else if (/Opera|OPR/i.test(ua)) browser = 'Opera';
+
+            return {
+                badgeClass: 'device-android-web',
+                icon: 'fa-brands fa-android',
+                label: 'Android Web',
+                fullName: `HP Android (${browser})`
+            };
+        }
+
+        // 3. Apple iOS (iPhone / iPad)
+        if (/iPhone|iPad|iPod|CFNetwork|Darwin/i.test(ua)) {
+            const isTablet = /iPad/i.test(ua);
+            return {
+                badgeClass: 'device-apple',
+                icon: 'fa-brands fa-apple',
+                label: isTablet ? 'iPad' : 'iPhone iOS',
+                fullName: isTablet ? 'Apple iPad' : 'Apple iPhone'
+            };
+        }
+
+        // 4. Windows PC
+        if (/Windows/i.test(ua)) {
+            let browser = 'Web';
+            if (/Edg\//i.test(ua)) browser = 'Edge';
+            else if (/Chrome\//i.test(ua)) browser = 'Chrome';
+            else if (/Firefox\//i.test(ua)) browser = 'Firefox';
+
+            return {
+                badgeClass: 'device-windows',
+                icon: 'fa-brands fa-windows',
+                label: 'Windows PC',
+                fullName: `PC Windows (${browser})`
+            };
+        }
+
+        // 5. Mac OS
+        if (/Macintosh|Mac OS X/i.test(ua)) {
+            let browser = 'Safari';
+            if (/Chrome\//i.test(ua)) browser = 'Chrome';
+            else if (/Firefox\//i.test(ua)) browser = 'Firefox';
+
+            return {
+                badgeClass: 'device-mac',
+                icon: 'fa-brands fa-apple',
+                label: 'macOS PC',
+                fullName: `Apple Mac (${browser})`
+            };
+        }
+
+        // 6. Linux PC
+        if (/Linux/i.test(ua)) {
+            return {
+                badgeClass: 'device-linux',
+                icon: 'fa-brands fa-linux',
+                label: 'Linux PC',
+                fullName: 'Komputer Linux'
+            };
+        }
+
+        // 7. API Tool / Postman / curl
+        if (/Postman|curl|insomnia|axios|node-fetch/i.test(ua)) {
+            const tool = ua.split('/')[0] || 'API Tool';
+            return {
+                badgeClass: 'device-api',
+                icon: 'fa-solid fa-terminal',
+                label: 'API Tool',
+                fullName: `API Client (${tool})`
+            };
+        }
+
+        // 8. Fallback
+        return {
+            badgeClass: 'device-web',
+            icon: 'fa-solid fa-desktop',
+            label: 'Web Browser',
+            fullName: 'Web Browser'
+        };
+    }
+
+    function getDeviceBadge(userAgent) {
+        const info = parseDeviceInfo(userAgent);
+        return `<span class="device-badge ${info.badgeClass}" title="${escapeHtml(info.fullName + ' | ' + (userAgent || ''))}">
+            <i class="${info.icon}"></i> <span>${escapeHtml(info.label)}</span>
+        </span>`;
+    }
+
     function escapeHtml(str) {
         if (!str) return '';
         return String(str)
@@ -1026,10 +1231,7 @@
 
             const ip = log.ip || log.ipAddress || '-';
             const userAgent = log.userAgent || '';
-            const isMobile = /Android|iPhone|Mobile/i.test(userAgent);
-            const deviceBadge = isMobile 
-                ? '<span title="Android / Mobile" style="color:#10b981; font-size:0.8rem;"><i class="fa-solid fa-mobile-screen"></i> Mobile</span>'
-                : '<span title="Web Browser" style="color:#6366f1; font-size:0.8rem;"><i class="fa-solid fa-desktop"></i> Web</span>';
+            const deviceBadge = getDeviceBadge(userAgent);
 
             tr.innerHTML = `
                 <td>${formatTime(log.createdAt)}</td>
@@ -1163,9 +1365,15 @@
             </div>
 
             <div style="margin-bottom:1rem;">
-                <div style="font-size:0.8rem; font-weight:700; color:#334155; margin-bottom:0.35rem;">User Agent / Perangkat:</div>
-                <div style="background:#f8fafc; padding:0.6rem 0.75rem; border-radius:0.5rem; border:1px solid #e2e8f0; font-size:0.75rem; color:#64748b; font-family:monospace; word-break:break-all;">
-                    ${escapeHtml(log.userAgent || '-')}
+                <div style="font-size:0.8rem; font-weight:700; color:#334155; margin-bottom:0.35rem;">Perangkat & User Agent:</div>
+                <div style="background:#f8fafc; padding:0.75rem; border-radius:0.5rem; border:1px solid #e2e8f0;">
+                    <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.5rem;">
+                        ${getDeviceBadge(log.userAgent)}
+                        <span style="font-size:0.85rem; font-weight:600; color:#1e293b;">${escapeHtml(parseDeviceInfo(log.userAgent).fullName)}</span>
+                    </div>
+                    <div style="font-size:0.75rem; color:#64748b; font-family:monospace; word-break:break-all; background:#ffffff; padding:0.5rem; border-radius:0.375rem; border:1px solid #e2e8f0;">
+                        ${escapeHtml(log.userAgent || 'Tidak ada data User-Agent')}
+                    </div>
                 </div>
             </div>
 
