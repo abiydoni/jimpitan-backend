@@ -1005,18 +1005,26 @@
             const userEmail = log.userEmail || (log.userId ? `UID: ${log.userId.slice(0, 8)}...` : '-');
 
             let villageDisplay = '<span style="color:#94a3b8; font-size:0.75rem;">- Global -</span>';
-            if (log.Village && log.Village.name) {
+            const vObj = log.Village || log.village;
+            if (vObj && vObj.name) {
                 villageDisplay = `
                     <div class="village-tag">
-                        <span>🏡 ${escapeHtml(log.Village.name)}</span>
-                        ${log.Village.uniqueCode ? `<span class="village-code-badge">${escapeHtml(log.Village.uniqueCode)}</span>` : ''}
+                        <span>🏡 ${escapeHtml(vObj.name)}</span>
+                        ${vObj.uniqueCode ? `<span class="village-code-badge">${escapeHtml(vObj.uniqueCode)}</span>` : ''}
+                    </div>
+                `;
+            } else if (log.villageName) {
+                villageDisplay = `
+                    <div class="village-tag">
+                        <span>🏡 ${escapeHtml(log.villageName)}</span>
+                        ${log.villageUniqueCode ? `<span class="village-code-badge">${escapeHtml(log.villageUniqueCode)}</span>` : ''}
                     </div>
                 `;
             } else if (log.villageId) {
                 villageDisplay = `<span class="village-tag" style="font-family:monospace; font-size:0.75rem;">ID: ${escapeHtml(log.villageId)}</span>`;
             }
 
-            const ip = log.ipAddress || '-';
+            const ip = log.ip || log.ipAddress || '-';
             const userAgent = log.userAgent || '';
             const isMobile = /Android|iPhone|Mobile/i.test(userAgent);
             const deviceBadge = isMobile 
@@ -1135,11 +1143,11 @@
                 </div>
                 <div style="background:#f8fafc; padding:0.75rem; border-radius:0.5rem; border:1px solid #e2e8f0;">
                     <div style="font-size:0.75rem; color:#64748b; font-weight:600;">DESA / WILAYAH</div>
-                    <div style="font-size:0.875rem; font-weight:600; color:#0f172a;">${log.Village ? escapeHtml(log.Village.name) : (log.villageId || '-')}</div>
+                    <div style="font-size:0.875rem; font-weight:600; color:#0f172a;">${escapeHtml(log.Village?.name || log.village?.name || log.villageName || log.villageId || '-')}</div>
                 </div>
                 <div style="background:#f8fafc; padding:0.75rem; border-radius:0.5rem; border:1px solid #e2e8f0;">
                     <div style="font-size:0.75rem; color:#64748b; font-weight:600;">ALAMAT IP CLIENT</div>
-                    <div style="font-size:0.825rem; font-family:monospace; color:#334155;">${escapeHtml(log.ipAddress || '-')}</div>
+                    <div style="font-size:0.825rem; font-family:monospace; color:#334155;">${escapeHtml(log.ip || log.ipAddress || '-')}</div>
                 </div>
                 <div style="background:#f8fafc; padding:0.75rem; border-radius:0.5rem; border:1px solid #e2e8f0;">
                     <div style="font-size:0.75rem; color:#64748b; font-weight:600;">WAKTU REKAM</div>
