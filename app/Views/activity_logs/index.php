@@ -301,6 +301,7 @@
         letter-spacing: 0.02em;
         white-space: nowrap;
     }
+    .badge-open { background: #ede9fe; color: #5b21b6; border: 1px solid #ddd6fe; }
     .badge-login { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
     .badge-login-pending { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
     .badge-join { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
@@ -514,7 +515,7 @@
             </div>
             <div>
                 <div class="stat-num" id="stat-login">0</div>
-                <div class="stat-label">Aktivitas Login</div>
+                <div class="stat-label">Login & Buka App</div>
             </div>
         </div>
         <div class="stat-chip">
@@ -546,6 +547,7 @@
 
         <select id="filter-action" class="toolbar-select" onchange="fetchLogs(1, false)">
             <option value="ALL">🔍 Semua Tipe Aksi</option>
+            <option value="APP_OPEN">📱 APP_OPEN (Membuka Aplikasi)</option>
             <option value="LOGIN">🟢 LOGIN (Login Berhasil)</option>
             <option value="LOGIN_PENDING_VILLAGE">🟡 LOGIN_PENDING_VILLAGE (Login Belum Ada RT)</option>
             <option value="JOIN_VILLAGE_PENDING">🔵 JOIN_VILLAGE_PENDING (Pendaftar Warga Baru)</option>
@@ -881,7 +883,7 @@
 
         logs.forEach(l => {
             const act = (l.action || '').toUpperCase();
-            if (act.includes('LOGIN')) loginCount++;
+            if (act.includes('LOGIN') || act.includes('APP_OPEN')) loginCount++;
             if (act.includes('LINK') || act.includes('CLAIM') || act.includes('JOIN')) linkCount++;
             if (act.includes('DELETE') || act.includes('CLEANUP')) deleteCount++;
         });
@@ -917,6 +919,10 @@
         let icon = '<i class="fa-solid fa-circle-dot"></i>';
 
         switch (act) {
+            case 'APP_OPEN':
+                badgeClass = 'badge-open';
+                icon = '<i class="fa-solid fa-mobile-screen"></i>';
+                break;
             case 'LOGIN':
                 badgeClass = 'badge-login';
                 icon = '<i class="fa-solid fa-right-to-bracket"></i>';
