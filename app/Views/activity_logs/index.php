@@ -30,6 +30,8 @@
         width: 240px; height: 240px;
         background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, rgba(99, 102, 241, 0) 70%);
         border-radius: 50%;
+        pointer-events: none;
+        z-index: 1;
     }
     .page-hero::after {
         content: '';
@@ -38,6 +40,12 @@
         width: 140px; height: 140px;
         background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(56, 189, 248, 0) 70%);
         border-radius: 50%;
+        pointer-events: none;
+        z-index: 1;
+    }
+    .hero-text {
+        position: relative;
+        z-index: 10;
     }
     .hero-text h1 { 
         margin: 0 0 0.4rem 0; 
@@ -460,7 +468,7 @@
                 Rekam jejak setiap login warga, pendaftaran akun baru, klaim akun, penghapusan, hingga penautan akun warga secara transparan dan akurat.
             </p>
         </div>
-        <div style="display:flex; align-items:center; gap:0.65rem; flex-wrap:wrap; justify-content:flex-end;">
+        <div style="display:flex; align-items:center; gap:0.65rem; flex-wrap:wrap; justify-content:flex-end; position:relative; z-index:10;">
             <!-- Realtime Live Pill -->
             <div class="realtime-pill" id="realtime-pill" title="Status pemantauan realtime">
                 <span class="pulsing-dot" id="realtime-dot"></span>
