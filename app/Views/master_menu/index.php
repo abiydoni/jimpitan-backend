@@ -10,9 +10,9 @@
     /* Hero Header */
     .page-hero {
         background: linear-gradient(135deg, #1e40af 0%, #4f46e5 50%, #7c3aed 100%);
-        border-radius: 1.25rem;
-        padding: 2rem 2.5rem;
-        margin-bottom: 2rem;
+        border-radius: 0.75rem;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1rem;
         color: white;
         display: flex;
         justify-content: space-between;
@@ -36,48 +36,48 @@
         background: rgba(255,255,255,0.05);
         border-radius: 50%;
     }
-    .hero-text h1 { margin: 0 0 0.35rem 0; font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
-    .hero-text p { margin: 0; opacity: 0.8; font-size: 0.95rem; }
-    .hero-actions { display: flex; gap: 0.75rem; z-index: 1; }
+    .hero-text h1 { margin: 0 0 0.2rem 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+    .hero-text p { margin: 0; opacity: 0.8; font-size: 0.8rem; }
+    .hero-actions { display: flex; gap: 0.5rem; z-index: 1; }
 
     /* Filter / Search Bar */
     .toolbar {
         display: flex;
-        gap: 0.75rem;
-        margin-bottom: 1.25rem;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
         align-items: center;
         flex-wrap: wrap;
     }
     .toolbar-search {
         flex: 1;
-        min-width: 220px;
+        min-width: 200px;
         position: relative;
     }
     .toolbar-search input {
         width: 100%;
-        padding: 0.65rem 1rem 0.65rem 2.5rem;
+        padding: 0.35rem 0.75rem 0.35rem 2.2rem;
         border: 1.5px solid #e5e7eb;
-        border-radius: 0.625rem;
+        border-radius: 0.5rem;
         font-family: inherit;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         background: white;
         box-sizing: border-box;
         transition: border-color 0.2s;
     }
-    .toolbar-search input:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+    .toolbar-search input:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 2px rgba(79,70,229,0.1); }
     .toolbar-search i {
         position: absolute;
-        left: 0.875rem; top: 50%;
+        left: 0.75rem; top: 50%;
         transform: translateY(-50%);
         color: #9ca3af;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
     .toolbar-filter {
-        padding: 0.65rem 1rem;
+        padding: 0.35rem 0.65rem;
         border: 1.5px solid #e5e7eb;
-        border-radius: 0.625rem;
+        border-radius: 0.5rem;
         font-family: inherit;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         background: white;
         cursor: pointer;
         color: #374151;
@@ -88,60 +88,61 @@
     /* Stats Row */
     .stats-row {
         display: flex;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
         flex-wrap: wrap;
     }
     .stat-chip {
         background: white;
         border: 1.5px solid #e5e7eb;
-        border-radius: 0.75rem;
-        padding: 0.75rem 1.25rem;
+        border-radius: 0.5rem;
+        padding: 0.45rem 0.75rem;
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.5rem;
         flex: 1;
-        min-width: 130px;
+        min-width: 110px;
     }
     .stat-chip-icon {
-        width: 38px; height: 38px;
-        border-radius: 0.625rem;
+        width: 28px; height: 28px;
+        border-radius: 0.4rem;
         display: flex; align-items: center; justify-content: center;
-        font-size: 1rem;
+        font-size: 0.85rem;
     }
     .stat-chip-icon.indigo  { background: #ede9fe; color: #4f46e5; }
     .stat-chip-icon.green   { background: #d1fae5; color: #059669; }
     .stat-chip-icon.red     { background: #fee2e2; color: #dc2626; }
     .stat-chip-icon.blue    { background: #dbeafe; color: #2563eb; }
     .stat-chip-text { line-height: 1.2; }
-    .stat-chip-num { font-size: 1.4rem; font-weight: 800; color: #1f2937; }
-    .stat-chip-label { font-size: 0.75rem; color: #6b7280; font-weight: 500; }
+    .stat-chip-num { font-size: 1.1rem; font-weight: 800; color: #1f2937; }
+    .stat-chip-label { font-size: 0.7rem; color: #6b7280; font-weight: 500; }
 
     /* Data Table Card */
     .data-card {
         background: white;
-        border-radius: 1rem;
+        border-radius: 0.625rem;
         border: 1px solid #e5e7eb;
         overflow: hidden;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
     .data-table { width: 100%; border-collapse: collapse; }
     .data-table th {
         background: #fafafa;
-        padding: 0.875rem 1.25rem;
+        padding: 4px 6px !important;
         text-align: left;
-        font-size: 0.7rem;
+        font-size: 0.68rem !important;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.05em;
         color: #6b7280;
         border-bottom: 1px solid #e5e7eb;
         white-space: nowrap;
     }
     .data-table td {
-        padding: 0.9rem 1.25rem;
+        padding: 3px 6px !important;
         border-bottom: 1px solid #f3f4f6;
-        font-size: 0.875rem;
+        font-size: 0.78rem !important;
+        line-height: 1.25 !important;
         vertical-align: middle;
         overflow: visible;
     }
@@ -151,21 +152,21 @@
 
     /* Icon Preview Cell */
     .icon-cell {
-        width: 40px;
-        height: 40px;
+        width: 24px;
+        height: 24px;
         background: #ede9fe;
-        border-radius: 0.625rem;
+        border-radius: 0.375rem;
         display: flex;
         align-items: center;
         justify-content: center;
         color: #4f46e5;
-        font-size: 1.1rem;
+        font-size: 0.85rem;
         flex-shrink: 0;
         overflow: visible;
     }
     .icon-cell i {
         color: #4f46e5 !important;
-        font-size: 1rem;
+        font-size: 0.8rem;
         display: inline-block;
     }
 
@@ -174,21 +175,21 @@
         font-family: 'JetBrains Mono', 'Fira Code', monospace;
         background: #f1f5f9;
         color: #0f172a;
-        border-radius: 0.375rem;
-        padding: 0.2rem 0.5rem;
-        font-size: 0.8rem;
+        border-radius: 0.3rem;
+        padding: 0.1rem 0.35rem;
+        font-size: 0.72rem;
         font-weight: 600;
         border: 1px solid #e2e8f0;
     }
 
     /* Position chip */
     .pos-chip {
-        padding: 0.2rem 0.6rem;
-        border-radius: 0.375rem;
-        font-size: 0.72rem;
+        padding: 0.1rem 0.4rem;
+        border-radius: 0.3rem;
+        font-size: 0.65rem;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.03em;
     }
     .pos-top { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
     .pos-grid { background: #fce7f3; color: #be185d; border: 1px solid #fbcfe8; }
@@ -197,7 +198,7 @@
     .pos-other { background: #f1f5f9; color: #475569; }
 
     /* Badges */
-    .badge { padding: 0.25rem 0.65rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.03em; display: inline-flex; align-items: center; gap: 0.25rem; }
+    .badge { padding: 1px 5px !important; border-radius: 9999px; font-size: 0.65rem !important; font-weight: 700; letter-spacing: 0.02em; display: inline-flex; align-items: center; gap: 0.2rem; }
     .badge-active   { background: #d1fae5; color: #065f46; }
     .badge-inactive { background: #fee2e2; color: #991b1b; }
     .badge-core     { background: #ede9fe; color: #5b21b6; }
@@ -206,8 +207,8 @@
     .drag-handle {
         cursor: grab;
         color: #d1d5db;
-        font-size: 1rem;
-        padding: 0 0.5rem;
+        font-size: 0.85rem;
+        padding: 0 0.35rem;
         touch-action: none;
     }
     .drag-handle:hover { color: #9ca3af; }
@@ -217,46 +218,46 @@
         background: linear-gradient(135deg, #4f46e5, #7c3aed);
         color: white;
         border: none;
-        padding: 0.625rem 1.25rem;
-        border-radius: 0.625rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 0.5rem;
         font-family: inherit;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         font-weight: 600;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
+        gap: 0.35rem;
         transition: all 0.2s;
-        box-shadow: 0 2px 8px rgba(79,70,229,0.3);
+        box-shadow: 0 1px 4px rgba(79,70,229,0.25);
     }
-    .btn-prim:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(79,70,229,0.4); }
+    .btn-prim:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(79,70,229,0.35); }
     .btn-sec {
         background: rgba(255,255,255,0.15);
         color: white;
         border: 1.5px solid rgba(255,255,255,0.3);
-        padding: 0.625rem 1.25rem;
-        border-radius: 0.625rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 0.5rem;
         font-family: inherit;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         font-weight: 600;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
+        gap: 0.35rem;
         transition: all 0.2s;
     }
     .btn-sec:hover { background: rgba(255,255,255,0.25); }
     .btn-icon {
-        padding: 0.4rem 0.6rem;
-        border-radius: 0.5rem;
-        border: 1.5px solid #e5e7eb;
+        padding: 2px 6px;
+        border-radius: 0.375rem;
+        border: 1px solid #e5e7eb;
         background: white;
         cursor: pointer;
         transition: all 0.2s;
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         display: inline-flex;
         align-items: center;
-        gap: 0.3rem;
+        gap: 0.25rem;
         white-space: nowrap;
     }
     .btn-icon.edit  { color: #f59e0b; border-color: #fde68a; background: #fffbeb; }
@@ -264,13 +265,13 @@
     .btn-icon.del   { color: #ef4444; border-color: #fecaca; background: #fff5f5; }
     .btn-icon.del:hover   { background: #fee2e2; }
     .btn-tog {
-        display: inline-flex; align-items: center; gap: 0.3rem;
-        padding: 0.3rem 0.65rem;
-        border-radius: 0.4rem;
-        border: 1.5px solid #e5e7eb;
+        display: inline-flex; align-items: center; gap: 0.25rem;
+        padding: 2px 6px;
+        border-radius: 0.35rem;
+        border: 1px solid #e5e7eb;
         background: white;
         cursor: pointer;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 600;
         color: #6b7280;
         transition: all 0.2s;

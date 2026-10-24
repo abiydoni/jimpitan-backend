@@ -12,16 +12,16 @@
     /* Hero Banner */
     .page-hero {
         background: linear-gradient(135deg, #065f46 0%, #059669 40%, #0d9488 75%, #4f46e5 100%);
-        border-radius: 1.25rem;
-        padding: 2.25rem 2.5rem;
-        margin-bottom: 2rem;
+        border-radius: 0.75rem;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1rem;
         color: white;
         display: flex;
         justify-content: space-between;
         align-items: center;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.25);
+        box-shadow: 0 4px 15px -3px rgba(5, 150, 105, 0.25);
     }
     .page-hero::before {
         content: '';
@@ -47,31 +47,31 @@
     .hero-badge {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.35rem;
         background: rgba(255,255,255,0.18);
         backdrop-filter: blur(8px);
-        padding: 0.35rem 0.85rem;
+        padding: 0.2rem 0.65rem;
         border-radius: 2rem;
-        font-size: 0.78rem;
+        font-size: 0.72rem;
         font-weight: 600;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
         border: 1px solid rgba(255,255,255,0.25);
     }
     .hero-content h1 {
-        margin: 0 0 0.45rem 0;
-        font-size: 1.85rem;
+        margin: 0 0 0.25rem 0;
+        font-size: 1.25rem;
         font-weight: 800;
         letter-spacing: -0.02em;
     }
     .hero-content p {
         margin: 0;
         opacity: 0.9;
-        font-size: 0.95rem;
-        line-height: 1.5;
+        font-size: 0.8rem;
+        line-height: 1.35;
     }
     .hero-actions {
         display: flex;
-        gap: 0.75rem;
+        gap: 0.5rem;
         z-index: 1;
         flex-wrap: wrap;
     }
@@ -79,72 +79,72 @@
     /* Top Stats Grid */
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 1.25rem;
-        margin-bottom: 1.75rem;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 1rem;
     }
     .stat-card {
         background: white;
-        border-radius: 1rem;
-        padding: 1.25rem 1.5rem;
+        border-radius: 0.625rem;
+        padding: 0.65rem 0.85rem;
         border: 1px solid #e5e7eb;
         display: flex;
         align-items: center;
-        gap: 1.25rem;
+        gap: 0.75rem;
         box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         transition: transform 0.2s, box-shadow 0.2s;
     }
     .stat-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.06);
     }
     .stat-icon {
-        width: 52px;
-        height: 52px;
-        border-radius: 0.85rem;
+        width: 32px;
+        height: 32px;
+        border-radius: 0.5rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
+        font-size: 1rem;
         flex-shrink: 0;
     }
     .stat-info .stat-val {
-        font-size: 1.6rem;
+        font-size: 1.15rem;
         font-weight: 800;
         line-height: 1.1;
         color: #111827;
     }
     .stat-info .stat-lbl {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         color: #6b7280;
-        margin-top: 0.25rem;
+        margin-top: 0.15rem;
         font-weight: 500;
     }
 
     /* Navigation Tabs */
     .tab-nav {
         display: flex;
-        gap: 0.5rem;
+        gap: 0.35rem;
         background: #f1f5f9;
-        padding: 0.4rem;
-        border-radius: 0.85rem;
-        margin-bottom: 1.75rem;
+        padding: 0.25rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
         border: 1px solid #e2e8f0;
         flex-wrap: wrap;
     }
     .tab-btn {
-        padding: 0.65rem 1.25rem;
+        padding: 0.4rem 0.75rem;
         border: none;
         background: transparent;
         color: #64748b;
         font-family: inherit;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         font-weight: 600;
-        border-radius: 0.65rem;
+        border-radius: 0.4rem;
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.4rem;
         transition: all 0.2s ease;
     }
     .tab-btn:hover {
@@ -154,7 +154,7 @@
     .tab-btn.active {
         background: white;
         color: #059669;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     }
 
     /* Main Grid for Blasting Tab */
@@ -417,52 +417,58 @@
     .custom-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 0.825rem;
+        font-size: 0.78rem !important;
         text-align: left;
     }
     .custom-table th {
         background: #f8fafc;
-        padding: 0.75rem 1rem;
-        font-weight: 600;
+        padding: 4px 6px !important;
+        font-size: 0.68rem !important;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
         color: #475569;
-        border-bottom: 1.5px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
         position: sticky;
         top: 0;
         z-index: 5;
     }
     .custom-table td {
-        padding: 0.75rem 1rem;
+        padding: 3px 6px !important;
         border-bottom: 1px solid #f1f5f9;
+        font-size: 0.78rem !important;
+        line-height: 1.25 !important;
         color: #1e293b;
+        vertical-align: middle !important;
     }
     .custom-table tr:hover {
         background: #f8fafc;
     }
     .custom-table.table-compact th {
-        padding: 0.35rem 0.55rem;
-        font-size: 0.78rem;
+        padding: 3px 5px !important;
+        font-size: 0.65rem !important;
         background: #f1f5f9;
         border-bottom: 1px solid #cbd5e1;
     }
     .custom-table.table-compact td {
-        padding: 0.22rem 0.55rem;
-        font-size: 0.8rem;
-        line-height: 1.25;
-        vertical-align: middle;
+        padding: 2px 4px !important;
+        font-size: 0.75rem !important;
+        line-height: 1.2 !important;
+        vertical-align: middle !important;
         border-bottom: 1px solid #f1f5f9;
     }
     .custom-table.table-compact tr {
-        height: 28px;
+        height: 22px;
     }
     .custom-table.table-compact .btn-sm {
-        padding: 0.15rem 0.45rem;
-        font-size: 0.72rem;
-        border-radius: 0.35rem;
+        padding: 1px 4px !important;
+        font-size: 0.68rem !important;
+        border-radius: 0.25rem;
     }
     .custom-table.table-compact .badge-wa-ok,
     .custom-table.table-compact .badge-wa-missing {
-        padding: 0.1rem 0.45rem;
-        font-size: 0.72rem;
+        padding: 1px 4px !important;
+        font-size: 0.68rem !important;
     }
 
     /* Status Badges */

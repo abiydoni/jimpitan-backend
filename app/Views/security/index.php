@@ -10,9 +10,9 @@
     /* Hero Header */
     .page-hero {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-        border-radius: 1.25rem;
-        padding: 2rem 2.5rem;
-        margin-bottom: 2rem;
+        border-radius: 0.75rem;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1rem;
         color: white;
         display: flex;
         justify-content: space-between;
@@ -28,63 +28,63 @@
         background: rgba(255,255,255,0.05);
         border-radius: 50%;
     }
-    .hero-text h1 { margin: 0 0 0.35rem 0; font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
-    .hero-text p { margin: 0; opacity: 0.8; font-size: 0.95rem; }
+    .hero-text h1 { margin: 0 0 0.2rem 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+    .hero-text p { margin: 0; opacity: 0.8; font-size: 0.8rem; }
 
     /* Action Cards */
     .action-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 0.85rem;
+        margin-bottom: 1rem;
     }
 
     .action-card {
         background: white;
-        border-radius: 1rem;
+        border-radius: 0.625rem;
         border: 1px solid #e5e7eb;
-        padding: 1.5rem;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        padding: 0.85rem 1rem;
+        box-shadow: 0 2px 4px -1px rgba(0,0,0,0.05);
         display: flex;
         flex-direction: column;
         transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .action-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px -2px rgba(0,0,0,0.08);
     }
 
     .action-icon {
-        width: 48px; height: 48px;
-        border-radius: 0.75rem;
+        width: 32px; height: 32px;
+        border-radius: 0.5rem;
         display: flex; align-items: center; justify-content: center;
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
+        font-size: 1rem;
+        margin-bottom: 0.65rem;
     }
 
     .icon-backup { background: #dbeafe; color: #2563eb; }
     .icon-clear { background: #fee2e2; color: #dc2626; }
 
     .action-card h3 {
-        margin: 0 0 0.5rem 0;
-        font-size: 1.15rem;
+        margin: 0 0 0.35rem 0;
+        font-size: 0.95rem;
         font-weight: 700;
         color: #1f2937;
     }
 
     .action-card p {
-        margin: 0 0 1.5rem 0;
-        font-size: 0.875rem;
+        margin: 0 0 0.85rem 0;
+        font-size: 0.78rem;
         color: #6b7280;
-        line-height: 1.5;
+        line-height: 1.35;
         flex-grow: 1;
     }
 
     .btn {
-        padding: 0.75rem 1.25rem;
-        border-radius: 0.5rem;
-        font-size: 0.875rem;
+        padding: 0.4rem 0.85rem;
+        border-radius: 0.4rem;
+        font-size: 0.8rem;
         font-weight: 600;
         font-family: inherit;
         cursor: pointer;
@@ -93,13 +93,13 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
+        gap: 0.4rem;
         width: 100%;
     }
     .btn-primary { background: #4f46e5; color: white; }
-    .btn-primary:hover { background: #4338ca; box-shadow: 0 4px 6px -1px rgba(79,70,229,0.2); }
+    .btn-primary:hover { background: #4338ca; box-shadow: 0 2px 4px -1px rgba(79,70,229,0.2); }
     .btn-danger { background: #ef4444; color: white; }
-    .btn-danger:hover { background: #dc2626; box-shadow: 0 4px 6px -1px rgba(239,68,68,0.2); }
+    .btn-danger:hover { background: #dc2626; box-shadow: 0 2px 4px -1px rgba(239,68,68,0.2); }
     .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
 </style>
@@ -112,7 +112,7 @@
         <div class="hero-text">
             <h1>Keamanan & Backup</h1>
             <p>Kelola keamanan sistem, pencadangan database, dan pembersihan file sementara secara langsung.</p>
-            <div style="margin-top: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 600;">
+            <div style="margin-top: 0.65rem; display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 0.15rem 0.55rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 600;">
                 <i class="fa-solid fa-cloud-arrow-up"></i> Auto-Backup Google Drive: Aktif (Jam 02:00)
             </div>
         </div>

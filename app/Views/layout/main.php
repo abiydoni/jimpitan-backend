@@ -78,13 +78,31 @@
             --card-bg: #ffffff;
             --danger: #ef4444;
             --success: #10b981;
+            --topbar-height: 48px;
+            --sidebar-width: 215px;
+        }
+
+        /* Root Font Scaling untuk Monitor Standar (1366x768 / 1080p scaled) */
+        html {
+            font-size: 13px;
+        }
+        @media (max-width: 1440px) {
+            html {
+                font-size: 12.5px;
+            }
+        }
+        @media (max-width: 1280px) {
+            html {
+                font-size: 12px;
+            }
         }
 
         body {
             margin: 0;
             padding: 0;
             font-family: 'Inter', sans-serif;
-            font-size: 14px; /* Default size diperkecil */
+            font-size: 0.8125rem; /* ~12.5px - 13px */
+            line-height: 1.35;
             background-color: var(--bg-color);
             color: var(--text-dark);
             display: flex;
@@ -92,23 +110,31 @@
             overflow: hidden;
         }
 
-        /* Sidebar */
+        /* Heading Normalization */
+        h1, .h1 { font-size: 1.35rem; line-height: 1.25; margin-top: 0; }
+        h2, .h2 { font-size: 1.15rem; line-height: 1.25; margin-top: 0; }
+        h3, .h3 { font-size: 1rem; line-height: 1.25; margin-top: 0; }
+        h4, .h4 { font-size: 0.9rem; line-height: 1.25; margin-top: 0; }
+
+        /* Sidebar Ringkas & Rapi */
         .sidebar {
-            width: 260px;
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
             background: linear-gradient(180deg, var(--sidebar-bg) 0%, #17153a 100%);
             color: white;
             display: flex;
             flex-direction: column;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
             position: relative;
-            box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+            box-shadow: 2px 0 15px rgba(0,0,0,0.08);
+            z-index: 20;
         }
         
         .sidebar::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 4px;
+            height: 3px;
             background: linear-gradient(90deg, #4f46e5, #a855f7);
             z-index: 10;
         }
@@ -117,21 +143,21 @@
             position: absolute;
             bottom: -50px;
             left: -50px;
-            width: 200px;
-            height: 200px;
+            width: 160px;
+            height: 160px;
             background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(30,27,75,0) 70%);
             border-radius: 50%;
             pointer-events: none;
         }
 
         .sidebar-brand {
-            padding: 1.5rem;
-            font-size: 1.5rem;
+            padding: 0.85rem 1rem;
+            font-size: 1.15rem;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            gap: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             background: linear-gradient(90deg, #6366f1, #8b5cf6);
             -webkit-background-clip: text;
             background-clip: text;
@@ -140,33 +166,35 @@
 
         .nav-list {
             list-style: none;
-            padding: 1rem 0;
+            padding: 0.5rem 0;
             margin: 0;
             flex: 1;
+            overflow-y: auto;
         }
 
         .nav-item {
-            padding: 0 1rem;
-            margin-bottom: 0.5rem;
+            padding: 0 0.5rem;
+            margin-bottom: 0.15rem;
         }
 
         .nav-link {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            padding: 0.75rem 1rem;
+            gap: 0.65rem;
+            padding: 0.45rem 0.65rem;
             color: var(--sidebar-text);
             text-decoration: none;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
+            border-radius: 0.4rem;
+            transition: all 0.15s;
             font-weight: 500;
+            font-size: 0.8rem;
             position: relative;
         }
 
         .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: rgba(255, 255, 255, 0.07);
             color: white;
-            transform: translateX(4px);
+            transform: translateX(3px);
         }
 
         .nav-link.active {
@@ -176,51 +204,55 @@
         }
 
         .nav-icon {
-            font-size: 1.25rem;
-            width: 24px;
+            font-size: 0.95rem;
+            width: 18px;
             text-align: center;
+            flex-shrink: 0;
         }
 
-        /* Main Content */
+        /* Main Content Wrapper */
         .main-wrapper {
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            min-width: 0;
         }
 
         .topbar {
-            height: 70px;
+            height: var(--topbar-height);
+            min-height: var(--topbar-height);
             background-color: var(--card-bg);
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.06);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 2rem;
+            padding: 0 1.25rem;
             z-index: 10;
         }
 
         .topbar-title {
-            font-size: 1.25rem;
+            font-size: 0.95rem;
             font-weight: 600;
+            color: #0f172a;
         }
 
         .topbar-actions {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            gap: 1rem;
         }
 
         .profile-btn {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
             cursor: pointer;
         }
 
         .profile-img {
-            width: 40px;
-            height: 40px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             background-color: var(--primary);
             color: white;
@@ -228,40 +260,164 @@
             align-items: center;
             justify-content: center;
             font-weight: 600;
+            font-size: 0.72rem;
         }
 
         .content {
             flex: 1;
-            padding: 2rem;
+            padding: 0.85rem 1.15rem;
             overflow-y: auto;
+            min-width: 0;
         }
 
         /* Badge */
         .badge {
             background-color: var(--danger);
             color: white;
-            padding: 0.1rem 0.5rem;
+            padding: 0.1rem 0.4rem;
             border-radius: 9999px;
-            font-size: 0.75rem;
+            font-size: 0.68rem;
             font-weight: 600;
             position: absolute;
-            right: 1rem;
+            right: 0.75rem;
             top: 50%;
             transform: translateY(-50%);
             display: none;
         }
 
-        /* Khusus layout halaman yang butuh full-height tanpa padding (seperti chat) */
         .content.no-padding {
             padding: 0;
         }
 
-        /* Utility classes */
+        /* Card Utility */
         .card {
             background: var(--card-bg);
-            border-radius: 1rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
+            border-radius: 0.625rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            padding: 0.85rem 1rem;
+        }
+
+        /* ===== GLOBAL MAXIMUM COMPACT TABLE SYSTEM ===== */
+        /* Pepetkan jarak semua baris tabel maksimal dan rapikan font */
+        table, .table, .data-table, .custom-table, .logs-table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            font-size: 0.78rem !important; /* ~11.5px - 12px */
+            line-height: 1.25 !important;
+        }
+        
+        table th, .table th, .data-table th, .custom-table th, .logs-table th {
+            padding: 4px 6px !important;
+            font-size: 0.68rem !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.04em !important;
+            line-height: 1.2 !important;
+            white-space: nowrap !important;
+            height: auto !important;
+            border-bottom: 1.5px solid #e2e8f0 !important;
+            background-color: #f8fafc !important;
+            color: #475569 !important;
+        }
+
+        table td, .table td, .data-table td, .custom-table td, .logs-table td {
+            padding: 3px 6px !important;
+            font-size: 0.78rem !important;
+            line-height: 1.25 !important;
+            vertical-align: middle !important;
+            height: auto !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+        }
+
+        table tr, .table tr, .data-table tr, .custom-table tr, .logs-table tr {
+            height: auto !important;
+            min-height: unset !important;
+        }
+
+        table tr:hover td, .table tr:hover td, .data-table tr:hover td, .custom-table tr:hover td, .logs-table tr:hover td {
+            background-color: #f8fafc !important;
+        }
+
+        /* Compact Elements inside Table Cells */
+        table .user-info, .data-table .user-info {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.45rem !important;
+        }
+
+        table .user-avatar, .data-table .user-avatar {
+            width: 22px !important;
+            height: 22px !important;
+            font-size: 0.65rem !important;
+            border-radius: 50% !important;
+            flex-shrink: 0 !important;
+        }
+
+        table .user-details, .data-table .user-details {
+            display: flex !important;
+            flex-direction: column !important;
+            line-height: 1.15 !important;
+        }
+
+        table .user-name, .data-table .user-name {
+            font-size: 0.78rem !important;
+            margin-bottom: 0 !important;
+            line-height: 1.15 !important;
+            font-weight: 600 !important;
+        }
+
+        table .user-email, .data-table .user-email {
+            font-size: 0.68rem !important;
+            line-height: 1.1 !important;
+            color: #64748b !important;
+        }
+
+        table .role-badge, .data-table .role-badge,
+        table .status-badge, .data-table .status-badge,
+        table .badge-type, .data-table .badge-type,
+        table .badge-action, .logs-table .badge-action,
+        table .badge-wa-ok, table .badge-wa-missing,
+        table .badge, .data-table .badge {
+            padding: 1px 5px !important;
+            font-size: 0.65rem !important;
+            line-height: 1.1 !important;
+            border-radius: 4px !important;
+            margin: 0 2px 0 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            position: static !important;
+            transform: none !important;
+            font-weight: 600 !important;
+        }
+
+        table .btn-action, .data-table .btn-action,
+        table .btn-icon, .data-table .btn-icon,
+        table .btn-sm, .custom-table .btn-sm,
+        table button, .data-table button {
+            padding: 1.5px 5px !important;
+            font-size: 0.68rem !important;
+            height: 22px !important;
+            min-width: 22px !important;
+            border-radius: 4px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 3px !important;
+            line-height: 1 !important;
+        }
+
+        table .icon-cell, .data-table .icon-cell {
+            width: 24px !important;
+            height: 24px !important;
+            font-size: 0.75rem !important;
+            border-radius: 4px !important;
+        }
+
+        /* Form inputs standard sizing */
+        .form-control, input[type="text"], input[type="search"], input[type="password"], input[type="number"], select, textarea {
+            font-size: 0.8125rem !important;
+            padding: 0.35rem 0.6rem !important;
+            border-radius: 0.375rem !important;
         }
     </style>
     

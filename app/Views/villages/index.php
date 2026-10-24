@@ -1,36 +1,36 @@
 <?= $this->extend('layout/main') ?>
 
 <?= $this->section('content') ?>
-<div class="content-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+<div class="content-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:0.85rem;">
     <div>
-        <h1 class="page-title" style="font-size:1.5rem; font-weight:700; color:#0f172a; margin:0; display:flex; align-items:center; gap:0.5rem;">
+        <h1 class="page-title" style="font-size:1.15rem; font-weight:700; color:#0f172a; margin:0; display:flex; align-items:center; gap:0.4rem;">
             <span>🏡</span> Data Desa & Wilayah
         </h1>
-        <p style="font-size:0.85rem; color:#64748b; margin:0.25rem 0 0 0;">
+        <p style="font-size:0.75rem; color:#64748b; margin:0.15rem 0 0 0;">
             Kelola data master desa, kode unik, alamat, dan pengaturan wilayah.
         </p>
     </div>
-    <button class="btn btn-primary" onclick="openVillageModal()" style="padding: 0.65rem 1.25rem; border-radius: 0.5rem; background-color: #4f46e5; color: white; border:none; font-weight:600; font-size:0.875rem; cursor:pointer; display:flex; align-items:center; gap:0.5rem; box-shadow:0 2px 4px rgba(79,70,229,0.25);">
+    <button class="btn btn-primary" onclick="openVillageModal()" style="padding: 0.35rem 0.85rem; border-radius: 0.4rem; background-color: #4f46e5; color: white; border:none; font-weight:600; font-size:0.8rem; cursor:pointer; display:flex; align-items:center; gap:0.35rem; box-shadow:0 1px 3px rgba(79,70,229,0.2);">
         <i class="fa-solid fa-plus"></i> Tambah Desa
     </button>
 </div>
 
-<div class="card" style="width: 100%; border-radius: 0.75rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 0; overflow: hidden; background: #ffffff;">
+<div class="card" style="width: 100%; border-radius: 0.5rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.04); padding: 0; overflow: hidden; background: #ffffff;">
     <div style="padding: 0; overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem;">
+        <table class="data-table">
             <thead>
-                <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #475569; font-size: 0.825rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                    <th style="padding: 1rem 1.25rem;">Kode Unik</th>
-                    <th style="padding: 1rem 1.25rem;">Nama Desa</th>
-                    <th style="padding: 1rem 1.25rem;">ID Sistem</th>
-                    <th style="padding: 1rem 1.25rem;">Alamat</th>
-                    <th style="padding: 1rem 1.25rem; text-align:right;">Aksi</th>
+                <tr>
+                    <th>Kode Unik</th>
+                    <th>Nama Desa</th>
+                    <th>ID Sistem</th>
+                    <th>Alamat</th>
+                    <th style="text-align:right;">Aksi</th>
                 </tr>
             </thead>
             <tbody id="villages-tbody">
                 <tr>
-                    <td colspan="5" style="text-align:center; padding: 2.5rem; color: #94a3b8;">
-                        <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block; color: #4f46e5;"></i>
+                    <td colspan="5" style="text-align:center; padding: 1.5rem; color: #94a3b8;">
+                        <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.25rem; margin-bottom: 0.35rem; display: block; color: #4f46e5;"></i>
                         Memuat data desa...
                     </td>
                 </tr>
@@ -124,28 +124,28 @@
                     const villageId = v.id;
 
                     tr.innerHTML = `
-                        <td style="padding: 1rem 1.25rem;">
-                            <span style="display:inline-block; padding:0.25rem 0.6rem; border-radius:0.4rem; background:#eef2ff; color:#4f46e5; font-weight:700; font-family:monospace; font-size:0.85rem; border:1px solid #c7d2fe;">
+                        <td>
+                            <span style="display:inline-block; padding:1px 5px; border-radius:3px; background:#eef2ff; color:#4f46e5; font-weight:700; font-family:monospace; font-size:0.75rem; border:1px solid #c7d2fe;">
                                 ${safeCode}
                             </span>
                         </td>
-                        <td style="padding: 1rem 1.25rem; font-weight: 700; color:#0f172a;">
+                        <td style="font-weight: 600; color:#0f172a;">
                             ${safeName}
                         </td>
-                        <td style="padding: 1rem 1.25rem; color:#64748b; font-size:0.825rem; font-family:monospace;">
+                        <td style="color:#64748b; font-size:0.72rem; font-family:monospace;">
                             ${villageId}
                         </td>
-                        <td style="padding: 1rem 1.25rem; color:#64748b; font-size:0.85rem;">
+                        <td style="color:#64748b; font-size:0.75rem;">
                             ${safeAddress}
                         </td>
-                        <td style="padding: 1rem 1.25rem; text-align:right; white-space:nowrap;">
-                            <button type="button" onclick="sendVillageNotification('${villageId}')" title="Kirim Notifikasi Chat Registrasi Desa" style="background:#e0e7ff; border:1px solid #c7d2fe; color:#4338ca; cursor:pointer; padding:0.4rem 0.7rem; border-radius:0.4rem; font-size:0.825rem; font-weight:600; margin-right:0.4rem; transition:all 0.15s; display:inline-flex; align-items:center; gap:0.35rem;">
-                                <i class="fa-solid fa-paper-plane"></i> Kirim Chat
+                        <td style="text-align:right; white-space:nowrap;">
+                            <button type="button" onclick="sendVillageNotification('${villageId}')" title="Kirim Notifikasi Chat Registrasi Desa" style="background:#e0e7ff; border:1px solid #c7d2fe; color:#4338ca; cursor:pointer; padding:2px 6px; border-radius:4px; font-size:0.7rem; font-weight:600; margin-right:2px; transition:all 0.15s; display:inline-flex; align-items:center; gap:0.25rem;">
+                                <i class="fa-solid fa-paper-plane"></i> Chat
                             </button>
-                            <button type="button" onclick="onEditClick('${villageId}')" title="Edit Desa" style="background:#fef3c7; border:1px solid #fde68a; color:#b45309; cursor:pointer; padding:0.4rem 0.7rem; border-radius:0.4rem; font-size:0.825rem; font-weight:600; margin-right:0.4rem; transition:all 0.15s;">
+                            <button type="button" onclick="onEditClick('${villageId}')" title="Edit Desa" style="background:#fef3c7; border:1px solid #fde68a; color:#b45309; cursor:pointer; padding:2px 6px; border-radius:4px; font-size:0.7rem; font-weight:600; margin-right:2px; transition:all 0.15s;">
                                 <i class="fa-solid fa-pen"></i> Edit
                             </button>
-                            <button type="button" onclick="confirmDeleteVillage('${villageId}')" title="Hapus Desa" style="background:#fee2e2; border:1px solid #fecaca; color:#b91c1c; cursor:pointer; padding:0.4rem 0.7rem; border-radius:0.4rem; font-size:0.825rem; font-weight:600; transition:all 0.15s;">
+                            <button type="button" onclick="confirmDeleteVillage('${villageId}')" title="Hapus Desa" style="background:#fee2e2; border:1px solid #fecaca; color:#b91c1c; cursor:pointer; padding:2px 6px; border-radius:4px; font-size:0.7rem; font-weight:600; transition:all 0.15s;">
                                 <i class="fa-solid fa-trash"></i> Hapus
                             </button>
                         </td>

@@ -4,13 +4,16 @@
 <style>
     .chat-container {
         display: flex;
-        height: calc(100vh - 70px); /* 100vh - topbar height */
+        height: calc(100vh - 48px - 1.7rem); /* 100vh - topbar height - content padding */
         background-color: white;
+        border-radius: 0.625rem;
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
     }
 
     /* Contact List (Left Sidebar) */
     .chat-sidebar {
-        width: 320px;
+        width: 250px;
         border-right: 1px solid #e5e7eb;
         display: flex;
         flex-direction: column;
@@ -18,26 +21,27 @@
     }
 
     .chat-header {
-        padding: 1.25rem;
+        padding: 0.65rem 0.85rem;
         border-bottom: 1px solid #e5e7eb;
         background-color: white;
     }
 
     .search-box {
         width: 100%;
-        padding: 0.75rem 1rem;
+        padding: 0.35rem 0.75rem;
         border: 1px solid #d1d5db;
         border-radius: 9999px;
         outline: none;
         background-color: #f3f4f6;
         transition: all 0.2s;
         box-sizing: border-box;
+        font-size: 0.8rem;
     }
 
     .search-box:focus {
         border-color: var(--primary);
         background-color: white;
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
     }
 
     .contact-list {
@@ -51,7 +55,7 @@
     .contact-item {
         display: flex;
         align-items: center;
-        padding: 1rem 1.25rem;
+        padding: 0.5rem 0.75rem;
         border-bottom: 1px solid #f3f4f6;
         cursor: pointer;
         transition: background-color 0.2s;
@@ -64,19 +68,20 @@
 
     .contact-item.active {
         background-color: #eef2ff;
-        border-left: 4px solid var(--primary);
+        border-left: 3px solid var(--primary);
     }
 
     .contact-avatar {
-        width: 45px;
-        height: 45px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         background-color: #d1d5db;
-        margin-right: 1rem;
+        margin-right: 0.65rem;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 600;
+        font-size: 0.85rem;
         color: white;
         flex-shrink: 0;
     }
@@ -88,15 +93,16 @@
 
     .contact-name {
         font-weight: 600;
+        font-size: 0.825rem;
         color: #111827;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.1rem;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     .contact-last-msg {
-        font-size: 0.875rem;
+        font-size: 0.75rem;
         color: #6b7280;
         white-space: nowrap;
         overflow: hidden;
@@ -106,11 +112,11 @@
     .contact-badge {
         background-color: var(--danger);
         color: white;
-        font-size: 0.75rem;
-        padding: 0.1rem 0.5rem;
+        font-size: 0.68rem;
+        padding: 1px 5px;
         border-radius: 9999px;
         font-weight: 700;
-        margin-left: 0.5rem;
+        margin-left: 0.35rem;
     }
 
     /* Chat Area (Right Side) */
@@ -123,7 +129,7 @@
     }
 
     .chat-area-header {
-        padding: 1rem 1.5rem;
+        padding: 0.65rem 1rem;
         border-bottom: 1px solid #e5e7eb;
         background-color: white;
         display: flex;
@@ -134,17 +140,17 @@
 
     .chat-area-title {
         font-weight: 600;
-        font-size: 1.125rem;
+        font-size: 0.95rem;
         color: #111827;
     }
 
     .chat-messages {
         flex: 1;
-        padding: 1.5rem;
+        padding: 1rem;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 0.65rem;
     }
 
     .message-wrapper {
@@ -162,10 +168,10 @@
     }
 
     .message-bubble {
-        padding: 0.75rem 1rem;
-        border-radius: 1rem;
-        font-size: 0.95rem;
-        line-height: 1.5;
+        padding: 0.45rem 0.75rem;
+        border-radius: 0.65rem;
+        font-size: 0.825rem;
+        line-height: 1.35;
         position: relative;
     }
 
@@ -186,9 +192,9 @@
         display: flex;
         align-items: center;
         gap: 0.25rem;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         color: #9ca3af;
-        margin-top: 0.25rem;
+        margin-top: 0.15rem;
     }
     
     .message-wrapper.sent .message-time-wrapper {
@@ -202,8 +208,8 @@
     .message-actions {
         display: none;
         align-items: center;
-        gap: 0.75rem;
-        margin-top: 0.25rem;
+        gap: 0.5rem;
+        margin-top: 0.15rem;
         align-self: flex-end;
     }
     
@@ -214,7 +220,7 @@
     .action-btn {
         color: #9ca3af;
         cursor: pointer;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         transition: color 0.2s;
     }
     
@@ -239,32 +245,32 @@
     }
 
     .chat-input-area {
-        padding: 1rem 1.5rem;
+        padding: 0.65rem 1rem;
         background-color: white;
         border-top: 1px solid #e5e7eb;
         display: flex;
-        gap: 1rem;
+        gap: 0.65rem;
         align-items: center;
     }
 
     .chat-input {
         flex: 1;
-        padding: 0.875rem 1.25rem;
+        padding: 0.45rem 0.85rem;
         border: 1px solid #d1d5db;
         border-radius: 9999px;
         outline: none;
         transition: all 0.2s;
-        font-size: 0.95rem;
+        font-size: 0.825rem;
     }
 
     .chat-input:focus {
         border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
     }
 
     .btn-send {
-        width: 45px;
-        height: 45px;
+        width: 34px;
+        height: 34px;
         border-radius: 50%;
         background-color: var(--primary);
         color: white;
@@ -274,7 +280,7 @@
         justify-content: center;
         cursor: pointer;
         transition: background-color 0.2s;
-        font-size: 1.25rem;
+        font-size: 0.95rem;
     }
 
     .btn-send:hover {

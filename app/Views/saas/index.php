@@ -7,12 +7,12 @@
         width: 100%;
     }
 
-    /* Hero Header */
+    /* Hero Header - Compact */
     .page-hero {
         background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #a855f7 100%);
-        border-radius: 1.25rem;
-        padding: 2rem 2.5rem;
-        margin-bottom: 2rem;
+        border-radius: 0.75rem;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1rem;
         color: white;
         display: flex;
         justify-content: space-between;
@@ -37,72 +37,72 @@
         border-radius: 50%;
     }
     .hero-text h1 {
-        margin: 0 0 0.35rem 0;
-        font-size: 1.75rem;
+        margin: 0 0 0.2rem 0;
+        font-size: 1.25rem;
         font-weight: 700;
-        letter-spacing: -0.02em;
+        letter-spacing: -0.01em;
     }
     .hero-text p {
         margin: 0;
-        opacity: 0.8;
-        font-size: 0.95rem;
+        opacity: 0.9;
+        font-size: 0.78rem;
     }
     .hero-stats {
         display: flex;
-        gap: 1.5rem;
+        gap: 0.75rem;
         z-index: 1;
     }
     .hero-stat {
         text-align: center;
         background: rgba(255,255,255,0.12);
-        border-radius: 0.75rem;
-        padding: 0.875rem 1.25rem;
+        border-radius: 0.5rem;
+        padding: 0.5rem 0.85rem;
         backdrop-filter: blur(8px);
         border: 1px solid rgba(255,255,255,0.2);
-        min-width: 90px;
+        min-width: 70px;
     }
     .hero-stat-num {
-        font-size: 1.75rem;
+        font-size: 1.25rem;
         font-weight: 700;
         line-height: 1;
         display: block;
     }
     .hero-stat-label {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         opacity: 0.8;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-top: 0.2rem;
+        letter-spacing: 0.04em;
+        margin-top: 0.15rem;
         display: block;
     }
 
-    /* Tabs */
+    /* Tabs - Compact */
     .tabs-nav {
         display: flex;
         gap: 0.25rem;
         background: white;
-        border-radius: 1rem;
-        padding: 0.375rem;
-        margin-bottom: 1.75rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+        border-radius: 0.65rem;
+        padding: 0.25rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         border: 1px solid #e5e7eb;
     }
     .tab-btn {
         flex: 1 1 0%;
-        padding: 0.75rem 0.5rem;
+        padding: 0.45rem 0.65rem;
         border: none;
         background: transparent;
-        border-radius: 0.625rem;
+        border-radius: 0.5rem;
         cursor: pointer;
         font-family: inherit;
         font-weight: 600;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         color: #6b7280;
-        transition: all 0.2s ease;
+        transition: all 0.15s ease;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
+        gap: 0.4rem;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -114,7 +114,7 @@
     .tab-btn.active {
         background: linear-gradient(135deg, #4f46e5, #7c3aed);
         color: white;
-        box-shadow: 0 4px 12px rgba(79,70,229,0.35);
+        box-shadow: 0 2px 8px rgba(79,70,229,0.3);
     }
     .tab-badge {
         background: rgba(255,255,255,0.25);
@@ -316,19 +316,20 @@
     }
     .data-table th {
         background: #fafafa;
-        padding: 0.875rem 1.25rem;
+        padding: 4px 6px !important;
         text-align: left;
-        font-size: 0.7rem;
+        font-size: 0.68rem !important;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.05em;
         color: #6b7280;
         border-bottom: 1px solid #e5e7eb;
     }
     .data-table td {
-        padding: 1rem 1.25rem;
+        padding: 3px 6px !important;
         border-bottom: 1px solid #f3f4f6;
-        font-size: 0.875rem;
+        font-size: 0.78rem !important;
+        line-height: 1.25 !important;
         vertical-align: middle;
     }
     .data-table tr:last-child td { border-bottom: none; }
@@ -337,14 +338,14 @@
 
     /* Badges */
     .status-badge {
-        padding: 0.25rem 0.7rem;
+        padding: 1px 5px !important;
         border-radius: 9999px;
-        font-size: 0.72rem;
+        font-size: 0.65rem !important;
         font-weight: 700;
-        letter-spacing: 0.03em;
+        letter-spacing: 0.02em;
         display: inline-flex;
         align-items: center;
-        gap: 0.25rem;
+        gap: 0.2rem;
         position: static;
         transform: none;
     }
@@ -355,7 +356,7 @@
     .badge-core      { background: #ede9fe; color: #5b21b6; }
 
     /* Toggle (Switch) */
-    .sw { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .sw { position: relative; display: inline-block; width: 32px; height: 18px; }
     .sw input { opacity: 0; width: 0; height: 0; }
     .sw-slider {
         position: absolute; cursor: pointer;
@@ -365,39 +366,39 @@
     }
     .sw-slider:before {
         content: ''; position: absolute;
-        height: 18px; width: 18px;
-        left: 3px; bottom: 3px;
+        height: 14px; width: 14px;
+        left: 2px; bottom: 2px;
         background: white; border-radius: 50%;
         transition: 0.3s;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.25);
     }
     .sw input:checked + .sw-slider { background: #4f46e5; }
-    .sw input:checked + .sw-slider:before { transform: translateX(20px); }
+    .sw input:checked + .sw-slider:before { transform: translateX(14px); }
     .sw.danger input:checked + .sw-slider { background: #ef4444; }
     .sw.warning input:checked + .sw-slider { background: #f59e0b; }
     .sw.success input:checked + .sw-slider { background: #10b981; }
 
     /* Selects in table */
     .inline-select {
-        padding: 0.4rem 0.75rem;
+        padding: 0.2rem 0.45rem;
         border: 1.5px solid #e5e7eb;
-        border-radius: 0.5rem;
+        border-radius: 0.375rem;
         font-family: inherit;
-        font-size: 0.825rem;
+        font-size: 0.75rem;
         background: white;
         color: #374151;
         cursor: pointer;
         transition: border-color 0.2s;
-        max-width: 170px;
+        max-width: 150px;
     }
     .inline-select:focus { outline: none; border-color: #4f46e5; }
     .inline-num {
-        padding: 0.4rem 0.5rem;
+        padding: 0.2rem 0.35rem;
         border: 1.5px solid #e5e7eb;
-        border-radius: 0.5rem;
+        border-radius: 0.375rem;
         font-family: inherit;
-        font-size: 0.825rem;
-        width: 80px;
+        font-size: 0.75rem;
+        width: 70px;
         text-align: center;
     }
     .inline-num:focus { outline: none; border-color: #4f46e5; }

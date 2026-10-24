@@ -5,58 +5,59 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-    /* Styling Elegan & Premium */
+    /* Styling Elegan & Ringkas untuk Monitor Standar */
     .dashboard-header {
-        margin-bottom: 2rem;
+        margin-bottom: 0.85rem;
     }
     
     .dashboard-header h2 {
         margin: 0;
-        font-size: 1.25rem;
+        font-size: 1.15rem;
         font-weight: 700;
         color: #111827;
-        letter-spacing: -0.02em;
+        letter-spacing: -0.01em;
     }
     
     .dashboard-header p {
         color: #6b7280;
-        font-size: 0.8125rem;
-        margin-top: 0.35rem;
+        font-size: 0.75rem;
+        margin-top: 0.15rem;
     }
 
     /* Grid Kartu Statistik */
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 1.25rem;
-        margin-bottom: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 1rem;
     }
 
     .stat-card {
         background: #ffffff;
-        border-radius: 12px;
-        padding: 1.25rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-        border: 1px solid rgba(229, 231, 235, 0.5);
+        border-radius: 8px;
+        padding: 0.75rem 0.85rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(229, 231, 235, 0.6);
         display: flex;
         align-items: center;
-        gap: 1rem;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        gap: 0.65rem;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
     .stat-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
     }
 
     .stat-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: 10px;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.15rem;
+        font-size: 0.95rem;
+        flex-shrink: 0;
     }
 
     .stat-icon.primary { background: #e0e7ff; color: #4f46e5; }
@@ -66,19 +67,20 @@
 
     .stat-content {
         flex: 1;
+        min-width: 0;
     }
 
     .stat-label {
         color: #6b7280;
-        font-size: 0.75rem;
+        font-size: 0.68rem;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 0.25rem;
+        letter-spacing: 0.03em;
+        margin-bottom: 0.1rem;
     }
 
     .stat-value {
-        font-size: 1.35rem;
+        font-size: 1.15rem;
         font-weight: 700;
         color: #111827;
         line-height: 1.2;
@@ -88,7 +90,7 @@
     .dashboard-bottom {
         display: grid;
         grid-template-columns: 1.5fr 1fr;
-        gap: 1.5rem;
+        gap: 1rem;
     }
 
     @media (max-width: 992px) {
@@ -99,49 +101,51 @@
 
     .panel {
         background: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-        border: 1px solid rgba(229, 231, 235, 0.5);
-        padding: 1.25rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(229, 231, 235, 0.6);
+        padding: 0.85rem;
     }
 
     .panel-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1rem;
+        margin-bottom: 0.65rem;
     }
 
     .panel-title {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         font-weight: 700;
         color: #111827;
         margin: 0;
     }
 
-    /* Tabel Aktivitas Premium */
+    /* Tabel Aktivitas Premium - Ultra Compact */
     .table-container {
         overflow-x: auto;
     }
     
     .table {
         width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
+        border-collapse: collapse;
     }
     
     .table th, .table td {
-        padding: 0.75rem 0.5rem;
+        padding: 3px 6px !important;
         text-align: left;
         border-bottom: 1px solid #f3f4f6;
-        font-size: 0.75rem;
+        font-size: 0.75rem !important;
+        line-height: 1.2 !important;
     }
     
     .table th {
         color: #6b7280;
-        font-weight: 600;
+        font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.04em;
+        background: #f8fafc;
+        border-bottom: 1.5px solid #e2e8f0;
     }
     
     .table tbody tr:hover {
@@ -149,11 +153,12 @@
     }
     
     .badge-type {
-        padding: 0.2rem 0.6rem;
-        border-radius: 9999px;
-        font-size: 0.7rem;
+        padding: 1px 5px !important;
+        border-radius: 4px;
+        font-size: 0.65rem !important;
         font-weight: 600;
         display: inline-block;
+        line-height: 1.1;
     }
     
     .type-in { background-color: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
@@ -162,7 +167,7 @@
     /* Skeleton Loading */
     .loading-skeleton {
         animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        height: 1.5rem;
+        height: 1.15rem;
         background-color: #e5e7eb;
         border-radius: 0.25rem;
         width: 60%;

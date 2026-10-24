@@ -16,21 +16,21 @@
     /* Tabs Styling */
     .settings-tabs {
         display: flex;
-        gap: 0.75rem;
-        margin-bottom: 1.5rem;
+        gap: 0.5rem;
+        margin-bottom: 0.85rem;
         border-bottom: 2px solid #e2e8f0;
-        padding-bottom: 0.5rem;
+        padding-bottom: 0.4rem;
         flex-wrap: wrap;
     }
 
     .settings-tab-btn {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.4rem;
-        font-size: 0.925rem;
+        gap: 0.4rem;
+        padding: 0.4rem 0.85rem;
+        font-size: 0.8rem;
         font-weight: 600;
-        border-radius: 0.6rem;
+        border-radius: 0.45rem;
         cursor: pointer;
         border: 1px solid #cbd5e1;
         background-color: #ffffff;
@@ -47,14 +47,14 @@
         background-color: #16a34a;
         color: #ffffff;
         border-color: #16a34a;
-        box-shadow: 0 2px 4px rgba(22, 163, 74, 0.25);
+        box-shadow: 0 1px 3px rgba(22, 163, 74, 0.25);
     }
 
     .settings-tab-btn.active-version {
         background-color: #4f46e5;
         color: #ffffff;
         border-color: #4f46e5;
-        box-shadow: 0 2px 4px rgba(79, 70, 229, 0.25);
+        box-shadow: 0 1px 3px rgba(79, 70, 229, 0.25);
     }
 
     /* Card Full Width */
@@ -62,20 +62,20 @@
         width: 100%;
         max-width: 100%;
         background: #ffffff;
-        border-radius: 0.85rem;
+        border-radius: 0.625rem;
         border: 1px solid #e2e8f0;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         overflow: hidden;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
     }
 
     .settings-card-header {
-        padding: 1.25rem 1.5rem;
+        padding: 0.75rem 1rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 0.75rem;
     }
 
     .header-wa {
@@ -89,13 +89,13 @@
     }
 
     .settings-card-body {
-        padding: 1.75rem 1.5rem;
+        padding: 1rem 1.15rem;
         width: 100%;
     }
 
     /* Form Layout Elements - Guaranteed No Overlap */
     .form-group {
-        margin-bottom: 1.25rem;
+        margin-bottom: 0.75rem;
         width: 100%;
         position: static;
         clear: both;
@@ -103,29 +103,29 @@
 
     .form-group label {
         display: block;
-        font-size: 0.875rem;
+        font-size: 0.78rem;
         font-weight: 700;
         color: #1e293b;
-        margin-bottom: 0.45rem;
+        margin-bottom: 0.25rem;
         line-height: 1.3;
     }
 
     .form-hint {
         display: block;
-        font-size: 0.775rem;
+        font-size: 0.7rem;
         color: #64748b;
-        margin-top: 0.35rem;
-        line-height: 1.4;
+        margin-top: 0.2rem;
+        line-height: 1.35;
     }
 
     .form-input {
         display: block;
         width: 100%;
-        padding: 0.7rem 0.95rem;
-        font-size: 0.9rem;
+        padding: 0.35rem 0.65rem;
+        font-size: 0.8rem;
         font-family: inherit;
         border: 1.5px solid #cbd5e1;
-        border-radius: 0.5rem;
+        border-radius: 0.375rem;
         background-color: #ffffff;
         color: #0f172a;
         outline: none;
@@ -134,30 +134,30 @@
 
     .form-input:focus {
         border-color: #4f46e5;
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
     }
 
     .form-input-wa:focus {
         border-color: #16a34a;
-        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+        box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.15);
     }
 
     .form-input-code {
         font-family: 'Consolas', 'Courier New', monospace;
-        font-size: 0.875rem;
+        font-size: 0.78rem;
     }
 
     /* Flex Grid Rows - Prevents Horizontal Overflow with min-width: 0 */
     .form-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 1.25rem;
+        gap: 0.75rem;
         width: 100%;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.35rem;
     }
 
     .form-col {
-        flex: 1 1 300px;
+        flex: 1 1 260px;
         min-width: 0; /* Essential to prevent overflow */
     }
 
@@ -168,17 +168,17 @@
 
     /* Action Buttons */
     .btn-submit-wa {
-        padding: 0.75rem 2rem;
-        border-radius: 0.5rem;
+        padding: 0.4rem 1.2rem;
+        border-radius: 0.4rem;
         background-color: #16a34a;
         color: #ffffff;
         border: none;
         font-weight: 700;
-        font-size: 0.925rem;
+        font-size: 0.8rem;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.4rem;
         transition: background-color 0.15s;
     }
 
@@ -187,17 +187,17 @@
     }
 
     .btn-submit-version {
-        padding: 0.75rem 2rem;
-        border-radius: 0.5rem;
+        padding: 0.4rem 1.2rem;
+        border-radius: 0.4rem;
         background-color: #4f46e5;
         color: #ffffff;
         border: none;
         font-weight: 700;
-        font-size: 0.925rem;
+        font-size: 0.8rem;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.4rem;
         transition: background-color 0.15s;
     }
 
@@ -210,11 +210,11 @@
 <?= $this->section('content') ?>
 <div class="settings-wrapper">
     <!-- Page Header -->
-    <div style="margin-bottom: 1.5rem;">
-        <h1 class="page-title" style="font-size: 1.5rem; font-weight: 700; color: #0f172a; margin: 0;">
+    <div style="margin-bottom: 1rem;">
+        <h1 class="page-title" style="font-size: 1.25rem; font-weight: 700; color: #0f172a; margin: 0;">
             Pengaturan Sistem
         </h1>
-        <p style="font-size: 0.85rem; color: #64748b; margin: 0.3rem 0 0 0;">
+        <p style="font-size: 0.78rem; color: #64748b; margin: 0.2rem 0 0 0;">
             Kelola konfigurasi pengiriman notifikasi WhatsApp Group dan versi rilis aplikasi Google Play Store.
         </p>
     </div>
@@ -236,8 +236,8 @@
         <div class="settings-card">
             <!-- Header -->
             <div class="settings-card-header header-wa">
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <div style="width: 42px; height: 42px; border-radius: 10px; background: #22c55e; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                    <div style="width: 30px; height: 30px; border-radius: 8px; background: #22c55e; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1rem;">
                         💬
                     </div>
                     <div>

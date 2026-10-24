@@ -328,6 +328,27 @@
             font-size: 0.95rem;
         }
 
+        /* Standard Monitor & Compact Laptop Scaling */
+        @media (max-width: 1440px) or (max-height: 850px) {
+            .left-panel { padding: 1.75rem 2rem; }
+            .brand-logo { font-size: 1.75rem; margin-bottom: 1.5rem; }
+            .brand-logo .icon-wrap { width: 44px; height: 44px; font-size: 1.25rem; border-radius: 12px; }
+            .left-illustration h2 { font-size: 1.5rem; margin-bottom: 0.75rem; }
+            .left-illustration p { font-size: 0.875rem; line-height: 1.5; }
+            .floating-cards { margin-top: 1.5rem; gap: 0.65rem; }
+            .info-card { padding: 0.65rem 0.85rem; font-size: 0.8rem; }
+            .info-card i { font-size: 1.15rem; }
+            .right-panel { width: 400px; padding: 1.75rem 2rem; }
+            .login-header { margin-bottom: 1.5rem; }
+            .login-header h1 { font-size: 1.5rem; }
+            .login-header p { font-size: 0.825rem; }
+            .btn-google { padding: 0.75rem 1.25rem; font-size: 0.875rem; }
+            .divider { margin: 1.15rem 0; font-size: 0.78rem; }
+            .access-info { padding: 0.75rem 1rem; }
+            .access-info p { font-size: 0.78rem; }
+            .login-footer { margin-top: 1.5rem; font-size: 0.75rem; }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .left-panel { display: none; }

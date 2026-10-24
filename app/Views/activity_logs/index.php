@@ -10,18 +10,18 @@
     /* Hero Header */
     .page-hero {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #312e81 100%);
-        border-radius: 1.25rem;
-        padding: 2rem 2.25rem;
-        margin-bottom: 1.75rem;
+        border-radius: 0.75rem;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1rem;
         color: white;
         display: flex;
         justify-content: space-between;
         align-items: center;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.2);
+        box-shadow: 0 4px 15px -3px rgba(15, 23, 42, 0.2);
         flex-wrap: wrap;
-        gap: 1.25rem;
+        gap: 0.75rem;
     }
     .page-hero::before {
         content: '';
@@ -48,33 +48,33 @@
         z-index: 10;
     }
     .hero-text h1 { 
-        margin: 0 0 0.4rem 0; 
-        font-size: 1.75rem; 
+        margin: 0 0 0.2rem 0; 
+        font-size: 1.25rem; 
         font-weight: 700; 
         letter-spacing: -0.02em;
         display: flex;
         align-items: center;
-        gap: 0.6rem;
+        gap: 0.5rem;
     }
     .hero-text p { 
         margin: 0; 
         opacity: 0.82; 
-        font-size: 0.925rem; 
+        font-size: 0.8rem; 
         max-width: 650px;
-        line-height: 1.45;
+        line-height: 1.35;
     }
 
     /* Realtime Pill & Pulse */
     .realtime-pill {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.35rem;
         background: rgba(16, 185, 129, 0.16);
         color: #34d399;
         border: 1px solid rgba(16, 185, 129, 0.32);
-        padding: 0.4rem 0.85rem;
+        padding: 0.2rem 0.55rem;
         border-radius: 9999px;
-        font-size: 0.775rem;
+        font-size: 0.72rem;
         font-weight: 600;
         letter-spacing: 0.02em;
         user-select: none;
@@ -86,8 +86,8 @@
         border-color: rgba(148, 163, 184, 0.25);
     }
     .pulsing-dot {
-        width: 8px;
-        height: 8px;
+        width: 6px;
+        height: 6px;
         border-radius: 50%;
         background-color: #10b981;
         box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
@@ -101,21 +101,21 @@
     }
     @keyframes pulseGreen {
         0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-        70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
         100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
     .btn-realtime-toggle {
-        padding: 0.55rem 0.95rem;
+        padding: 0.35rem 0.65rem;
         background: rgba(255, 255, 255, 0.12);
         color: white;
         border: 1px solid rgba(255, 255, 255, 0.25);
-        border-radius: 0.625rem;
-        font-size: 0.8rem;
+        border-radius: 0.5rem;
+        font-size: 0.75rem;
         font-weight: 600;
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 0.4rem;
+        gap: 0.35rem;
         transition: all 0.2s;
     }
     .btn-realtime-toggle:hover {
@@ -133,43 +133,43 @@
     /* Stats Grid */
     .stats-row {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 1rem;
     }
     .stat-chip {
         background: white;
         border: 1px solid #e2e8f0;
-        border-radius: 0.875rem;
-        padding: 1rem 1.25rem;
+        border-radius: 0.5rem;
+        padding: 0.5rem 0.75rem;
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 0.65rem;
         box-shadow: 0 1px 3px rgba(0,0,0,0.03);
         transition: transform 0.2s, box-shadow 0.2s;
     }
     .stat-chip:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 15px -3px rgba(0,0,0,0.07);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.06);
     }
     .stat-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 0.625rem;
+        width: 28px;
+        height: 28px;
+        border-radius: 0.4rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.25rem;
+        font-size: 0.85rem;
         flex-shrink: 0;
     }
     .stat-num {
-        font-size: 1.35rem;
+        font-size: 1.15rem;
         font-weight: 700;
         color: #0f172a;
         line-height: 1.2;
     }
     .stat-label {
-        font-size: 0.775rem;
+        font-size: 0.68rem;
         color: #64748b;
         font-weight: 500;
         text-transform: uppercase;
@@ -180,27 +180,27 @@
     .toolbar-card {
         background: white;
         border: 1px solid #e2e8f0;
-        border-radius: 0.875rem;
-        padding: 1rem 1.25rem;
-        margin-bottom: 1.25rem;
+        border-radius: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 0.75rem;
         display: flex;
-        gap: 0.85rem;
+        gap: 0.65rem;
         align-items: center;
         flex-wrap: wrap;
         box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
     .toolbar-search {
         flex: 1;
-        min-width: 220px;
+        min-width: 200px;
         position: relative;
     }
     .toolbar-search input {
         width: 100%;
-        padding: 0.65rem 1rem 0.65rem 2.4rem;
+        padding: 0.35rem 0.75rem 0.35rem 2.2rem;
         border: 1.5px solid #cbd5e1;
-        border-radius: 0.625rem;
+        border-radius: 0.5rem;
         font-family: inherit;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         background: #f8fafc;
         box-sizing: border-box;
         transition: all 0.2s;
@@ -209,22 +209,22 @@
         outline: none;
         background: #ffffff;
         border-color: #4f46e5;
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+        box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.12);
     }
     .toolbar-search i {
         position: absolute;
-        left: 0.85rem;
+        left: 0.75rem;
         top: 50%;
         transform: translateY(-50%);
         color: #94a3b8;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
     }
     .toolbar-select {
-        padding: 0.65rem 1rem;
+        padding: 0.35rem 0.65rem;
         border: 1.5px solid #cbd5e1;
-        border-radius: 0.625rem;
+        border-radius: 0.5rem;
         font-family: inherit;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         background: #f8fafc;
         cursor: pointer;
         color: #334155;
@@ -237,17 +237,17 @@
         border-color: #4f46e5;
     }
     .btn-refresh {
-        padding: 0.65rem 1.15rem;
+        padding: 0.35rem 0.75rem;
         background: #4f46e5;
         color: white;
         border: none;
-        border-radius: 0.625rem;
+        border-radius: 0.5rem;
         font-weight: 600;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.35rem;
         transition: background 0.2s;
     }
     .btn-refresh:hover {
@@ -258,7 +258,7 @@
     .table-card {
         background: white;
         border: 1px solid #e2e8f0;
-        border-radius: 0.875rem;
+        border-radius: 0.625rem;
         overflow: hidden;
         box-shadow: 0 1px 3px rgba(0,0,0,0.03);
     }
@@ -266,24 +266,25 @@
         width: 100%;
         border-collapse: collapse;
         text-align: left;
-        font-size: 0.85rem;
+        font-size: 0.78rem !important;
     }
     .logs-table thead tr {
         background: #f8fafc;
-        border-bottom: 2px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
         color: #475569;
-        font-size: 0.775rem;
+        font-size: 0.68rem !important;
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
     .logs-table th {
-        padding: 0.9rem 1.1rem;
+        padding: 4px 6px !important;
         font-weight: 700;
     }
     .logs-table td {
-        padding: 0.9rem 1.1rem;
+        padding: 3px 6px !important;
         border-bottom: 1px solid #f1f5f9;
-        vertical-align: middle;
+        vertical-align: middle !important;
+        line-height: 1.25 !important;
     }
     .logs-table tbody tr:hover {
         background: #f8fafc;
@@ -293,10 +294,10 @@
     .badge-action {
         display: inline-flex;
         align-items: center;
-        gap: 0.35rem;
-        padding: 0.25rem 0.65rem;
+        gap: 0.25rem;
+        padding: 1px 5px !important;
         border-radius: 9999px;
-        font-size: 0.75rem;
+        font-size: 0.65rem !important;
         font-weight: 700;
         letter-spacing: 0.02em;
         white-space: nowrap;
