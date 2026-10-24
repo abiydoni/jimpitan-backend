@@ -5,8 +5,8 @@
     /* ===== WHATSAPP BLASTING - PREMIUM SUITE ===== */
     .blast-wrapper {
         width: 100%;
-        max-width: 1400px;
-        margin: 0 auto;
+        max-width: 100%;
+        margin: 0;
     }
 
     /* Hero Banner */
@@ -22,6 +22,7 @@
         position: relative;
         overflow: hidden;
         box-shadow: 0 4px 15px -3px rgba(5, 150, 105, 0.25);
+        width: 100%;
     }
     .page-hero::before {
         content: '';
@@ -42,7 +43,7 @@
     .hero-content {
         position: relative;
         z-index: 1;
-        max-width: 700px;
+        max-width: 100%;
     }
     .hero-badge {
         display: inline-flex;
@@ -160,9 +161,10 @@
     /* Main Grid for Blasting Tab */
     .blast-grid {
         display: grid;
-        grid-template-columns: 1.25fr 0.95fr;
-        gap: 1.75rem;
+        grid-template-columns: 1.2fr 0.95fr;
+        gap: 1rem;
         align-items: start;
+        width: 100%;
     }
     @media (max-width: 1024px) {
         .blast-grid {
@@ -173,54 +175,55 @@
     /* Cards */
     .panel-card {
         background: white;
-        border-radius: 1.15rem;
+        border-radius: 0.625rem;
         border: 1px solid #e5e7eb;
-        padding: 1.5rem;
+        padding: 0.85rem 1rem;
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        margin-bottom: 1.5rem;
+        margin-bottom: 0.85rem;
+        width: 100%;
     }
     .panel-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1.25rem;
-        padding-bottom: 0.85rem;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.5rem;
         border-bottom: 1px solid #f3f4f6;
     }
     .panel-header h3 {
         margin: 0;
-        font-size: 1.05rem;
+        font-size: 0.95rem;
         font-weight: 700;
         color: #1f2937;
         display: flex;
         align-items: center;
-        gap: 0.6rem;
+        gap: 0.5rem;
     }
     .panel-header .header-badge {
-        font-size: 0.75rem;
-        padding: 0.2rem 0.65rem;
+        font-size: 0.72rem;
+        padding: 0.15rem 0.55rem;
         border-radius: 1rem;
         font-weight: 600;
     }
 
     /* Form Elements */
     .form-group {
-        margin-bottom: 1.15rem;
+        margin-bottom: 0.75rem;
     }
     .form-label {
         display: block;
-        font-size: 0.825rem;
+        font-size: 0.78rem;
         font-weight: 600;
         color: #374151;
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.25rem;
     }
     .form-control, .form-select {
         width: 100%;
-        padding: 0.65rem 0.95rem;
+        padding: 0.35rem 0.65rem;
         border: 1.5px solid #d1d5db;
-        border-radius: 0.65rem;
+        border-radius: 0.45rem;
         font-family: inherit;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         color: #1f2937;
         background-color: white;
         box-sizing: border-box;
@@ -229,13 +232,13 @@
     .form-control:focus, .form-select:focus {
         outline: none;
         border-color: #059669;
-        box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+        box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.12);
     }
     textarea.form-control {
-        min-height: 160px;
-        line-height: 1.5;
+        min-height: 120px;
+        line-height: 1.45;
         font-family: 'Consolas', 'Menlo', 'Courier New', monospace;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
     }
 
     /* Variable Tags (Placeholders) */
@@ -409,10 +412,11 @@
 
     /* Recipient Table */
     .table-container {
-        max-height: 380px;
+        max-height: 480px;
+        width: 100%;
         overflow-y: auto;
         border: 1px solid #e5e7eb;
-        border-radius: 0.75rem;
+        border-radius: 0.625rem;
     }
     .custom-table {
         width: 100%;
