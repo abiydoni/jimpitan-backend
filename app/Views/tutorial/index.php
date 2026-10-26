@@ -1267,11 +1267,12 @@
         <div class="pills-wrapper">
             <a href="#modul-pembuatan-desa" class="topic-pill active"><i class="fa-solid fa-house-chimney-medical"></i> 1. Pembuatan Desa</a>
             <a href="#modul-join-desa" class="topic-pill"><i class="fa-solid fa-user-plus"></i> 2. Gabung Desa</a>
+            <a href="#modul-approve-warga" class="topic-pill"><i class="fa-solid fa-user-check"></i> 2B. Setujui Warga</a>
             <a href="#modul-input-warga" class="topic-pill"><i class="fa-solid fa-address-card"></i> 3. Input Data Warga</a>
             <a href="#modul-import-csv" class="topic-pill"><i class="fa-solid fa-file-import"></i> 4. Import CSV Massal</a>
             <a href="#modul-scan-qr" class="topic-pill"><i class="fa-solid fa-qrcode"></i> 5. Scan QR Ronda</a>
             <a href="#modul-checklist-manual" class="topic-pill"><i class="fa-solid fa-clipboard-check"></i> 6. Input Manual</a>
-            <a href="#modul-setor-ronda" class="topic-pill"><i class="fa-solid fa-hand-holding-dollar"></i> 7. Setor Ronda</a>
+            <a href="#modul-setor-ronda" class="topic-pill"><i class="fa-solid fa-hand-holding-dollar"></i> 7. Validasi Jimpitan</a>
             <a href="#modul-iuran-warga" class="topic-pill"><i class="fa-solid fa-money-bill-transfer"></i> 8. Iuran Kas RT</a>
             <a href="#modul-buku-kas" class="topic-pill"><i class="fa-solid fa-book-journal-whills"></i> 9. Buku Kas</a>
             <a href="#modul-jadwal-ronda" class="topic-pill"><i class="fa-solid fa-calendar-days"></i> 10. Jadwal Ronda</a>
@@ -1301,7 +1302,7 @@
                 </div>
                 <div class="hero-stats-grid">
                     <div class="stat-item">
-                        <div class="stat-number">14+</div>
+                        <div class="stat-number">15+</div>
                         <div class="stat-label">Modul Tutorial</div>
                     </div>
                     <div class="stat-item">
@@ -1332,11 +1333,12 @@
             <ul class="toc-list">
                 <li class="toc-item"><a href="#modul-pembuatan-desa"><span class="toc-num">01</span> Pembuatan Desa Baru</a></li>
                 <li class="toc-item"><a href="#modul-join-desa"><span class="toc-num">02</span> Cara Warga Bergabung</a></li>
+                <li class="toc-item"><a href="#modul-approve-warga"><span class="toc-num">2B</span> Persetujuan Warga Baru</a></li>
                 <li class="toc-item"><a href="#modul-input-warga"><span class="toc-num">03</span> Input Data Warga & KK</a></li>
                 <li class="toc-item"><a href="#modul-import-csv"><span class="toc-num">04</span> Import Data Massal (CSV)</a></li>
                 <li class="toc-item"><a href="#modul-scan-qr"><span class="toc-num">05</span> Scan QR Ronda Harian</a></li>
                 <li class="toc-item"><a href="#modul-checklist-manual"><span class="toc-num">06</span> Input Manual & Checklist</a></li>
-                <li class="toc-item"><a href="#modul-setor-ronda"><span class="toc-num">07</span> Setor Uang ke Bendahara</a></li>
+                <li class="toc-item"><a href="#modul-setor-ronda"><span class="toc-num">07</span> Validasi Setoran Jimpitan</a></li>
                 <li class="toc-item"><a href="#modul-iuran-warga"><span class="toc-num">08</span> Pembayaran Iuran Kas RT</a></li>
                 <li class="toc-item"><a href="#modul-buku-kas"><span class="toc-num">09</span> Buku Kas & Keuangan</a></li>
                 <li class="toc-item"><a href="#modul-jadwal-ronda"><span class="toc-num">10</span> Jadwal Ronda Malam</a></li>
@@ -1503,7 +1505,7 @@
                                 <div class="step-content">
                                     <div class="step-title">Jalur Pengajuan Baru (Pending Approval)</div>
                                     <div class="step-desc">
-                                        Jika NIK belum pernah didaftarkan oleh admin, pengajuan warga akan masuk ke status <em>"Menunggu Persetujuan Admin RT"</em>. Admin RT cukup membuka menu Warga di aplikasi dan menekan tombol centang (Setujui).
+                                        Jika NIK belum pernah didaftarkan oleh admin, pengajuan warga akan masuk ke status <em>"Menunggu Persetujuan Admin RT"</em>. Admin RT dapat menyetujui dan menautkan data warga melalui tab <strong>Pendaftar Baru</strong> (lihat panduan langkah demi langkah di <a href="#modul-approve-warga" style="color: var(--primary); font-weight: 700; text-decoration: underline;">Modul 2B di bawah</a>).
                                     </div>
                                 </div>
                             </div>
@@ -1525,6 +1527,99 @@
                             </div>
                         </div>
                         <span class="visual-caption">Tampilan Form Gabung Desa di HP Warga</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ========================================== -->
+            <!-- MODUL 02B: PERSETUJUAN & VALIDASI PENDAFTAR BARU OLEH ADMIN -->
+            <!-- ========================================== -->
+            <article class="tutorial-card" id="modul-approve-warga">
+                <div class="card-header-meta">
+                    <span class="module-badge badge-rt"><i class="fa-solid fa-user-check"></i> Modul 2B • Khusus Admin Desa / RT</span>
+                    <button class="btn-copy-link" onclick="copySectionLink('modul-approve-warga')">
+                        <i class="fa-regular fa-copy"></i> Salin Link
+                    </button>
+                </div>
+                <h2 class="card-title">2B. Cara Admin Menyetujui & Menautkan Warga Baru</h2>
+                <p class="card-lead">
+                    Ketika warga baru mengajukan permohonan bergabung ke desa menggunakan Kode Desa, permohonan mereka akan masuk ke daftar tunggu. Admin RT dapat memverifikasi pemohon di tab <strong>Pendaftar Baru</strong> dan memanfaatkan fitur cerdas <em>Smart Linking</em> agar data warga tidak ganda.
+                </p>
+
+                <div class="module-body-grid">
+                    <div class="module-steps">
+                        <div class="step-sequence">
+                            <div class="step-row">
+                                <div class="step-badge">1</div>
+                                <div class="step-content">
+                                    <div class="step-title">Buka Menu "Manajemen Warga"</div>
+                                    <div class="step-desc">
+                                        Dari dashboard utama aplikasi Jimpitan (menggunakan akun Admin RT / Pengurus Desa), masuk ke menu <strong>Manajemen Warga</strong> (atau Data Warga).
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="step-row">
+                                <div class="step-badge">2</div>
+                                <div class="step-content">
+                                    <div class="step-title">Pilih Tab "Pendaftar Baru"</div>
+                                    <div class="step-desc">
+                                        Di bagian atas layar terdapat dua tab: <strong>Warga Aktif</strong> dan <strong>Pendaftar Baru</strong>. Ketuk tab <strong>"Pendaftar Baru"</strong> untuk melihat permohonan warga yang sedang menunggu persetujuan (status Pending).
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="step-row">
+                                <div class="step-badge">3</div>
+                                <div class="step-content">
+                                    <div class="step-title">Periksa Data & Ketuk Tombol "Setujui"</div>
+                                    <div class="step-desc">
+                                        Periksa nama lengkap, akun email Google, dan NIK yang diajukan pemohon. Untuk menyetujui warga tersebut bergabung ke desa, ketuk tombol <strong>Setujui (Ikon Centang)</strong> pada kartu warga.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="step-row">
+                                <div class="step-badge">4</div>
+                                <div class="step-content">
+                                    <div class="step-title">Fitur Cerdas Smart Linking (Pencegahan Data Ganda)</div>
+                                    <div class="step-desc">
+                                        Sistem Jimpitan secara cerdas mendeteksi apakah nama warga tersebut sudah terdaftar di desa (misal sudah pernah diinput manual atau lewat import CSV):
+                                        <ul style="margin: 0.35rem 0 0 1.25rem;">
+                                            <li><strong>Jika Terdeteksi Warga Serupa:</strong> Muncul dialog peringatan <em>"Terdeteksi Warga Serupa"</em> yang menampilkan No KK, NIK, dan Alamat yang cocok. Pilih tombol <strong>"Ya, Kaitkan Data"</strong>. Akun Google warga pendaftar langsung tertaut ke profil KK yang sudah ada, sehingga data tidak menjadi ganda dan warga langsung bisa melihat kartu jimpitan serta tagihan kas rumahnya!</li>
+                                            <li><strong>Bukan Warga Serupa:</strong> Jika orang tersebut memang warga baru yang terpisah, pilih <em>"Bukan (Warga Baru)"</em> untuk menyetujuinya sebagai kepala keluarga / warga baru mandiri.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="step-row">
+                                <div class="step-badge">5</div>
+                                <div class="step-content">
+                                    <div class="step-title">Warga Resmi Aktif & Berpindah ke "Warga Aktif"</div>
+                                    <div class="step-desc">
+                                        Setelah disetujui, pendaftar langsung berpindah ke tab <strong>"Warga Aktif"</strong>. Akun warga tersebut seketika aktif dan dapat langsung menggunakan seluruh fitur warga di aplikasi Jimpitan.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="callout-box callout-tip">
+                            <i class="fa-solid fa-user-shield" style="font-size: 1.25rem; margin-top: 2px;"></i>
+                            <div>
+                                <strong>Keamanan Lingkungan:</strong> Jika pemohon ternyata bukan warga RT setempat, Admin berhak menolak permohonan dengan menekan tombol <strong>Tolak / Hapus</strong> agar orang asing tidak memiliki akses data ke lingkungan Anda.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="module-visual">
+                        <div class="phone-mockup-frame" onclick="openLightbox('<?= base_url('tutorial_assets/persetujuan_warga_baru.png') ?>', 'Layar Manajemen Warga - Tab Pendaftar Baru')">
+                            <div class="phone-screen">
+                                <img src="<?= base_url('tutorial_assets/persetujuan_warga_baru.png') ?>" alt="Manajemen Warga Pendaftar Baru">
+                                <div class="zoom-overlay-hint"><i class="fa-solid fa-expand"></i> Perbesar Gambar</div>
+                            </div>
+                        </div>
+                        <span class="visual-caption">Tampilan Tab Pendaftar Baru di Layar Manajemen Warga HP</span>
                     </div>
                 </div>
             </article>
@@ -1959,27 +2054,27 @@
             </article>
 
             <!-- ========================================== -->
-            <!-- MODUL 07: SETOR JIMPITAN KE BENDAHARA -->
+            <!-- MODUL 07: PENGECEKAN & VALIDASI JIMPITAN OLEH PENGURUS -->
             <!-- ========================================== -->
             <article class="tutorial-card" id="modul-setor-ronda">
                 <div class="card-header-meta">
-                    <span class="module-badge badge-bendahara"><i class="fa-solid fa-hand-holding-dollar"></i> Modul 07 • Ronda & Bendahara</span>
+                    <span class="module-badge badge-bendahara"><i class="fa-solid fa-hand-holding-dollar"></i> Modul 07 • Pengecekan & Validasi Pengurus</span>
                     <button class="btn-copy-link" onclick="copySectionLink('modul-setor-ronda')">
                         <i class="fa-regular fa-copy"></i> Salin Link
                     </button>
                 </div>
-                <h2 class="card-title">7. Penyetoran Hasil Jimpitan ke Bendahara</h2>
+                <h2 class="card-title">7. Pengecekan & Validasi Hasil Jimpitan oleh Pengurus (Menu "Setor Jimpitan")</h2>
                 <p class="card-lead">
-                    Setelah putaran ronda selesai, uang koin/tunai jimpitan yang terkumpul di kaleng ronda harus diserahterimakan kepada Bendahara RT untuk dimasukkan ke pembukuan resmi.
+                    Menu <strong>"Setor Jimpitan"</strong> di aplikasi adalah sarana pengecekan bagi Pengurus / Bendahara untuk memvalidasi jumlah uang fisik jimpitan yang diterima dari petugas ronda. Setelah uang fisik dihitung dan dipastikan <strong>sesuai</strong> dengan rekap di aplikasi, pengurus mengklik tombol <strong>"Setor"</strong> untuk memvalidasi dan membukukannya ke Kas RT secara otomatis.
                 </p>
 
                 <div class="step-sequence">
                     <div class="step-row">
                         <div class="step-badge">1</div>
                         <div class="step-content">
-                            <div class="step-title">Petugas Ronda Membuka Menu "Setor Jimpitan"</div>
+                            <div class="step-title">Pengurus Membuka Menu "Setor Jimpitan"</div>
                             <div class="step-desc">
-                                Aplikasi secara otomatis menampilkan rekap: jumlah rumah yang dijimpit malam ini, daftar nama petugas yang bertugas, dan <strong>Total Uang Fisik yang Harus Disetor</strong> (contoh: 58 rumah x Rp 1.000 = Rp 58.000).
+                                Setelah regu ronda selesai berkeliling dan menyerahkan hasil jimpitan malam tersebut, Pengurus Lingkungan / Bendahara membuka menu <strong>"Setor Jimpitan"</strong> di aplikasi Jimpitan. Halaman ini memuat daftar tanggal penarikan jimpitan yang menunggu untuk divalidasi.
                             </div>
                         </div>
                     </div>
@@ -1987,9 +2082,14 @@
                     <div class="step-row">
                         <div class="step-badge">2</div>
                         <div class="step-content">
-                            <div class="step-title">Serahkan Uang Fisik ke Bendahara RT</div>
+                            <div class="step-title">Cek Rincian Tanggal & Hitung Uang Fisik</div>
                             <div class="step-desc">
-                                Petugas menyerahkan uang fisik hasil jimpitan kepada Bendahara. Bendahara menghitung kecocokan nominal uang dengan aplikasi.
+                                Setiap kartu menampilkan:
+                                <ul style="margin: 0.35rem 0 0 1.25rem;">
+                                    <li><strong>Hari & Tanggal Ronda:</strong> Contoh <code>Senin, 26 Oktober 2026</code></li>
+                                    <li><strong>Total Hasil Scan Jimpitan:</strong> Contoh <code>Rp 58.000</code> (akumulasi nominal dari seluruh barcode rumah warga yang berhasil discan oleh petugas ronda pada malam itu).</li>
+                                </ul>
+                                Pengurus menghitung uang tunai/koin fisik yang diterima dan mencocokkannya dengan nominal yang tercantum pada layar aplikasi.
                             </div>
                         </div>
                     </div>
@@ -1997,11 +2097,38 @@
                     <div class="step-row">
                         <div class="step-badge">3</div>
                         <div class="step-content">
-                            <div class="step-title">Konfirmasi Setoran & Masuk Buku Kas Otomatis</div>
+                            <div class="step-title">Validasi dengan Mengklik Tombol "Setor"</div>
                             <div class="step-desc">
-                                Begitu Bendahara menekan <strong>"Konfirmasi Terima Setoran"</strong>, uang setoran tersebut otomatis tercatat sebagai <strong>Pemasukan Kas Lingkungan</strong> di Buku Kas tanpa perlu input ulang.
+                                <strong>Jika jumlah uang fisik sudah sesuai</strong> dengan total di aplikasi, pengurus melakukan validasi penerimaan dengan menekan tombol hijau <strong>"Setor"</strong> pada kartu tanggal tersebut.
                             </div>
                         </div>
+                    </div>
+
+                    <div class="step-row">
+                        <div class="step-badge">4</div>
+                        <div class="step-content">
+                            <div class="step-title">Konfirmasi Masuk Kas Pengurus</div>
+                            <div class="step-desc">
+                                Sistem memunculkan jendela dialog konfirmasi: <em>"Setor pendapatan jimpitan tanggal [Tanggal] sebesar Rp [Nominal] ke kas pengurus?"</em>. Pengurus menekan tombol <strong>"Ya, Setor"</strong> untuk mengesahkan penerimaan kas.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-row">
+                        <div class="step-badge">5</div>
+                        <div class="step-content">
+                            <div class="step-title">Otomatis Tercatat di Buku Kas (Dues Journal)</div>
+                            <div class="step-desc">
+                                Setelah tombol divalidasi, dana tersebut otomatis dibukukan sebagai <strong>Pemasukan Kas Lingkungan</strong> dengan keterangan resmi (<em>"Setor fisik hasil scan jimpitan tanggal [Tanggal]"</em>). Tanggal tersebut langsung ditandai tuntas sehingga mencegah risiko setoran ganda (dobel input).
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="callout-box callout-tip">
+                    <i class="fa-solid fa-calculator" style="font-size: 1.25rem; margin-top: 2px;"></i>
+                    <div>
+                        <strong>Fungsi Kontrol & Akuntabilitas Pengurus:</strong> Pengecekan ini memastikan uang fisik yang diserahkan petugas ronda benar-benar klop 100% dengan data digital scan rumah. Jika terdapat selisih uang fisik, pengurus dapat meminta klarifikasi regu ronda sebelum menekan tombol validasi.
                     </div>
                 </div>
             </article>
