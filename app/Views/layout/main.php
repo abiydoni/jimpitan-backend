@@ -517,6 +517,13 @@
                     <span>Log Aktivitas</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="<?= base_url('/tutorial') ?>" target="_blank" class="nav-link <?= (url_is('tutorial*') || url_is('panduan*')) ? 'active' : '' ?>">
+                    <i class="fa-solid fa-book-open-reader nav-icon" style="color: #10b981;"></i>
+                    <span>Panduan & Tutorial</span>
+                    <span style="background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 2px 7px; border-radius: 999px; font-size: 0.68rem; font-weight: 700; margin-left: auto;">Web</span>
+                </a>
+            </li>
         </ul>
     </aside>
 

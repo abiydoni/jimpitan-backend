@@ -1,0 +1,6 @@
+No KK,NIK,Nama Lengkap,Status Hubungan,Status Perkawinan,Jenis Kelamin,Tempat Lahir,Tanggal Lahir,Alamat,Agama,Pekerjaan,Status Hidup,Email,No HP,Jabatan,Kode Rumah
+3273010101900001,3273010101900001,Bambang Sudarmono,Kepala Keluarga,Kawin,Laki-laki,Bandung,1985-05-12,Jl. Mawar No. 12 RT 04 RW 02,Islam,Wiraswasta,Aktif,bambang@example.com,081234567890,WARGA,A-12
+3273010101900001,3273010101920002,Siti Aminah,Istri,Kawin,Perempuan,Bandung,1988-08-20,Jl. Mawar No. 12 RT 04 RW 02,Islam,Mengurus Rumah Tangga,Aktif,siti@example.com,081234567891,WARGA,A-12
+3273010101900001,3273010101150003,Rizky Pratama,Anak,Belum Kawin,Laki-laki,Bandung,2015-02-14,Jl. Mawar No. 12 RT 04 RW 02,Islam,Pelajar/Mahasiswa,Aktif,,081234567892,WARGA,A-12
+3273010102900002,3273010102900001,Agus Supriatna,Kepala Keluarga,Kawin,Laki-laki,Jakarta,1979-11-04,Jl. Mawar No. 14 RT 04 RW 02,Islam,Karyawan Swasta,Aktif,agus@example.com,081398765432,WARGA,A-14
+3273010102900002,3273010102920002,Dewi Sartika,Istri,Kawin,Perempuan,Bandung,1982-03-18,Jl. Mawar No. 14 RT 04 RW 02,Islam,PNS,Aktif,dewi@example.com,081398765433,WARGA,A-14

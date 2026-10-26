@@ -35,3 +35,8 @@ $routes->post('/wa_blast/blast', 'WaBlast::sendBlast');
 $routes->get('/wa_blast/history', 'WaBlast::getHistory');
 $routes->match(['delete', 'post'], '/wa_blast/history/(:segment)', 'WaBlast::deleteHistory/$1');
 
+// Halaman Publik Tutorial & Panduan Lengkap Penggunaan Jimpitan APK (Tanpa Login)
+$routes->get('/tutorial', 'Tutorial::index');
+$routes->get('/panduan', 'Tutorial::index');
+$routes->get('/tutorial/download_template', 'Tutorial::downloadTemplate');
+
