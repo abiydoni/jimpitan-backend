@@ -1575,6 +1575,7 @@
                                     <div class="step-title">Periksa Data & Ketuk Tombol "Setujui"</div>
                                     <div class="step-desc">
                                         Periksa nama lengkap, akun email Google, dan NIK yang diajukan pemohon. Untuk menyetujui warga tersebut bergabung ke desa, ketuk tombol <strong>Setujui (Ikon Centang)</strong> pada kartu warga.
+                                        Jika NIK tidak sesuai atau tidak diisi dan sebelumnya warga sudah diinput sebelumnya maka pilih tombol "Kaitkan". 
                                     </div>
                                 </div>
                             </div>
