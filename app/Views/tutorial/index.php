@@ -1315,8 +1315,8 @@
                 </div>
             </div>
             <div class="hero-visual">
-                <div class="hero-img-stack" onclick="openLightbox('<?= base_url('tutorial_assets/1_pembuatan_desa.jpg') ?>', 'Screenshot Antarmuka Aplikasi Jimpitan Mobile')">
-                    <img src="<?= base_url('tutorial_assets/1_pembuatan_desa.jpg') ?>" alt="Screenshot Jimpitan APK">
+                <div class="hero-img-stack" onclick="openLightbox('<?= base_url('tutorial_assets/1_pembuatan_desa_real.png') ?>', 'Screenshot Antarmuka Aplikasi Jimpitan Mobile')">
+                    <img src="<?= base_url('tutorial_assets/1_pembuatan_desa_real.png') ?>" alt="Screenshot Jimpitan APK">
                     <div class="zoom-overlay-hint"><i class="fa-solid fa-expand"></i> Ketuk untuk Zoom</div>
                 </div>
             </div>
@@ -1429,9 +1429,9 @@
                     </div>
 
                     <div class="module-visual">
-                        <div class="phone-mockup-frame" onclick="openLightbox('<?= base_url('tutorial_assets/1_pembuatan_desa.jpg') ?>', 'Formulir Registrasi Desa Baru Jimpitan')">
+                        <div class="phone-mockup-frame" onclick="openLightbox('<?= base_url('tutorial_assets/1_pembuatan_desa_real.png') ?>', 'Formulir Registrasi Desa Baru Jimpitan')">
                             <div class="phone-screen">
-                                <img src="<?= base_url('tutorial_assets/1_pembuatan_desa.jpg') ?>" alt="Registrasi Desa Baru">
+                                <img src="<?= base_url('tutorial_assets/1_pembuatan_desa_real.png') ?>" alt="Registrasi Desa Baru">
                                 <div class="zoom-overlay-hint"><i class="fa-solid fa-expand"></i> Perbesar Gambar</div>
                             </div>
                         </div>
@@ -1518,9 +1518,9 @@
                     </div>
 
                     <div class="module-visual">
-                        <div class="phone-mockup-frame" onclick="openLightbox('<?= base_url('tutorial_assets/2_join_desa.jpg') ?>', 'Layar Bergabung ke Desa Jimpitan')">
+                        <div class="phone-mockup-frame" onclick="openLightbox('<?= base_url('tutorial_assets/2_join_desa_real.png') ?>', 'Layar Bergabung ke Desa Jimpitan')">
                             <div class="phone-screen">
-                                <img src="<?= base_url('tutorial_assets/2_join_desa.jpg') ?>" alt="Join Desa Jimpitan">
+                                <img src="<?= base_url('tutorial_assets/2_join_desa_real.png') ?>" alt="Join Desa Jimpitan">
                                 <div class="zoom-overlay-hint"><i class="fa-solid fa-expand"></i> Perbesar Gambar</div>
                             </div>
                         </div>
@@ -1608,9 +1608,9 @@
                     </div>
 
                     <div class="module-visual">
-                        <div class="phone-mockup-frame" onclick="openLightbox('<?= base_url('tutorial_assets/3_input_warga.jpg') ?>', 'Formulir Data Warga & Kartu Keluarga di Jimpitan')">
+                        <div class="phone-mockup-frame" onclick="openLightbox('<?= base_url('tutorial_assets/3_input_warga_real.png') ?>', 'Formulir Data Warga & Kartu Keluarga di Jimpitan')">
                             <div class="phone-screen">
-                                <img src="<?= base_url('tutorial_assets/3_input_warga.jpg') ?>" alt="Formulir Data Warga Jimpitan">
+                                <img src="<?= base_url('tutorial_assets/3_input_warga_real.png') ?>" alt="Formulir Data Warga Jimpitan">
                                 <div class="zoom-overlay-hint"><i class="fa-solid fa-expand"></i> Perbesar Gambar</div>
                             </div>
                         </div>
